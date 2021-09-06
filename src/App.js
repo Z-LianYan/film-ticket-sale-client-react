@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Route, Switch, withRouter } from 'react-router-dom'
-import { Home, BuyCar, List, Mine } from './view/main/index.js'
+import { Route, Switch, withRouter } from 'react-router-dom';
+import { Home, BuyCar, List, Mine } from './view/main/index.js';
 
-import AppFooter from './components/commons/AppFooter'
+import AppFooter from './components/commons/AppFooter';
 
 class App extends Component {
 
@@ -37,7 +37,7 @@ class App extends Component {
 		let { routes } = this.props
 		return (
 			<Switch>
-				{routes.map(item => <Route key={item.id}
+				{routes.map((item,index) => <Route key={index}
 					path={item.path} component={item.component} exact={item.exact} />)}
 			</Switch>
 		)
@@ -64,10 +64,10 @@ class App extends Component {
 
 App.defaultProps = {
 	routes: [
-		{ id: 1, path: '/', component: Home, exact: true },
-		{ id: 2, path: '/list', component: List },
-		{ id: 3, path: '/buycar', component: BuyCar },
-		{ id: 4, path: '/mine', component: Mine }
+		{  path: '/', component: Home, exact: true },
+		{  path: '/list', component: List },
+		{  path: '/buycar', component: BuyCar },
+		{  path: '/mine', component: Mine }
 	]
 }
 

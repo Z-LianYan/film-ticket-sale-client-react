@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import { BrowserRouter as Router } from 'react-router-dom'
+import { BrowserRouter as Router } from 'react-router-dom';
 
 //rem
 import './modules/rem.js'
@@ -16,8 +16,8 @@ import store from './store'
 ReactDOM.render(
   <Provider store={store}>
     <Router>
-			<App />
-		</Router>
+      <App/>
+    </Router>
   </Provider>,
   document.getElementById('root')
 );

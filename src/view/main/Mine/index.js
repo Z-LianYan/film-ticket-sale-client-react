@@ -17,6 +17,7 @@ class Mine extends Component{
 	
 	checkLogin(props){
 		let { userInfo, history } =( props || this.props ) 
+		
 		let { replace } = history
 		if( userInfo ){
 			replace('/mine/user')

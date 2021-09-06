@@ -11,7 +11,7 @@ class AppFooter extends Component{
 		let { navs } = this.props
 		return navs.map( item => (
 			<NavLink exact={item.exact} activeClassName='actived' to={item.path} key = {item.id}>
-				<i className={'fa fa-'+item.icon}></i>
+				<i className={item.icon}></i>
 				<span>{item.title}</span>
 			</NavLink>
 		))
@@ -30,10 +30,10 @@ class AppFooter extends Component{
 
 AppFooter.defaultProps = {
 	navs:[
-		{id:1,path:'/',title:'首页',icon:'home', exact:true},
-		{id:2,path:'/list',title:'分类',icon:'th-list'},
-		{id:3,path:'/buycar',title:'购物袋',icon:'shopping-bag'},
-		{id:4,path:'/mine',title:'我的',icon:'user-circle'}
+		{id:1,path:'/',title:'电影',icon:'iconfont icon-dianying1', exact:true},
+		{id:2,path:'/list',title:'影院',icon:'iconfont icon-yingyuan'},
+		{id:3,path:'/buycar',title:'咨询',icon:'iconfont icon-zixun'},
+		{id:4,path:'/mine',title:'我的',icon:'iconfont icon-wode'}
 	]
 }
 
