@@ -3,6 +3,8 @@
 import React, { Component } from 'react'
 import './index.scss'
 
+import { get_film_hot } from '../../../api/film';
+
 
 class Home extends Component{
 	constructor(props){
@@ -10,6 +12,12 @@ class Home extends Component{
 		this.state = {
 			
 		}
+	}
+
+	componentDidMount(){
+		get_film_hot({}).then(res=>{
+			console.log('666',res);
+		})
 	}
 	
 	render(){
