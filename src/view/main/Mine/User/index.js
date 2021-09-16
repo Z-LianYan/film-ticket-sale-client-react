@@ -1,41 +1,31 @@
+import React, { Component } from "react";
+import "./index.less";
 
+import { GroupCommons } from "../../../../modules/group";
 
-import React, { Component } from 'react'
-import './index.scss'
+class User extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
-import { GroupCommons } from '../../../../modules/group'
+  componentWillReceiveProps(props) {
+    let { userInfo, history } = props;
+    if (userInfo === null) {
+      history.replace("/mine/login");
+    }
+  }
 
-class User extends Component{
-	constructor(props){
-		super(props)
-		this.state = {
-			
-		}
-	}
-	
-	
-	componentWillReceiveProps(props){
-		let { userInfo, history } = props
-		if( userInfo === null ){
-			history.replace("/mine/login")
-		}
-	}
-	
-	
-	
-	
-	
-	render(){
-		let { userInfo } = this.props
-		return (
-			<div className=''>
-				user
-				<div>{ !userInfo || userInfo.username }</div>
-				<button onClick = { this.props.exit }>exit</button>
-			</div>
-		)
-	}
-	
+  render() {
+    let { userInfo } = this.props;
+    return (
+      <div className="">
+        user
+        <div>{!userInfo || userInfo.username}</div>
+        <button onClick={this.props.exit}>exit</button>
+      </div>
+    );
+  }
 }
 
-export default GroupCommons(User)
+export default GroupCommons(User);

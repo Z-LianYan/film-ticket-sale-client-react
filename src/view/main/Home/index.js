@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./index.scss";
+import "./index.less";
 
 import { get_film_hot } from "../../../api/film";
 import { Button, WhiteSpace } from "antd-mobile";
