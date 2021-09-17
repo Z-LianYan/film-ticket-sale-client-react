@@ -170,7 +170,7 @@
     "style-loader": "1.3.0"
   },
   "theme": {
-    "brand-primary": "#f8a120",
-    "color-text-base": "#333"
+    "@brand-primary": "#f8a120",
+    "@brand-primary-tap": "#f1b153"
   }
 }

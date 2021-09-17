@@ -40,6 +40,10 @@ class Home extends Component {
         <WhiteSpace />
         <Button icon="check-circle-o">with icon</Button>
         <WhiteSpace />
+        <a href="/list">
+          <i class="iconfont icon-yingyuan"></i>
+          <span>影院</span>
+        </a>
       </div>
     );
   }
