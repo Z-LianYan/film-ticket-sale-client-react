@@ -171,6 +171,9 @@
   },
   "theme": {
     "@brand-primary": "#f8a120",
-    "@brand-primary-tap": "#f1b153"
+    "@brand-primary-tap": "#f1b153",
+    "@color-link": "#333333",
+    "@color-text-base": "#333333",
+    "@color-text-base-inverse": "#ffffff"
   }
 }

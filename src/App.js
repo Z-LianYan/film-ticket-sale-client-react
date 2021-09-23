@@ -3,6 +3,7 @@ import { Route, Switch, withRouter } from "react-router-dom";
 import { Home, BuyCar, List, Mine } from "./view/main/index.js";
 
 import AppFooter from "./components/commons/AppFooter";
+import Citys from "@/view/citys/index";
 
 class App extends Component {
   constructor(props) {
@@ -16,9 +17,11 @@ class App extends Component {
   renderFooter() {
     //因为只要路由变化，属性就会变化，就会重新render，就会执行这个函数
     let { pathname } = this.props.location;
-    let no_footer_pathnames = ["/mine/login"];
-    if (no_footer_pathnames.indexOf(pathname) > -1) return "";
-    return <AppFooter />;
+    // let no_footer_pathnames = ["/mine/login"];
+    // if (no_footer_pathnames.indexOf(pathname) > -1) return "";
+    // return <AppFooter />;
+    let no_footer_pathnames = ["/mine/user","/cinemas","/"];
+    if (no_footer_pathnames.indexOf(pathname) > -1) return <AppFooter />;
   }
 
   //判断是否显示AppFooter组件:方法2
@@ -65,9 +68,10 @@ class App extends Component {
 App.defaultProps = {
   routes: [
     { path: "/", component: Home, exact: true },
-    { path: "/list", component: List },
+    { path: "/cinemas", component: List },
     { path: "/buycar", component: BuyCar },
     { path: "/mine", component: Mine },
+    { path: "/citys", component: Citys },
   ],
 };
 

@@ -33,8 +33,8 @@ AppFooter.defaultProps = {
       icon: "iconfont icon-dianying1",
       exact: true,
     },
-    { id: 2, path: "/list", title: "影院", icon: "iconfont icon-yingyuan" },
-    { id: 3, path: "/buycar", title: "咨询", icon: "iconfont icon-zixun" },
+    { id: 2, path: "/cinemas", title: "影院", icon: "iconfont icon-yingyuan" },
+    // { id: 3, path: "/buycar", title: "咨询", icon: "iconfont icon-zixun" },
     { id: 4, path: "/mine", title: "我的", icon: "iconfont icon-wode" },
   ],
 };
