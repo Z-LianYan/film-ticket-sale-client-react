@@ -46,13 +46,14 @@ if (process.env.NODE_ENV === "development") {
   api = "/api";
 }
 
-export function post(
-  url,
-  data,
-  { isLoading = false, text = "加载中..." } = {}
-) {
+export function post(url, data, text) {
   return new Promise((resolve, reject) => {
-    if (isLoading) Toast.loading(text, 0);
+    if (text)
+      Toast.show({
+        icon: "loading",
+        duration: 2000,
+        content: text,
+      });
     service({
       url: api + url,
       method: "POST",
@@ -61,22 +62,27 @@ export function post(
     })
       .then((res) => {
         resolve(res.data);
-        if (isLoading) Toast.hide();
+        if (text) Toast.clear();
       })
       .catch((err) => {
         reject(err);
-        Toast.fail(err.message, 2);
+        Toast.show({
+          icon: "fail",
+          duration: 2000,
+          content: err.message,
+        });
       });
   });
 }
 
-export function get(
-  url,
-  params,
-  { isLoading = false, text = "加载中..." } = {}
-) {
+export function get(url, params, text) {
   return new Promise((resolve, reject) => {
-    if (isLoading) Toast.loading(text, 0);
+    if (text)
+      Toast.show({
+        icon: "loading",
+        duration: 2000,
+        content: text,
+      });
     service({
       url: api + url,
       method: "GET",
@@ -85,11 +91,15 @@ export function get(
     })
       .then((res) => {
         resolve(res.data);
-        if (isLoading) Toast.hide();
+        if (text) Toast.clear();
       })
       .catch((err) => {
         reject(err);
-        Toast.fail(err.message, 2);
+        Toast.show({
+          icon: "fail",
+          duration: 2000,
+          content: err.message,
+        });
       });
   });
 }

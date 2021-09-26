@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./index.less";
+import "./index.scss";
 import { GroupCommons } from "../../../modules/group";
 import { Route } from "react-router-dom";
 import Login from "./Login";

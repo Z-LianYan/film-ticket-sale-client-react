@@ -1,4 +1,4 @@
-@import "../../../stylesheets/_base.less";
+@import "../../../stylesheets/_base.scss";
 .app-footer-nav {
   position: fixed;
   bottom: 0;
@@ -21,7 +21,7 @@
     }
 
     &.actived {
-      color: @base-color;
+      color: $base-color;
     }
   }
 }
