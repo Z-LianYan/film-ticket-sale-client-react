@@ -1,22 +1,42 @@
 import React, { Component } from "react";
 import "./index.scss";
 import { IndexBar, List } from "antd-mobile";
+import { get_city_list } from "@/api/citys";
 class Citys extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      cityList: [],
+    };
+  }
+  componentDidMount() {
+    get_city_list({}).then((res) => {
+      console.log("城市列表", res);
+      this.setState({
+        cityList: res,
+      });
+    });
   }
 
   render() {
+    let { cityList } = this.state;
     return (
-      <IndexBar>
-        <IndexBar.Panel index={"title"} title={`标题1`} key={`标题1`}>
-          <List>
-            <List.Item key={1}>{"item"}</List.Item>
-          </List>
-        </IndexBar.Panel>
-        )
-      </IndexBar>
+      <div style={{ height: "100vh" }}>
+        <IndexBar>
+          {cityList.map((item, index) => {
+            const { children, name } = item;
+            return (
+              <IndexBar.Panel index={`${index}`} title={name} key={index}>
+                <List>
+                  {children.map((it, idx) => (
+                    <List.Item key={idx}>{it.name}</List.Item>
+                  ))}
+                </List>
+              </IndexBar.Panel>
+            );
+          })}
+        </IndexBar>
+      </div>
     );
   }
 }
