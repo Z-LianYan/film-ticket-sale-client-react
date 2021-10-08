@@ -1,6 +1,6 @@
-
 const state = {
-	userInfo: null
-}
+  userInfo: null,
+  locationInfo: null,
+};
 
-export default state
+export default state;

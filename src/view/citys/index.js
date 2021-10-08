@@ -4,6 +4,8 @@ import { IndexBar, List, Search, Toast, NavBar } from "antd-mobile";
 import { CloseOutline } from "antd-mobile-icons";
 import { get_city_list } from "@/api/citys";
 import ChinesePY from "@/utils/ChinesePY";
+import logo from "@/static/svg/city.svg";
+import { GroupCommons } from "@/modules/group";
 
 class Citys extends Component {
   constructor(props) {
@@ -38,9 +40,9 @@ class Citys extends Component {
         Y: [],
         Z: [],
       },
-      filterList:[],
+      filterList: [],
       hotList: [],
-      searchValue: ''
+      searchValue: "",
     };
   }
   componentDidMount() {
@@ -73,27 +75,35 @@ class Citys extends Component {
       });
     });
   }
-  searchChange(val){
+  searchChange(val) {
     let { letter } = this.state;
     this.setState({
-      searchValue: val
+      searchValue: val,
     });
     let filterList = [];
-    for(let key in letter){
-      for(let item of letter[key]){
-        if(item.name.includes(val)){
+    for (let key in letter) {
+      for (let item of letter[key]) {
+        if (item.name.includes(val)) {
           filterList.push(item);
         }
       }
-
     }
     this.setState({
-      filterList
-    })
+      filterList,
+    });
+  }
+
+  setLocationInfo(item) {
+    let { history } = this.props;
+    this.props.setLocationInfo(item, () => {
+      console.log("12340", this.props.locationInfo);
+      history.goBack();
+    });
   }
 
   render() {
     let { letter, hotList, searchValue, filterList } = this.state;
+    let { history } = this.props;
     return (
       <div>
         <NavBar
@@ -101,6 +111,7 @@ class Citys extends Component {
           backArrow={<CloseOutline />}
           onBack={() => {
             console.log("返回");
+            history.goBack();
           }}
         >
           当前城市 -
@@ -109,53 +120,53 @@ class Citys extends Component {
           value={searchValue}
           placeholder="输入城市名称"
           showCancelButton
-          onSearch={(val) => {
-            Toast.show(`你搜索了：${val}`);
-          }}
           onChange={(val) => {
-            // Toast.show(`onChange：${val}`);
             this.searchChange(val);
           }}
           onClear={() => {
-            // Toast.show("清空内容");
             this.setState({
-              searchValue: ''
-            })
+              searchValue: "",
+            });
           }}
           onCancel={() => {
-            // Toast.show("取消搜索");
             this.setState({
-              searchValue: ''
-            })
+              searchValue: "",
+            });
           }}
           style={{
             "--border-radius": "3px",
             "--background": "#ffffff",
             background: "#f4f4f4",
             padding: "10px 15px",
-            "borderBottom": "1px solid #eee"
+            borderBottom: "1px solid #eee",
           }}
         />
-        <div style={{ height: "calc(100vh - 98px)", "overflowX": "hidden" }}>
-          {
-            searchValue ? filterList.length?<List>
-              {
-                filterList.map((item,index)=>{
-                  return <List.Item key={index} arrow={false} 
-                    onClick={() => { 
-                      console.log('onclick') 
-                    }}>{item.name}</List.Item>
-                })
-              }
-              
-            </List>:<div className="iconfont icon-zixun" style={{
-              "height":"100%",
-              "display":"flex",
-              "alignItems":"center",
-              "justifyContent":"center"
-              }}>
-              没有找到匹配的城市
-            </div> : <IndexBar sticky={true}>
+        <div style={{ height: "calc(100vh - 98px)", overflowX: "hidden" }}>
+          {searchValue ? (
+            filterList.length ? (
+              <List>
+                {filterList.map((item, index) => {
+                  return (
+                    <List.Item
+                      key={index}
+                      arrow={false}
+                      onClick={() => {
+                        console.log("onclick");
+                      }}
+                    >
+                      {item.name}
+                    </List.Item>
+                  );
+                })}
+              </List>
+            ) : (
+              <div className="not-search-relative-info">
+                <img src={logo} alt="svg" />
+                <p>没有找到匹配的城市</p>
+              </div>
+            )
+          ) : (
+            <IndexBar sticky={true}>
               <div className="header-location-wrapper">
                 <div className="row">
                   <p className="title">GPS定位你所在城市</p>
@@ -171,8 +182,9 @@ class Citys extends Component {
                         <div
                           className="item-tag"
                           key={index}
-                          onClick={() => {
+                          onClick={async () => {
                             console.log("热门城市", item.name);
+                            this.setLocationInfo(item);
                           }}
                         >
                           {item.name}
@@ -188,19 +200,25 @@ class Citys extends Component {
                   <IndexBar.Panel index={`${key}`} title={key} key={key}>
                     <List>
                       {letter[key].map((it, idx) => (
-                        <List.Item key={idx}>{it.name}</List.Item>
+                        <List.Item
+                          key={idx}
+                          onClick={() => {
+                            this.setLocationInfo(it);
+                          }}
+                        >
+                          {it.name}
+                        </List.Item>
                       ))}
                     </List>
                   </IndexBar.Panel>
                 );
               })}
             </IndexBar>
-          }
-
+          )}
         </div>
       </div>
     );
   }
 }
 
-export default Citys;
+export default GroupCommons(Citys);

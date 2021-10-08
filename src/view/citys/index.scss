@@ -1,3 +1,12 @@
+
+.not-search-relative-info{
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+  color: #bdc0c5;
+}
 .header-location-wrapper{
   padding: 0.15rem 0 0 0.15rem;
   .row{
