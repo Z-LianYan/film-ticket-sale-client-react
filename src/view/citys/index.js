@@ -38,7 +38,9 @@ class Citys extends Component {
         Y: [],
         Z: [],
       },
+      filterList:[],
       hotList: [],
+      searchValue: ''
     };
   }
   componentDidMount() {
@@ -47,7 +49,7 @@ class Citys extends Component {
       let citys = res.rows;
       let hotList = res.hotList;
       for (let i = 0; i < citys.length; i++) {
-        if (citys[i].id == 110000 || citys[i].id == 120000) {
+        if (citys[i].id === 110000 || citys[i].id === 120000) {
           //110000北京 120000天津
           let str = ChinesePY.getWordsCode(citys[i].name.substr(0, 1));
           // console.log("省", str);
@@ -63,7 +65,7 @@ class Citys extends Component {
           }
         }
       }
-      console.log("城市列表", citys);
+      // console.log("城市列表", citys);
       // console.log("66666", letter);
       this.setState({
         cityList: citys,
@@ -71,9 +73,27 @@ class Citys extends Component {
       });
     });
   }
+  searchChange(val){
+    let { letter } = this.state;
+    this.setState({
+      searchValue: val
+    });
+    let filterList = [];
+    for(let key in letter){
+      for(let item of letter[key]){
+        if(item.name.includes(val)){
+          filterList.push(item);
+        }
+      }
+
+    }
+    this.setState({
+      filterList
+    })
+  }
 
   render() {
-    let { cityList, letter, hotList } = this.state;
+    let { letter, hotList, searchValue, filterList } = this.state;
     return (
       <div>
         <NavBar
@@ -85,66 +105,98 @@ class Citys extends Component {
         >
           当前城市 -
         </NavBar>
-        <div style={{ height: "calc(100vh - 95px)" }}>
-          <Search
-            placeholder="输入城市名称"
-            showCancelButton
-            onSearch={(val) => {
-              Toast.show(`你搜索了：${val}`);
-            }}
-            onClear={() => {
-              Toast.show("清空内容");
-            }}
-            onCancel={() => {
-              Toast.show("取消搜索");
-            }}
-            style={{
-              "--border-radius": "3px",
-              "--background": "#ffffff",
-              background: "#f4f4f4",
-              padding: "10px 15px",
-            }}
-          />
+        <Search
+          value={searchValue}
+          placeholder="输入城市名称"
+          showCancelButton
+          onSearch={(val) => {
+            Toast.show(`你搜索了：${val}`);
+          }}
+          onChange={(val) => {
+            // Toast.show(`onChange：${val}`);
+            this.searchChange(val);
+          }}
+          onClear={() => {
+            // Toast.show("清空内容");
+            this.setState({
+              searchValue: ''
+            })
+          }}
+          onCancel={() => {
+            // Toast.show("取消搜索");
+            this.setState({
+              searchValue: ''
+            })
+          }}
+          style={{
+            "--border-radius": "3px",
+            "--background": "#ffffff",
+            background: "#f4f4f4",
+            padding: "10px 15px",
+            "borderBottom": "1px solid #eee"
+          }}
+        />
+        <div style={{ height: "calc(100vh - 98px)", "overflowX": "hidden" }}>
+          {
+            searchValue ? filterList.length?<List>
+              {
+                filterList.map((item,index)=>{
+                  return <List.Item key={index} arrow={false} 
+                    onClick={() => { 
+                      console.log('onclick') 
+                    }}>{item.name}</List.Item>
+                })
+              }
+              
+            </List>:<div className="iconfont icon-zixun" style={{
+              "height":"100%",
+              "display":"flex",
+              "alignItems":"center",
+              "justifyContent":"center"
+              }}>
+              没有找到匹配的城市
+            </div> : <IndexBar sticky={true}>
+              <div className="header-location-wrapper">
+                <div className="row">
+                  <p className="title">GPS定位你所在城市</p>
+                  <div className="item-tag-wrapper">
+                    <div className="item-tag">定位失败</div>
+                  </div>
+                </div>
+                <div className="row">
+                  <p className="title">热门城市</p>
+                  <div className="item-tag-wrapper">
+                    {hotList.map((item, index) => {
+                      return (
+                        <div
+                          className="item-tag"
+                          key={index}
+                          onClick={() => {
+                            console.log("热门城市", item.name);
+                          }}
+                        >
+                          {item.name}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+              {Object.keys(letter).map((key, index) => {
+                if (!letter[key].length) return;
+                return (
+                  <IndexBar.Panel index={`${key}`} title={key} key={key}>
+                    <List>
+                      {letter[key].map((it, idx) => (
+                        <List.Item key={idx}>{it.name}</List.Item>
+                      ))}
+                    </List>
+                  </IndexBar.Panel>
+                );
+              })}
+            </IndexBar>
+          }
 
-          <IndexBar sticky={false}>
-            <div className="header-location-wrapper">
-              <div className="row">
-                <p className="title">GPS定位你所在城市</p>
-                <div className="item-tag-wrapper">
-                  <div className="item-tag">定位失败</div>
-                </div>
-              </div>
-              <div className="row">
-                <p className="title">热门城市</p>
-                <div className="item-tag-wrapper">
-                  {hotList.map((item, index) => {
-                    return (
-                      <div
-                        className="item-tag"
-                        onClick={() => {
-                          console.log("热门城市", item.name);
-                        }}
-                      >
-                        {item.name}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-            {Object.keys(letter).map((key, index) => {
-              if (!letter[key].length) return;
-              return (
-                <IndexBar.Panel index={`${key}`} title={key} key={key}>
-                  <List>
-                    {letter[key].map((it, idx) => (
-                      <List.Item key={idx}>{it.name}</List.Item>
-                    ))}
-                  </List>
-                </IndexBar.Panel>
-              );
-            })}
-          </IndexBar>
         </div>
       </div>
     );
