@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./index.scss";
-import { IndexBar, List, Search, Toast, NavBar } from "antd-mobile";
+import { IndexBar, List, Search, NavBar } from "antd-mobile";
 import { CloseOutline } from "antd-mobile-icons";
 import { get_city_list } from "@/api/citys";
 import ChinesePY from "@/utils/ChinesePY";
