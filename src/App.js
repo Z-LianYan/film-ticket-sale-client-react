@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
-import { Home, BuyCar, List, Mine } from "./view/main/index.js";
+import { Film, Cinemas, Mine } from "./view/main/index.js";
 
 import AppFooter from "./components/commons/AppFooter";
 import Citys from "@/view/citys/index";
@@ -67,9 +67,9 @@ class App extends Component {
 
 App.defaultProps = {
   routes: [
-    { path: "/", component: Home, exact: true },
-    { path: "/cinemas", component: List },
-    { path: "/buycar", component: BuyCar },
+    { path: "/", component: Film, exact: true },
+    { path: "/cinemas", component: Cinemas },
+    // { path: "/buycar", component: BuyCar },
     { path: "/mine", component: Mine },
     { path: "/citys", component: Citys },
   ],

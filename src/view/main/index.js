@@ -1,10 +1,10 @@
 
-import Home from './Home'
+import Film from './Film'
 import BuyCar from './BuyCar'
-import List from './List'
+import Cinemas from './Cinemas'
 import Mine from './Mine'
 
 
 export {
-	Home,BuyCar,List,Mine
+	Film,BuyCar,Cinemas,Mine
 }
