@@ -1,5 +1,52 @@
 @import "@/stylesheets/_base.scss";
-.film-list-item{
-  padding: 15px;
+@import "@/stylesheets/_mixin.scss";
+.film-list-item-container{
+  .film-list-item{
+    box-sizing: border-box;
+    padding: 0.15rem;
+    display: flex;
+    align-items: center;
+    color: #797d82;
+    .left{
+      width: 0.66rem;
+      height: 0.92rem;
+    }
+    .middle{
+      margin: 0 0.1rem;
+      flex: 1;
+      font-size: 0.13rem;
+      .title{
+        color: #000;
+        font-size: 0.16rem;
+        .tag{
+          background-color: #d2d6dc;
+          margin-left: 0.05rem;
+          color: #fff;
+          padding: 0 0.02rem;
+          border-radius: 0.03rem;
+          font-size: 0.12rem;
+        }
+      }
+      .score-wrapper{
+        .score{
+          color: $base-color;
+        }
+      }
+      .actors{
+        width: calc(100vw - 1.58rem);
+        @include ellipsis-one();
+      }
+      .area{
+        width: calc(100vw - 1.58rem);
+        @include ellipsis-one();
+      }
+    }
+  }
+  .line{
+    height: 0.01rem;
+    background: #eee;
+    margin-left: 0.15rem;
+  }
 }
+
  

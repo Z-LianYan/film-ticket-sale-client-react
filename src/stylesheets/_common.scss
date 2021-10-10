@@ -1,5 +1,6 @@
-
-// .container{
-//     width: 900px;
-//     padding-top: 50px;
-// }
+.ellipsis-one{
+  @include ellipsis-one();
+}
+.ellipsis-two{
+  @include ellipsis-two(); 
+}
