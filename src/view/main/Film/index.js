@@ -6,6 +6,7 @@ import { get_film_hot, get_film_soon_show } from "../../../api/film";
 import { Button, Tabs, InfiniteScroll, PullToRefresh } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import FilmListItem from "@/components/FilmListItem/index";
+import dayjs from "dayjs";
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -46,10 +47,72 @@ class Home extends Component {
   async loadMore() {
     await console.log("hasMore");
   }
+  handleWeek(day){
+    switch(day){
+      case 0:
+        return "周日"
+        break;
+      case 1:
+        return "周一"
+        break;
+      case 2:
+        return "周二"
+        break;
+      case 3:
+        return "周三"
+        break;
+      case 4:
+        return "周四"
+        break;
+      case 5:
+        return "周五"
+        break;
+      case 6:
+        return "周六"
+        break;
+    }
+  }
+
+  renderHot(){
+    let { hotList } = this.state;
+    return hotList.map((item, index) => {
+      return (
+        <FilmListItem
+          key={item.id}
+          title={item.film_name}
+          playType={item.play_type_name}
+          score={item.grade}
+          actors={item.actors.map((item) => item.name).join(",")}
+          bottomText={item.nation +" | "+ item.play_time+'分钟'}
+          imgUrl={item.poster_img}
+          separator={hotList.length == index + 1 ? false : true}
+        />
+      );
+    })
+  }
+  renderSoon(){
+    let { soonShowList } = this.state;
+    return soonShowList.map((item, index) => {
+      return (
+        <FilmListItem
+          key={item.id}
+          title={item.film_name}
+          playType={item.play_type_name}
+          isShowScore={false}
+          actors={item.actors.map((item) => item.name).join(",")}
+          bottomText={'上映日期：' +this.handleWeek(dayjs(item.show_time).day())+' '+ dayjs(item.show_time).format('MM月DD日')}
+          imgUrl={item.poster_img}
+          separator={soonShowList.length == index + 1 ? false : true}
+          btnColor='warning'
+          btnTxt={item.isPresale?'预购':''}
+        />
+      );
+    })
+  }
 
   render() {
     // let { userInfo, locationInfo, history } = this.props;
-    let { soonShowList, floatTabs, activeTab } = this.state;
+    let { soonShowList, floatTabs, activeTab, hotList } = this.state;
     // console.log("soonShowList", soonShowList);
     // console.log("history", this.props);
     return (
@@ -71,23 +134,7 @@ class Home extends Component {
             console.log("下拉加载更多");
           }}
         >
-          {activeTab == "soon"
-            ? soonShowList.map((item, index) => {
-                return (
-                  <FilmListItem
-                    key={item.id}
-                    title={item.film_name}
-                    playType={item.play_type + "D"}
-                    score={item.grade}
-                    actors={item.actors.map((item) => item.name).join(",")}
-                    area={item.nation}
-                    time={item.play_time + "分钟"}
-                    imgUrl={item.poster_img}
-                    separator={soonShowList.length == index + 1 ? false : true}
-                  />
-                );
-              })
-            : null}
+          {activeTab == "hot" ? this.renderHot(): this.renderSoon()}
         </PullToRefresh>
 
         <InfiniteScroll
