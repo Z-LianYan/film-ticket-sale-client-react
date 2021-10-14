@@ -83,7 +83,7 @@ class Home extends Component {
           playType={item.play_type_name}
           score={item.grade}
           actors={item.actors.map((item) => item.name).join(",")}
-          bottomText={item.nation +" | "+ item.play_time+'分钟'}
+          bottomText={item.area +" | "+ item.runtime+'分钟'}
           imgUrl={item.poster_img}
           separator={hotList.length == index + 1 ? false : true}
         />
