@@ -90,6 +90,15 @@ class Home extends Component {
       );
     })
   }
+  hendalDate(show_time){
+    let year = dayjs(show_time).format('YYYY');
+    let cur_year = dayjs().format('YYYY');
+    if(cur_year!==year){
+      return dayjs(show_time).format('YYYY年MM月DD')
+    }else{
+      return dayjs(show_time).format('MM月DD')
+    }
+  }
   renderSoon(){
     let { soonShowList } = this.state;
     return soonShowList.map((item, index) => {
@@ -100,7 +109,7 @@ class Home extends Component {
           playType={item.play_type_name}
           isShowScore={false}
           actors={item.actors.map((item) => item.name).join(",")}
-          bottomText={'上映日期：' +this.handleWeek(dayjs(item.show_time).day())+' '+ dayjs(item.show_time).format('MM月DD日')}
+          bottomText={'上映日期：' +this.handleWeek(dayjs(item.show_time).day())+' '+ this.hendalDate(item.show_time)}
           imgUrl={item.poster_img}
           separator={soonShowList.length == index + 1 ? false : true}
           btnColor='warning'
