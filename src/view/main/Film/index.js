@@ -7,6 +7,7 @@ import { Button, Tabs, InfiniteScroll, PullToRefresh } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import FilmListItem from "@/components/FilmListItem/index";
 import dayjs from "dayjs";
+import resolve from "resolve";
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -15,145 +16,295 @@ class Home extends Component {
       soonShowList: [],
       floatTabs: false,
       activeTab: "hot",
+      fetchOptionsHot: {
+        page: 0,
+        limit: 6,
+      },
+      fetchOptionsSoonShow: {
+        page: 0,
+        limit: 6,
+      },
+      isHotHasMore: true,
+      isSoonHasMore: true,
+      scrollTopHot: 0,
+      scrollTopSoon: 0,
     };
   }
 
   componentDidMount() {
-    get_film_hot({}).then((res) => {
-      console.log("正在热映", res);
-      this.setState({
-        hotList: res.rows,
-      });
-    });
-    get_film_soon_show({}).then((res) => {
-      console.log("即将上映", res);
-      this.setState({
-        soonShowList: res.rows,
-      });
-    });
-
     window.addEventListener("scroll", (e) => {
       var scrollTop =
         document.documentElement.scrollTop ||
         window.pageYOffset ||
         document.body.scrollTop;
-      // console.log("1234", scrollTop);
       this.setState({
         floatTabs: scrollTop >= 200 ? true : false,
       });
+      if (this.state.activeTab == "soon") {
+        this.setState({
+          scrollTopSoon: scrollTop,
+        });
+      }
+      if (this.state.activeTab == "hot") {
+        this.setState({
+          scrollTopHot: scrollTop,
+        });
+      }
     });
   }
-
-  async loadMore() {
-    await console.log("hasMore");
+  async getHotList() {
+    let { fetchOptionsHot, isHotHasMore, hotList } = this.state;
+    let res = await get_film_hot(fetchOptionsHot);
+    console.log("正在热映", res);
+    this.setState({
+      hotList: fetchOptionsHot.page == 1 ? res.rows : hotList.concat(res.rows),
+    });
+    if (this.state.hotList.length >= res.count) {
+      this.setState({
+        isHotHasMore: false,
+      });
+    }
   }
-  handleWeek(day){
-    switch(day){
+  async getSoonShowList() {
+    let { fetchOptionsSoonShow, isSoonHasMore, soonShowList } = this.state;
+    return new Promise((resolve, reject) => {
+      get_film_soon_show(fetchOptionsSoonShow).then((res) => {
+        this.setState({
+          soonShowList:
+            fetchOptionsSoonShow.page == 1
+              ? res.rows
+              : soonShowList.concat(res.rows),
+        });
+        if (this.state.soonShowList.length >= res.count) {
+          this.setState({
+            isSoonHasMore: false,
+          });
+        }
+        resolve();
+      });
+    });
+    // let res = await get_film_soon_show(fetchOptionsSoonShow);
+    // console.log("即将上映", res);
+  }
+
+  handleWeek(day) {
+    switch (day) {
       case 0:
-        return "周日"
+        return "周日";
         break;
       case 1:
-        return "周一"
+        return "周一";
         break;
       case 2:
-        return "周二"
+        return "周二";
         break;
       case 3:
-        return "周三"
+        return "周三";
         break;
       case 4:
-        return "周四"
+        return "周四";
         break;
       case 5:
-        return "周五"
+        return "周五";
         break;
       case 6:
-        return "周六"
+        return "周六";
         break;
     }
   }
 
-  renderHot(){
-    let { hotList } = this.state;
-    return hotList.map((item, index) => {
-      return (
-        <FilmListItem
-          key={item.id}
-          title={item.film_name}
-          playType={item.play_type_name}
-          score={item.grade}
-          actors={item.actors.map((item) => item.name).join(",")}
-          bottomText={item.area +" | "+ item.runtime+'分钟'}
-          imgUrl={item.poster_img}
-          separator={hotList.length == index + 1 ? false : true}
+  renderHot() {
+    let { hotList, fetchOptionsHot, isHotHasMore } = this.state;
+    return (
+      <PullToRefresh
+        onRefresh={async () => {
+          fetchOptionsHot.page = 1;
+          this.setState(
+            {
+              fetchOptionsHot,
+            },
+            async () => {
+              let result = await get_film_hot(fetchOptionsHot);
+              this.setState(
+                {
+                  hotList: result.rows,
+                },
+                () => {
+                  this.setState({
+                    isHotHasMore: true,
+                  });
+                }
+              );
+              if (this.state.hotList.length >= result.count) {
+                this.setState({
+                  isHotHasMore: false,
+                });
+              }
+            }
+          );
+        }}
+      >
+        {hotList.map((item, index) => {
+          return (
+            <FilmListItem
+              key={item.id}
+              title={item.film_name}
+              playType={item.play_type_name}
+              score={item.grade}
+              actors={item.actors.map((item) => item.name).join(",")}
+              bottomText={item.area + " | " + item.runtime + "分钟"}
+              imgUrl={item.poster_img}
+              separator={hotList.length == index + 1 ? false : true}
+            />
+          );
+        })}
+
+        <InfiniteScroll
+          threshold="100"
+          loadMore={async () => {
+            fetchOptionsHot.page += 1;
+            this.setState({ fetchOptionsHot });
+            let result = await get_film_hot(fetchOptionsHot);
+            this.setState({
+              hotList:
+                fetchOptionsHot.page == 1
+                  ? result.rows
+                  : hotList.concat(result.rows),
+            });
+            if (this.state.hotList.length >= result.count) {
+              this.setState({
+                isHotHasMore: false,
+              });
+            }
+          }}
+          hasMore={isHotHasMore}
         />
-      );
-    })
+      </PullToRefresh>
+    );
   }
-  hendalDate(show_time){
-    let year = dayjs(show_time).format('YYYY');
-    let cur_year = dayjs().format('YYYY');
-    if(cur_year!==year){
-      return dayjs(show_time).format('YYYY年MM月DD')
-    }else{
-      return dayjs(show_time).format('MM月DD')
+  hendalDate(show_time) {
+    let year = dayjs(show_time).format("YYYY");
+    let cur_year = dayjs().format("YYYY");
+    if (cur_year !== year) {
+      return dayjs(show_time).format("YYYY年MM月DD");
+    } else {
+      return dayjs(show_time).format("MM月DD");
     }
   }
-  renderSoon(){
-    let { soonShowList } = this.state;
-    return soonShowList.map((item, index) => {
-      return (
-        <FilmListItem
-          key={item.id}
-          title={item.film_name}
-          playType={item.play_type_name}
-          isShowScore={false}
-          actors={item.actors.map((item) => item.name).join(",")}
-          bottomText={'上映日期：' +this.handleWeek(dayjs(item.show_time).day())+' '+ this.hendalDate(item.show_time)}
-          imgUrl={item.poster_img}
-          separator={soonShowList.length == index + 1 ? false : true}
-          btnColor='warning'
-          btnTxt={item.isPresale?'预购':''}
+  renderSoon() {
+    let { soonShowList, fetchOptionsSoonShow, isSoonHasMore } = this.state;
+    return (
+      <PullToRefresh
+        onRefresh={async () => {
+          fetchOptionsSoonShow.page = 1;
+          this.setState(
+            {
+              fetchOptionsSoonShow,
+            },
+            async () => {
+              let result = await get_film_hot(fetchOptionsSoonShow);
+              this.setState(
+                {
+                  soonShowList: result.rows,
+                },
+                () => {
+                  this.setState({
+                    isSoonHasMore: true,
+                  });
+                }
+              );
+              if (this.state.soonShowList.length >= result.count) {
+                this.setState({
+                  isSoonHasMore: false,
+                });
+              }
+            }
+          );
+        }}
+      >
+        {soonShowList.map((item, index) => {
+          return (
+            <FilmListItem
+              key={item.id}
+              title={item.film_name}
+              playType={item.play_type_name}
+              isShowScore={false}
+              actors={item.actors.map((item) => item.name).join(",")}
+              bottomText={
+                "上映日期：" +
+                this.handleWeek(dayjs(item.show_time).day()) +
+                " " +
+                this.hendalDate(item.show_time)
+              }
+              imgUrl={item.poster_img}
+              separator={soonShowList.length == index + 1 ? false : true}
+              btnColor="warning"
+              btnTxt={item.isPresale ? "预购" : ""}
+            />
+          );
+        })}
+        <InfiniteScroll
+          threshold="100"
+          loadMore={async () => {
+            fetchOptionsSoonShow.page += 1;
+            this.setState({ fetchOptionsSoonShow });
+            let result = await get_film_soon_show(fetchOptionsSoonShow);
+            this.setState({
+              soonShowList:
+                fetchOptionsSoonShow.page == 1
+                  ? result.rows
+                  : soonShowList.concat(result.rows),
+            });
+            if (this.state.soonShowList.length >= result.count) {
+              this.setState({
+                isSoonHasMore: false,
+              });
+            }
+          }}
+          hasMore={isSoonHasMore}
         />
-      );
-    })
+      </PullToRefresh>
+    );
   }
 
   render() {
     // let { userInfo, locationInfo, history } = this.props;
-    let { soonShowList, floatTabs, activeTab, hotList } = this.state;
-    // console.log("soonShowList", soonShowList);
-    // console.log("history", this.props);
+    let {
+      soonShowList,
+      hotList,
+      floatTabs,
+      activeTab,
+      isHotHasMore,
+      isSoonHasMore,
+      fetchOptionsSoonShow,
+      fetchOptionsHot,
+    } = this.state;
     return (
       <div className="app-film-container">
         <Tabs
           defaultActiveKey={"hot"}
           className={[floatTabs ? "float-tabs-component" : ""]}
           onChange={(val) => {
-            this.setState({ activeTab: val });
-            console.log("history", this.state.activeTab, val);
+            this.setState({
+              activeTab: val,
+            });
+            console.log(
+              "soon-hot",
+              this.state.scrollTopSoon,
+              this.state.scrollTopHot
+            );
+            if (val == "soon") {
+              window.scrollTo(0, this.state.scrollTopSoon);
+            }
+            if (val == "hot") {
+              window.scrollTo(0, this.state.scrollTopHot);
+            }
           }}
         >
-          <Tabs.TabPane title="正在热映" key="hot"></Tabs.TabPane>
-          <Tabs.TabPane title="即将上映" key="soon"></Tabs.TabPane>
+          <Tabs.TabPane title="正在热映" key="hot" />
+          <Tabs.TabPane title="即将上映" key="soon" />
         </Tabs>
-
-        <PullToRefresh
-          onRefresh={async () => {
-            console.log("下拉加载更多");
-          }}
-        >
-          {activeTab == "hot" ? this.renderHot(): this.renderSoon()}
-        </PullToRefresh>
-
-        <InfiniteScroll
-          threshold="250"
-          loadMore={async () => {
-            await this.loadMore();
-          }}
-          hasMore={true}
-        />
-
+        {activeTab == "hot" ? this.renderHot() : this.renderSoon()}
         <div style={{ height: "1rem" }}></div>
       </div>
     );
