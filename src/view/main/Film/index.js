@@ -33,10 +33,8 @@ class Home extends Component {
 
   componentDidMount() {
     window.addEventListener("scroll", (e) => {
-      var scrollTop =
-        document.documentElement.scrollTop ||
-        window.pageYOffset ||
-        document.body.scrollTop;
+      var scrollTop = window.scrollY;
+      console.log("scrollTop", scrollTop);
       this.setState({
         floatTabs: scrollTop >= 200 ? true : false,
       });
@@ -289,8 +287,9 @@ class Home extends Component {
               activeTab: val,
             });
             console.log(
-              "soon-hot",
+              "soon",
               this.state.scrollTopSoon,
+              "-hot",
               this.state.scrollTopHot
             );
             if (val == "soon") {
