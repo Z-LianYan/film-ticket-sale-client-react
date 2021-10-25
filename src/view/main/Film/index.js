@@ -1,13 +1,23 @@
 import React, { Component } from "react";
 import "./index.scss";
 
-import { get_film_hot, get_film_soon_show } from "../../../api/film";
+import {
+  get_film_hot,
+  get_film_soon_show,
+  get_banner,
+} from "../../../api/film";
 // import { Button, WhiteSpace } from "antd-mobile";
-import { Button, Tabs, InfiniteScroll, PullToRefresh } from "antd-mobile";
+import {
+  Button,
+  Tabs,
+  InfiniteScroll,
+  PullToRefresh,
+  Swiper,
+  Toast,
+} from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import FilmListItem from "@/components/FilmListItem/index";
 import dayjs from "dayjs";
-import resolve from "resolve";
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -28,34 +38,33 @@ class Home extends Component {
       isSoonHasMore: true,
       scrollTopHot: 0,
       scrollTopSoon: 0,
+      bannerList: [],
     };
   }
 
   componentDidMount() {
     window.addEventListener("scroll", (e) => {
       var scrollTop = window.scrollY;
-      console.log("scrollTop", scrollTop);
+      // console.log("scrollTop", scrollTop);
       this.setState({
         floatTabs: scrollTop >= 200 ? true : false,
       });
-      if (this.state.activeTab == "soon") {
-        this.setState({
-          scrollTopSoon: scrollTop,
-        });
-      }
-      if (this.state.activeTab == "hot") {
-        this.setState({
-          scrollTopHot: scrollTop,
-        });
-      }
     });
+    this.getBanneer();
+  }
+  async getBanneer() {
+    let result = await get_banner();
+    this.setState({
+      bannerList: result.rows,
+    });
+    console.log("result--banner", result);
   }
   async getHotList() {
     let { fetchOptionsHot, isHotHasMore, hotList } = this.state;
     let res = await get_film_hot(fetchOptionsHot);
     console.log("正在热映", res);
     this.setState({
-      hotList: fetchOptionsHot.page == 1 ? res.rows : hotList.concat(res.rows),
+      hotList: fetchOptionsHot.page === 1 ? res.rows : hotList.concat(res.rows),
     });
     if (this.state.hotList.length >= res.count) {
       this.setState({
@@ -69,7 +78,7 @@ class Home extends Component {
       get_film_soon_show(fetchOptionsSoonShow).then((res) => {
         this.setState({
           soonShowList:
-            fetchOptionsSoonShow.page == 1
+            fetchOptionsSoonShow.page === 1
               ? res.rows
               : soonShowList.concat(res.rows),
         });
@@ -152,7 +161,7 @@ class Home extends Component {
               actors={item.actors.map((item) => item.name).join(",")}
               bottomText={item.area + " | " + item.runtime + "分钟"}
               imgUrl={item.poster_img}
-              separator={hotList.length == index + 1 ? false : true}
+              separator={hotList.length === index + 1 ? false : true}
             />
           );
         })}
@@ -165,7 +174,7 @@ class Home extends Component {
             let result = await get_film_hot(fetchOptionsHot);
             this.setState({
               hotList:
-                fetchOptionsHot.page == 1
+                fetchOptionsHot.page === 1
                   ? result.rows
                   : hotList.concat(result.rows),
             });
@@ -235,7 +244,7 @@ class Home extends Component {
                 this.hendalDate(item.show_time)
               }
               imgUrl={item.poster_img}
-              separator={soonShowList.length == index + 1 ? false : true}
+              separator={soonShowList.length === index + 1 ? false : true}
               btnColor="warning"
               btnTxt={item.isPresale ? "预购" : ""}
             />
@@ -249,7 +258,7 @@ class Home extends Component {
             let result = await get_film_soon_show(fetchOptionsSoonShow);
             this.setState({
               soonShowList:
-                fetchOptionsSoonShow.page == 1
+                fetchOptionsSoonShow.page === 1
                   ? result.rows
                   : soonShowList.concat(result.rows),
             });
@@ -262,6 +271,46 @@ class Home extends Component {
           hasMore={isSoonHasMore}
         />
       </PullToRefresh>
+    );
+  }
+  renderSwiper() {
+    let { bannerList } = this.state;
+    return (
+      <Swiper
+        indicatorProps={{
+          color: "white",
+          style: {
+            "--dot-color": "#fff",
+            "--dot-opcity": "0.4",
+            "--active-dot-color": "#ff5f16",
+            "--dot-size": "8px",
+            "--active-dot-size": "20px",
+            "--dot-border-radius": "50%",
+            "--active-dot-border-radius": "10px",
+            "--dot-spacing": "8px",
+          },
+        }}
+        allowTouchMove={true}
+        loop={true}
+        autoplay={true}
+      >
+        {bannerList.map((item, index) => {
+          return (
+            <Swiper.Item
+              key={index}
+              onClick={() => {
+                console.log("123");
+              }}
+            >
+              <img
+                className="left"
+                style={{ width: "100%", height: "2.1rem" }}
+                src={item.film_poster_img}
+              />
+            </Swiper.Item>
+          );
+        })}
+      </Swiper>
     );
   }
 
@@ -279,31 +328,41 @@ class Home extends Component {
     } = this.state;
     return (
       <div className="app-film-container">
+        {this.renderSwiper()}
         <Tabs
           defaultActiveKey={"hot"}
           className={[floatTabs ? "float-tabs-component" : ""]}
           onChange={(val) => {
-            this.setState({
-              activeTab: val,
-            });
-            console.log(
-              "soon",
-              this.state.scrollTopSoon,
-              "-hot",
-              this.state.scrollTopHot
+            var scrollTop = window.scrollY;
+            if (val === "hot") {
+              this.setState({
+                scrollTopSoon: scrollTop,
+              });
+            }
+            if (val === "soon") {
+              this.setState({
+                scrollTopHot: scrollTop,
+              });
+            }
+            this.setState(
+              {
+                activeTab: val,
+              },
+              () => {
+                if (val === "soon") {
+                  window.scrollTo(0, this.state.scrollTopSoon);
+                }
+                if (val === "hot") {
+                  window.scrollTo(0, this.state.scrollTopHot);
+                }
+              }
             );
-            if (val == "soon") {
-              window.scrollTo(0, this.state.scrollTopSoon);
-            }
-            if (val == "hot") {
-              window.scrollTo(0, this.state.scrollTopHot);
-            }
           }}
         >
           <Tabs.TabPane title="正在热映" key="hot" />
           <Tabs.TabPane title="即将上映" key="soon" />
         </Tabs>
-        {activeTab == "hot" ? this.renderHot() : this.renderSoon()}
+        {activeTab === "hot" ? this.renderHot() : this.renderSoon()}
         <div style={{ height: "1rem" }}></div>
       </div>
     );

@@ -21,26 +21,26 @@ Pinyin._JMcode = {
   "+": "",
   0: "0",
   1: "1",
-  "ⅰ": "Y",
+  ⅰ: "Y",
   2: "2",
-  "ⅱ": "E",
+  ⅱ: "E",
   3: "3",
-  "Ⅲ": "S",
+  Ⅲ: "S",
   4: "4",
-  "Ⅳ": "S",
+  Ⅳ: "S",
   5: "5",
-  "Ⅴ": "W",
+  Ⅴ: "W",
   6: "6",
-  "Ⅵ": "L",
+  Ⅵ: "L",
   7: "7",
-  "Ⅶ": "Q",
+  Ⅶ: "Q",
   8: "8",
-  "Ⅷ": "B",
+  Ⅷ: "B",
   9: "9",
-  "Ⅸ": "J",
-  "Ⅹ": "S",
-  "Ⅺ": "S",
-  "Ⅻ": "S",
+  Ⅸ: "J",
+  Ⅹ: "S",
+  Ⅺ: "S",
+  Ⅻ: "S",
   A: "A",
   B: "B",
   C: "C",
@@ -7226,7 +7226,7 @@ Pinyin.getWordsCode = function (str) {
   for (var i = 0; i < len; i++) {
     c = str.substr(i, 1);
     t = this._JMcode[c];
-    if ("" + t == "undefined") t = "";
+    if ("" + t === "undefined") t = "";
     result += t;
   }
   return result.toUpperCase();
@@ -7246,7 +7246,7 @@ Pinyin._ucfirst = function (l1) {
 
 Pinyin._arraySearch = function (l1, l2) {
   for (var name in this._pinyin) {
-    if (this._pinyin[name].indexOf(l1) != -1) {
+    if (this._pinyin[name].indexOf(l1) !== -1) {
       return this._ucfirst(name);
       break;
     }
@@ -7266,7 +7266,7 @@ Pinyin.GetJP = function (str) {
   for (var i = 0; i < len; i++) {
     c = str.substr(i, 1);
     t = this._JMcode[c];
-    if ("" + t == "undefined") t = "";
+    if ("" + t === "undefined") t = "";
     result += t;
   }
 
@@ -7307,11 +7307,11 @@ Pinyin.GetHP = function (str) {
   //var regStr = str.replace(/(^\s*)|(\s*$)/g,'');
   var regStr = str.replace(/\s/g, "");
   var strlh = regStr.length;
-  if (strlh == 2) {
+  if (strlh === 2) {
     result = Pinyin.GetQP(regStr);
   } else {
     for (var i = 0; i < strlh; i++) {
-      if (i != 0) {
+      if (i !== 0) {
         result += Pinyin.GetJP(regStr.charAt(i).toString());
       } else {
         result += Pinyin.GetQP(regStr.charAt(i).toString());
