@@ -1,0 +1,52 @@
+@import "@/stylesheets/_base.scss";
+@import "@/stylesheets/_mixin.scss";
+.cinema-item-wrapper{
+  .cinema-item{
+    padding: 0.15rem;
+    display: flex;
+    align-items: center;
+    color: #797d82;
+    .left-box{
+      flex: 1;
+      .title{
+        color: #191a1b;
+        font-size: 0.15rem;
+      }
+      .label{
+        color: #797d82;
+        font-size: 0.12rem;
+        margin-top: 0.05rem;
+        width: calc(100vw - 1rem);
+        @include ellipsis-one();
+      }
+    }
+    .right-box{
+      width: 0.7rem;
+      .value{
+        color: $base-color;
+        font-size: 0.15rem;
+        text-align: center;
+        .symbol{
+          font-size: 0.11rem;
+          margin-right: 0.03rem;
+        }
+        .qi{
+          font-size: 0.11rem;
+        }
+      }
+      .distance{
+        font-weight: 400;
+        display: block;
+        margin-top: 0.05rem;
+        font-size: 0.11rem;
+        text-align: center;
+      }
+    }
+  }
+  .line{
+    height: 0.01rem;
+    background: #eee;
+  }
+}
+
+ 

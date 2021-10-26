@@ -1,0 +1,34 @@
+@import "@/stylesheets/_base.scss";
+.cinema-page{
+  // padding-top: 0.87;
+  .header-wrapper{
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    background-color: #fff;
+    z-index: 100;
+    .navbar-wrapper{
+      font-size: 0.13rem;
+      font-weight: bold;
+      .city-name{
+        margin-right: 0.03rem;
+      }
+    }
+  }
+  
+}
+.adm-grid-item{
+  text-align: center;
+}
+.area-wrapper{
+  border: 0.01rem solid #eee;
+  height: 0.3rem;
+  line-height: 0.3rem;
+  border-radius: 0.03rem;
+  &.active{
+    border: 0.01rem solid $base-color;
+    color: $base-color;
+  }
+}
+

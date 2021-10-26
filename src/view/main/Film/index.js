@@ -305,7 +305,7 @@ class Home extends Component {
               <img
                 className="left"
                 style={{ width: "100%", height: "2.1rem" }}
-                src={item.film_poster_img}
+                src={item.poster_img}
               />
             </Swiper.Item>
           );
