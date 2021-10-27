@@ -4,6 +4,7 @@ import { Film, Cinemas, Mine } from "./view/main/index.js";
 
 import AppFooter from "./components/commons/AppFooter";
 import Citys from "@/view/citys/index";
+import FilmDetail from "@/view/FilmDetail/index";
 
 class App extends Component {
   constructor(props) {
@@ -20,7 +21,7 @@ class App extends Component {
     // let no_footer_pathnames = ["/mine/login"];
     // if (no_footer_pathnames.indexOf(pathname) > -1) return "";
     // return <AppFooter />;
-    let no_footer_pathnames = ["/mine/user","/cinemas","/"];
+    let no_footer_pathnames = ["/mine/user", "/cinemas", "/"];
     if (no_footer_pathnames.indexOf(pathname) > -1) return <AppFooter />;
   }
 
@@ -72,6 +73,7 @@ App.defaultProps = {
     // { path: "/buycar", component: BuyCar },
     { path: "/mine", component: Mine },
     { path: "/citys", component: Citys },
+    { path: "/film/detail", component: FilmDetail },
   ],
 };
 
