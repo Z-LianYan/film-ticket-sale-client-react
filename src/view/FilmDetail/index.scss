@@ -38,6 +38,54 @@
     .abstract{
       font-size: 0.13rem;
       margin-top: 0.12rem;
+      .text{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        position: relative;
+        // animation-name:  animationname;
+        // animation-duration: 4s;
+        .label{
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0px;
+          background-color: #fff;
+          padding-top: 0.06rem;
+          display: flex;
+          justify-content: center;
+        }
+        .label .down-out-line{
+          display: block;
+        }
+        .label .up-out-line{
+          display: none;
+        }
+      }
+      .label-input{
+        display: none;
+      }
+      .label-input:checked + .text {
+        -webkit-line-clamp: 999;
+      }
+      .label-input:checked + .text .label .down-out-line {
+        display: none;
+      }
+      .label-input:checked + .text .label .up-out-line {
+        display: block;
+      }
     }
   }
+  .separator{
+    height: 0.1rem;
+    background-color: #f4f4f4;
+
+  }
 }
+
+// @keyframes animationname {
+//   from {-webkit-line-clamp: 3;}
+//   to {-webkit-line-clamp: 999;}
+// }
