@@ -142,11 +142,11 @@ class Home extends Component {
                   });
                 }
               );
-              if (this.state.hotList.length >= result.count) {
-                this.setState({
-                  isHotHasMore: false,
-                });
-              }
+              // if (this.state.hotList.length >= result.count) {
+              //   this.setState({
+              //     isHotHasMore: false,
+              //   });
+              // }
             }
           );
         }}
@@ -220,11 +220,11 @@ class Home extends Component {
                   });
                 }
               );
-              if (this.state.soonShowList.length >= result.count) {
-                this.setState({
-                  isSoonHasMore: false,
-                });
-              }
+              // if (this.state.soonShowList.length >= result.count) {
+              //   this.setState({
+              //     isSoonHasMore: false,
+              //   });
+              // }
             }
           );
         }}
@@ -261,12 +261,14 @@ class Home extends Component {
                 fetchOptionsSoonShow.page === 1
                   ? result.rows
                   : soonShowList.concat(result.rows),
+            },()=>{
+              if (this.state.soonShowList.length >= result.count) {
+                this.setState({
+                  isSoonHasMore: false,
+                });
+              }
             });
-            if (this.state.soonShowList.length >= result.count) {
-              this.setState({
-                isSoonHasMore: false,
-              });
-            }
+            
           }}
           hasMore={isSoonHasMore}
         />
