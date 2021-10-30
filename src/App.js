@@ -5,6 +5,7 @@ import { Film, Cinemas, Mine } from "./view/main/index.js";
 import AppFooter from "./components/commons/AppFooter";
 import Citys from "@/view/citys/index";
 import FilmDetail from "@/view/FilmDetail/index";
+import CinemaDetail from "@/view/CinemaDetail/index";
 
 class App extends Component {
   constructor(props) {
@@ -74,6 +75,7 @@ App.defaultProps = {
     { path: "/mine", component: Mine },
     { path: "/citys", component: Citys },
     { path: "/film/detail", component: FilmDetail },
+    { path: "/cinema/detail", component: CinemaDetail },
   ],
 };
 

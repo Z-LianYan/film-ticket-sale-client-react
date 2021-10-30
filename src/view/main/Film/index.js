@@ -137,16 +137,17 @@ class Home extends Component {
                   hotList: result.rows,
                 },
                 () => {
-                  this.setState({
-                    isHotHasMore: true,
-                  });
+                  if (this.state.hotList.length >= result.count) {
+                    this.setState({
+                      isHotHasMore: false,
+                    });
+                  } else {
+                    this.setState({
+                      isHotHasMore: true,
+                    });
+                  }
                 }
               );
-              // if (this.state.hotList.length >= result.count) {
-              //   this.setState({
-              //     isHotHasMore: false,
-              //   });
-              // }
             }
           );
         }}
@@ -161,6 +162,12 @@ class Home extends Component {
               actors={item.actors.map((item) => item.name).join(",")}
               bottomText={item.area + " | " + item.runtime + "分钟"}
               imgUrl={item.poster_img}
+              onClick={() => {
+                this.props.history.push({
+                  pathname: "/film/detail",
+                  state: { film_id: 123 },
+                });
+              }}
               separator={hotList.length === index + 1 ? false : true}
             />
           );
@@ -209,22 +216,23 @@ class Home extends Component {
               fetchOptionsSoonShow,
             },
             async () => {
-              let result = await get_film_hot(fetchOptionsSoonShow);
+              let result = await get_film_soon_show(fetchOptionsSoonShow);
               this.setState(
                 {
                   soonShowList: result.rows,
                 },
                 () => {
-                  this.setState({
-                    isSoonHasMore: true,
-                  });
+                  if (this.state.soonShowList.length >= result.count) {
+                    this.setState({
+                      isSoonHasMore: false,
+                    });
+                  } else {
+                    this.setState({
+                      isSoonHasMore: true,
+                    });
+                  }
                 }
               );
-              // if (this.state.soonShowList.length >= result.count) {
-              //   this.setState({
-              //     isSoonHasMore: false,
-              //   });
-              // }
             }
           );
         }}
@@ -247,6 +255,12 @@ class Home extends Component {
               separator={soonShowList.length === index + 1 ? false : true}
               btnColor="warning"
               btnTxt={item.isPresale ? "预购" : ""}
+              onClick={() => {
+                // this.props.history.push({
+                //   pathname: "/cinema/detail",
+                //   state: { film_id: 123 },
+                // });
+              }}
             />
           );
         })}
@@ -256,19 +270,21 @@ class Home extends Component {
             fetchOptionsSoonShow.page += 1;
             this.setState({ fetchOptionsSoonShow });
             let result = await get_film_soon_show(fetchOptionsSoonShow);
-            this.setState({
-              soonShowList:
-                fetchOptionsSoonShow.page === 1
-                  ? result.rows
-                  : soonShowList.concat(result.rows),
-            },()=>{
-              if (this.state.soonShowList.length >= result.count) {
-                this.setState({
-                  isSoonHasMore: false,
-                });
+            this.setState(
+              {
+                soonShowList:
+                  fetchOptionsSoonShow.page === 1
+                    ? result.rows
+                    : soonShowList.concat(result.rows),
+              },
+              () => {
+                if (this.state.soonShowList.length >= result.count) {
+                  this.setState({
+                    isSoonHasMore: false,
+                  });
+                }
               }
-            });
-            
+            );
           }}
           hasMore={isSoonHasMore}
         />
@@ -369,6 +385,12 @@ class Home extends Component {
       </div>
     );
   }
+
+  componentWillUnmount = () => {
+    this.setState = (state, callback) => {
+      return;
+    };
+  };
 }
 
 export default GroupCommons(Home);

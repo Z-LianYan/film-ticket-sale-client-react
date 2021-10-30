@@ -17,7 +17,12 @@ class CInemaListItem extends Component {
   render() {
     let { title, label, value, distance, separator } = this.props;
     return (
-      <div className="cinema-item-wrapper">
+      <div
+        className="cinema-item-wrapper"
+        onClick={() => {
+          this.props.onClick && this.props.onClick();
+        }}
+      >
         <div className="cinema-item">
           <div className="left-box">
             <div className="title">{title}</div>

@@ -117,6 +117,13 @@ class List extends Component {
             value="40"
             label="广州市越秀区农林下路4-6号锦轩现代城四楼飞机失联飞机老师"
             distance="距离未知"
+            onClick={() => {
+              console.log("12345");
+              this.props.history.push({
+                pathname: "/cinema/detail",
+                state: { cinema_id: 123 },
+              });
+            }}
           />
 
           <div style={{ height: "1rem" }}></div>

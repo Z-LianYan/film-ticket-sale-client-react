@@ -1,4 +1,3 @@
-@import "@/stylesheets/_base.scss";
 .file-detail-container {
   .header-wrapper {
     height: 2.1rem;
@@ -9,28 +8,16 @@
   }
   .film-detail{
     padding: 0.12rem 0.15rem 0.15rem 0.15rem;
-    .film-name-score{
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      .film-name{
-        font-size: 0.18rem;
-        color: #191a1b;
-        
-        .show-type{
-          padding: 0.01rem 0.03rem;
-          background-color: #d2d6dc;;
-          font-size: 0.11rem;
-          border-radius: 0.04rem;
-          color: #fff;
-        }
-      }
-      .score-val{
-        font-size: 0.18rem;
-        color: $base-color;
-        .score{
-          font-size: 0.1rem;
-        }
+    .film-name{
+      font-size: 18px;
+      color: #191a1b;
+      
+      .show-type{
+        padding: 0.01rem 0.03rem;
+        background-color: #d2d6dc;;
+        font-size: 0.11rem;
+        border-radius: 0.04rem;
+        color: #fff;
       }
     }
     .record-film{
@@ -95,58 +82,6 @@
     height: 0.1rem;
     background-color: #f4f4f4;
 
-  }
-  .actors-wrapper{
-    padding-left: 0.15rem;
-    display: flex;
-    overflow-x: scroll;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE 10+ */
-    padding-bottom: 0.1rem;
-    &::-webkit-scrollbar {
-      display: none; /* Chrome Safari */
-    }
-    .actor-item{
-      width: 0.85rem;
-      margin-right: 0.1rem;
-      text-align: center;
-      .name{
-        margin-top: 0.1rem;
-        font-size: 12px;
-        color: #191a1b;
-      }
-      .role{
-        font-size: 10px;
-        color: #797d82;
-      }
-    }
-    .still{
-      width: 1.5rem;
-      height: 1rem;
-      background: rgb(249, 249, 249);
-      position: relative;
-      overflow: hidden;
-      .image{
-        width: 100%;
-        position: absolute;
-        top: 50%;
-        -webkit-transform: translateY(-50%);
-      }
-    }
-  }
-  .still-mask-container{
-    width: 100%;
-    height: 100%;
-    background: #fff;
-    .img-box{
-      .image{
-        border-right: 0.01rem solid #fff;
-        border-bottom: 0.01rem solid #fff;
-      }
-      .image:nth-child(3n){
-        border-right: none;
-      }
-    }
   }
 }
 
