@@ -1,11 +1,27 @@
 @import "@/stylesheets/_base.scss";
-.file-detail-container {
+.film-detail-container {
+  .adm-nav-bar-left{
+    .adm-nav-bar-back{
+      border-radius: 50%;
+      background: #fff;
+      padding:0.06rem;
+      opacity: 0.3;
+      .adm-nav-bar-back-arrow{
+            margin-right: 0
+      }
+    }
+  }
   .header-wrapper {
-    height: 2.1rem;
+    height: 2.31rem;
     width: 100%;
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: 100% 100%;
+    position: relative;
+    overflow: hidden;
+    .image{
+      width: 100%;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
   }
   .film-detail{
     padding: 0.12rem 0.15rem 0.15rem 0.15rem;

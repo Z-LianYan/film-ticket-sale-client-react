@@ -1,48 +1,75 @@
 import React, { Component } from "react";
 import "./index.scss";
 import { DownOutline, UpOutline } from "antd-mobile-icons";
+import { List, Image, Mask, NavBar, ImageViewer, Tag } from "antd-mobile";
+import { RightOutline, EnvironmentOutline, PhoneFill } from "antd-mobile-icons";
+import { ColorExtractor } from "react-color-extractor";
+import imgJpeg from "@/view/CinemaDetail/img.jpeg";
 class FileDetail extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      isShowNavBarTitle: false,
+    };
   }
   componentDidMount() {
     let { history } = this.props;
     let { location } = history;
     console.log("props---cinema", location.state);
+    window.addEventListener("scroll", (e) => {
+      var scrollTop = window.scrollY;
+      this.setState({
+        isShowNavBarTitle: scrollTop >= 100 ? true : false,
+      });
+    });
   }
   render() {
+    let { isShowNavBarTitle } = this.state;
+    let { history } = this.props;
     return (
-      <div className="file-detail-container">
-        <div
-          className="header-wrapper"
-          style={{
-            backgroundImage:
-              "url(https://pic.maizuo.com/usr/movie/e1d72175999c1756a2c80a6de0853b62.jpg?x-oss-process=image/quality,Q_70)",
+      <div className="cinema-detail-container">
+        <NavBar
+          backArrow={true}
+          onBack={() => {
+            history.goBack();
           }}
-        ></div>
-        <div className="film-detail">
-          <h3 className="film-name">
-            演员 <span className="show-type">2D</span>
-          </h3>
-          <div className="record-film">纪录片</div>
-          <div className="show-date"> 2021-10-30上映 </div>
-          <div className="area-and-play-time">中国大陆 | 93分钟</div>
-          <div className="abstract">
-            <input id="label-input" className="label-input" type="checkbox" />
-            <p className="text">
-              <label className="label" htmlFor="label-input">
-                <DownOutline className="down-out-line" />
-                <UpOutline className="up-out-line" />
-              </label>
-              《演员》是中国首部探讨演员德艺的电影。影片以“新中国二十二大电影明星”为切入点，历时五年、以多重形式进行记录，讲述于蓝、秦怡、田华、于洋、王晓棠、金迪、谢芳、祝希娟、牛犇等老一辈艺术家的从影经历和艺术成就，挖掘他们对于演员这一职业超过半个世纪的感悟和思考，并以他们塑造的经典电影形象向百年中国电影致敬。
-            </p>
+        >
+          {isShowNavBarTitle ? "电影" : ""}
+        </NavBar>
+        <div className="header-title">广州中影火山湖电影城东山口店</div>
+        <div className="services-wrapper">
+          <div className="tags">
+            <Tag className="tag-item" color="#ffb232" fill="outline">
+              Primary
+            </Tag>
+          </div>
+          <RightOutline color="#ffb232" />
+        </div>
+        <div className="location-wrapper">
+          <EnvironmentOutline fontSize={20} />
+          <div className="addr">
+            广州市海珠区海珠叠景路157—170号（双号）合生广场L5-01/17号单位
+          </div>
+          <div className="phone-icon">
+            <PhoneFill fontSize={20} />
           </div>
         </div>
-        <div className="separator"></div>
+
+        <ColorExtractor
+          getColors={(colors) => {
+            console.log("color-----", colors);
+          }}
+        >
+          <img src={imgJpeg} alt="" />
+        </ColorExtractor>
       </div>
     );
   }
+  componentWillUnmount = () => {
+    this.setState = (state, callback) => {
+      return;
+    };
+  };
 }
 
 export default FileDetail;

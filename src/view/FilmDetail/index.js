@@ -18,7 +18,7 @@ class FileDetail extends Component {
       var scrollTop = window.scrollY;
       // console.log("scrollTop", scrollTop);
       this.setState({
-        isShowNavBar: scrollTop >= 5 ? true : false,
+        isShowNavBar: scrollTop >= 20 ? true : false,
       });
     });
   }
@@ -63,13 +63,14 @@ class FileDetail extends Component {
     let { isShowNavBar } = this.state;
     let { history } = this.props;
     return (
-      <div className="file-detail-container">
+      <div className="film-detail-container">
         <NavBar
           style={{
             position: "fixed",
             top: 0,
             left: 0,
             right: 0,
+            zIndex: 1000,
             background: isShowNavBar ? "#fff" : "",
             "--height": "0.44rem",
             color: "#000",
@@ -81,13 +82,13 @@ class FileDetail extends Component {
         >
           {isShowNavBar ? "电影名称" : ""}
         </NavBar>
-        <div
-          className="header-wrapper"
-          style={{
-            backgroundImage:
-              "url(https://pic.maizuo.com/usr/movie/723b7f946f894c63146d6159d57f92a1.jpg@1024h_768w_50Q?x-oss-process=image/quality,Q_70)",
-          }}
-        ></div>
+        <div className="header-wrapper">
+          <img
+            className="image"
+            src="https://pic.maizuo.com/usr/movie/723b7f946f894c63146d6159d57f92a1.jpg@1024h_768w_50Q?x-oss-process=image/quality,Q_70"
+            alt=""
+          ></img>
+        </div>
         <div className="film-detail">
           <div className="film-name-score">
             <h3 className="film-name">
@@ -165,6 +166,11 @@ class FileDetail extends Component {
       </div>
     );
   }
+  componentWillUnmount = () => {
+    this.setState = (state, callback) => {
+      return;
+    };
+  };
 }
 
 export default FileDetail;

@@ -13,10 +13,11 @@ import {
   InfiniteScroll,
   PullToRefresh,
   Swiper,
-  Toast,
+  NavBar,
 } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import FilmListItem from "@/components/FilmListItem/index";
+import { SearchOutline, DownOutline } from "antd-mobile-icons";
 import dayjs from "dayjs";
 class Home extends Component {
   constructor(props) {
@@ -347,39 +348,65 @@ class Home extends Component {
     return (
       <div className="app-film-container">
         {this.renderSwiper()}
-        <Tabs
-          defaultActiveKey={"hot"}
-          className={[floatTabs ? "float-tabs-component" : ""]}
-          onChange={(val) => {
-            var scrollTop = window.scrollY;
-            if (val === "hot") {
-              this.setState({
-                scrollTopSoon: scrollTop,
-              });
-            }
-            if (val === "soon") {
-              this.setState({
-                scrollTopHot: scrollTop,
-              });
-            }
-            this.setState(
-              {
-                activeTab: val,
-              },
-              () => {
-                if (val === "soon") {
-                  window.scrollTo(0, this.state.scrollTopSoon);
-                }
-                if (val === "hot") {
-                  window.scrollTo(0, this.state.scrollTopHot);
-                }
+        <div className="tag-film-name">
+          <div className="mask"></div>
+          广州
+          <DownOutline />
+        </div>
+        <div className={[floatTabs ? "float-tabs-component" : ""]}>
+          {floatTabs ? (
+            <NavBar
+              backArrow={false}
+              left={
+                <div className="navbar-wrapper">
+                  <span className="city-name">广州</span>
+                  <DownOutline
+                    fontSize={12}
+                    onClick={() => {
+                      console.log("13124--DownOutline");
+                    }}
+                  />
+                </div>
               }
-            );
-          }}
-        >
-          <Tabs.TabPane title="正在热映" key="hot" />
-          <Tabs.TabPane title="即将上映" key="soon" />
-        </Tabs>
+            >
+              电影
+            </NavBar>
+          ) : null}
+          <Tabs
+            defaultActiveKey={"hot"}
+            // className={[floatTabs ? "float-tabs-component" : ""]}
+            onChange={(val) => {
+              var scrollTop = window.scrollY;
+              if (val === "hot") {
+                this.setState({
+                  scrollTopSoon: scrollTop,
+                });
+              }
+              if (val === "soon") {
+                this.setState({
+                  scrollTopHot: scrollTop,
+                });
+              }
+              this.setState(
+                {
+                  activeTab: val,
+                },
+                () => {
+                  if (val === "soon") {
+                    window.scrollTo(0, this.state.scrollTopSoon);
+                  }
+                  if (val === "hot") {
+                    window.scrollTo(0, this.state.scrollTopHot);
+                  }
+                }
+              );
+            }}
+          >
+            <Tabs.TabPane title="正在热映" key="hot" />
+            <Tabs.TabPane title="即将上映" key="soon" />
+          </Tabs>
+        </div>
+
         {activeTab === "hot" ? this.renderHot() : this.renderSoon()}
         <div style={{ height: "1rem" }}></div>
       </div>
