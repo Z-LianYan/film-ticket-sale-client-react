@@ -4574,6 +4574,13 @@ dom-walk@^0.1.0:
   resolved "https://registry.yarnpkg.com/dom-walk/-/dom-walk-0.1.2.tgz#0c548bef048f4d1f2a97249002236060daa3fd84"
   integrity sha512-6QvTW9mrGeIegrFXdtQi9pk7O/nSK6lSdXW2eqUspN5LWD7UTji2Fqw5V2YLjBpHEoU9Xl/eUWNpDeZvoyOv2w==
 
+dom7@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.npmmirror.com/dom7/download/dom7-4.0.1.tgz#821209df1bfdf97dd82b5156e50f7cb66b3f166c"
+  integrity sha1-ghIJ3xv9+X3YK1FW5Q98tms/Fmw=
+  dependencies:
+    ssr-window "^4.0.0"
+
 domain-browser@^1.1.1:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/domain-browser/-/domain-browser-1.2.0.tgz#3d31f50191a6749dd1375a7f522e823d42e54eda"
@@ -11120,6 +11127,11 @@ sshpk@^1.7.0:
     safer-buffer "^2.0.2"
     tweetnacl "~0.14.0"
 
+ssr-window@^4.0.0, ssr-window@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.npmmirror.com/ssr-window/download/ssr-window-4.0.1.tgz#514bf2ca81952f63fe88e8b0c623a23f90f7feb3"
+  integrity sha1-UUvyyoGVL2P+iOiwxiOiP5D3/rM=
+
 ssri@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/ssri/-/ssri-6.0.1.tgz#2a3c41b28dd45b62b63676ecb74001265ae9edd8"
@@ -11474,6 +11486,14 @@ svgo@^1.0.0, svgo@^1.2.2:
     stable "^0.1.8"
     unquote "~1.1.1"
     util.promisify "~1.0.0"
+
+swiper@^7.2.0:
+  version "7.2.0"
+  resolved "https://registry.npmmirror.com/swiper/download/swiper-7.2.0.tgz#aae2bb7632798467abd5c1ab3e2441598a70dbd7"
+  integrity sha1-quK7djJ5hGer1cGrPiRBWYpw29c=
+  dependencies:
+    dom7 "^4.0.1"
+    ssr-window "^4.0.1"
 
 symbol-tree@^3.2.4:
   version "3.2.4"

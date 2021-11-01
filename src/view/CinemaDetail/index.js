@@ -5,6 +5,9 @@ import { List, Image, Mask, NavBar, ImageViewer, Tag } from "antd-mobile";
 import { RightOutline, EnvironmentOutline, PhoneFill } from "antd-mobile-icons";
 import { ColorExtractor } from "react-color-extractor";
 import imgJpeg from "@/view/CinemaDetail/img.jpeg";
+import { Swiper } from 'swiper/react/swiper';
+import { SwiperSlide } from 'swiper/react/swiper-slide';
+import 'swiper/swiper-bundle.min.css';
 class FileDetail extends Component {
   constructor(props) {
     super(props);
@@ -22,6 +25,29 @@ class FileDetail extends Component {
         isShowNavBarTitle: scrollTop >= 100 ? true : false,
       });
     });
+    // setTimeout(()=>{
+    //   var mySwiper = new Swiper ('.swiper-container', {
+    //     direction: 'vertical', // 垂直切换选项
+    //     loop: true, // 循环模式选项
+        
+    //     // 如果需要分页器
+    //     pagination: {
+    //       el: '.swiper-pagination',
+    //     },
+        
+    //     // 如果需要前进后退按钮
+    //     navigation: {
+    //       nextEl: '.swiper-button-next',
+    //       prevEl: '.swiper-button-prev',
+    //     },
+        
+    //     // 如果需要滚动条
+    //     scrollbar: {
+    //       el: '.swiper-scrollbar',
+    //     },
+    //   })
+    // },4000)
+    
   }
   render() {
     let { isShowNavBarTitle } = this.state;
@@ -62,6 +88,20 @@ class FileDetail extends Component {
         >
           <img src={imgJpeg} alt="" />
         </ColorExtractor>
+
+        <Swiper
+          spaceBetween={50}
+          slidesPerView={3}
+          onSlideChange={() => console.log('slide change')}
+          onSwiper={(swiper) => console.log(swiper)}
+        >
+          <SwiperSlide>Slide 1</SwiperSlide>
+          <SwiperSlide>Slide 2</SwiperSlide>
+          <SwiperSlide>Slide 3</SwiperSlide>
+          <SwiperSlide>Slide 4</SwiperSlide>
+        </Swiper>
+
+
       </div>
     );
   }
