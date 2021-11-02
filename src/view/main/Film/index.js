@@ -1,16 +1,8 @@
 import React, { Component } from "react";
 import "./index.scss";
 
-import {
-  get_film_hot,
-  get_film_soon_show,
-} from "@/api/film";
-import {
-  Tabs,
-  InfiniteScroll,
-  PullToRefresh,
-  NavBar,
-} from "antd-mobile";
+import { get_film_hot, get_film_soon_show } from "@/api/film";
+import { Tabs, InfiniteScroll, PullToRefresh, NavBar } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import FilmListItem from "@/components/FilmListItem/index";
 import { DownOutline } from "antd-mobile-icons";
@@ -46,7 +38,7 @@ class Home extends Component {
       this.setState({
         floatTabs: scrollTop >= 200 ? true : false,
       });
-    });    
+    });
   }
   async getHotList() {
     let { fetchOptionsHot, isHotHasMore, hotList } = this.state;
@@ -151,13 +143,20 @@ class Home extends Component {
               actors={item.actors.map((item) => item.name).join(",")}
               bottomText={item.area + " | " + item.runtime + "分钟"}
               imgUrl={item.poster_img}
+              separator={hotList.length === index + 1 ? false : true}
               onClick={() => {
                 this.props.history.push({
                   pathname: "/film/detail",
                   state: { film_id: 123 },
                 });
               }}
-              separator={hotList.length === index + 1 ? false : true}
+              onRightClick={() => {
+                console.log("onRightClick");
+                this.props.history.push({
+                  pathname: "/film/cinema",
+                  state: { film_id: "6666" },
+                });
+              }}
             />
           );
         })}
@@ -280,30 +279,28 @@ class Home extends Component {
       </PullToRefresh>
     );
   }
-  
+
   render() {
     let { userInfo, locationInfo, history } = this.props;
-    let {
-      floatTabs,
-      activeTab
-    } = this.state;
+    let { floatTabs, activeTab } = this.state;
     return (
       <div className="app-film-container">
-        <div className='custom-swiper-wrapper'>
-          <div className="tag-film-name" onClick={()=>{
-            history.push({
-              pathname:'/citys'
-            })
-          }}>
+        <div className="custom-swiper-wrapper">
+          <div
+            className="tag-film-name"
+            onClick={() => {
+              history.push({
+                pathname: "/citys",
+              });
+            }}
+          >
             <div className="mask"></div>
-              广州
+            广州
             <DownOutline />
           </div>
-          <CustomSwiper/>
+          <CustomSwiper />
         </div>
-        
-        
-        
+
         <div className={[floatTabs ? "float-tabs-component" : ""]}>
           {floatTabs ? (
             <NavBar

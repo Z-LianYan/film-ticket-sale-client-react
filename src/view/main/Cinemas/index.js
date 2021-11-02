@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./index.scss";
 import CinemaListItem from "@/components/CinemaListItem/index";
-import { SearchOutline, DownOutline } from "antd-mobile-icons";
+import { SearchOutline, DownOutline, LeftOutline } from "antd-mobile-icons";
 import {
   Button,
   InfiniteScroll,
@@ -10,6 +10,7 @@ import {
   Dropdown,
   Toast,
   Grid,
+  Tabs,
 } from "antd-mobile";
 class List extends Component {
   constructor(props) {
@@ -18,26 +19,49 @@ class List extends Component {
   }
 
   render() {
+    let { location, history } = this.props;
+    console.log("location---", location);
     return (
-      <div className="cinema-page">
+      <div className="app-cinema-page">
         <div className="header-wrapper">
           <NavBar
             backArrow={false}
             right={<SearchOutline fontSize={20} />}
             left={
-              <div className="navbar-wrapper">
-                <span className="city-name">广州</span>
-                <DownOutline
-                  fontSize={12}
+              location.state && location.state.film_id ? (
+                <LeftOutline
                   onClick={() => {
-                    console.log("13124--DownOutline");
+                    history.goBack();
                   }}
                 />
-              </div>
+              ) : (
+                <div className="navbar-wrapper">
+                  <span className="city-name">广州</span>
+                  <DownOutline
+                    fontSize={12}
+                    onClick={() => {
+                      console.log("13124--DownOutline");
+                    }}
+                  />
+                </div>
+              )
             }
           >
-            影院
+            {location.state && location.state.film_id ? "长津湖" : "影院"}
           </NavBar>
+          {location.state && location.state.film_id ? (
+            <Tabs
+              defaultActiveKey="vegetables"
+              onChange={(val) => {
+                console.log("onChange", val);
+              }}
+            >
+              <Tabs.TabPane title="今天11月2日" key="fruits" />
+              <Tabs.TabPane title="明天11月3日" key="vegetables" />
+              <Tabs.TabPane title="后天11月4日" key="animals" />
+            </Tabs>
+          ) : null}
+
           <Dropdown>
             <Dropdown.Item
               key="all-city"
@@ -83,7 +107,12 @@ class List extends Component {
             </Dropdown.Item>
           </Dropdown>
         </div>
-        <div style={{ height: "0.87rem" }}></div>
+        <div
+          style={{
+            height:
+              location.state && location.state.film_id ? "1.26rem" : "0.87rem",
+          }}
+        ></div>
         <PullToRefresh
           onRefresh={async () => {
             // fetchOptionsHot.page = 1;

@@ -71,7 +71,19 @@ class FilmListItem extends Component {
             </p>
           </div>
           {btnTxt ? (
-            <Button color={btnColor} size="mini" fill="outline">
+            <Button
+              color={btnColor}
+              size="mini"
+              fill="outline"
+              onClick={(e) => {
+                this.props.onRightClick && this.props.onRightClick();
+                e.stopPropagation && e.stopPropagation();
+                e.cancelBubble = true;
+                // window.event
+                //   ? (window.event.cancelBubble = true)
+                //   : e.stopPropagation();
+              }}
+            >
               {btnTxt}
             </Button>
           ) : null}
