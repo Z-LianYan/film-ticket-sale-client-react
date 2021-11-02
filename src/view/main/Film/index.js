@@ -4,20 +4,17 @@ import "./index.scss";
 import {
   get_film_hot,
   get_film_soon_show,
-  get_banner,
-} from "../../../api/film";
-// import { Button, WhiteSpace } from "antd-mobile";
+} from "@/api/film";
 import {
-  Button,
   Tabs,
   InfiniteScroll,
   PullToRefresh,
-  Swiper,
   NavBar,
 } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import FilmListItem from "@/components/FilmListItem/index";
-import { SearchOutline, DownOutline } from "antd-mobile-icons";
+import { DownOutline } from "antd-mobile-icons";
+import CustomSwiper from "@/components/CustomSwiper/index";
 import dayjs from "dayjs";
 class Home extends Component {
   constructor(props) {
@@ -39,26 +36,17 @@ class Home extends Component {
       isSoonHasMore: true,
       scrollTopHot: 0,
       scrollTopSoon: 0,
-      bannerList: [],
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     window.addEventListener("scroll", (e) => {
       var scrollTop = window.scrollY;
       // console.log("scrollTop", scrollTop);
       this.setState({
         floatTabs: scrollTop >= 200 ? true : false,
       });
-    });
-    this.getBanneer();
-  }
-  async getBanneer() {
-    let result = await get_banner();
-    this.setState({
-      bannerList: result.rows,
-    });
-    console.log("result--banner", result);
+    });    
   }
   async getHotList() {
     let { fetchOptionsHot, isHotHasMore, hotList } = this.state;
@@ -292,67 +280,30 @@ class Home extends Component {
       </PullToRefresh>
     );
   }
-  renderSwiper() {
-    let { bannerList } = this.state;
-    return (
-      <Swiper
-        indicatorProps={{
-          color: "white",
-          style: {
-            "--dot-color": "#fff",
-            "--dot-opcity": "0.4",
-            "--active-dot-color": "#ff5f16",
-            "--dot-size": "8px",
-            "--active-dot-size": "20px",
-            "--dot-border-radius": "50%",
-            "--active-dot-border-radius": "10px",
-            "--dot-spacing": "8px",
-          },
-        }}
-        allowTouchMove={true}
-        loop={true}
-        autoplay={true}
-      >
-        {bannerList.map((item, index) => {
-          return (
-            <Swiper.Item
-              key={index}
-              onClick={() => {
-                console.log("123");
-              }}
-            >
-              <img
-                className="left"
-                style={{ width: "100%", height: "2.1rem" }}
-                src={item.poster_img}
-              />
-            </Swiper.Item>
-          );
-        })}
-      </Swiper>
-    );
-  }
-
+  
   render() {
-    // let { userInfo, locationInfo, history } = this.props;
+    let { userInfo, locationInfo, history } = this.props;
     let {
-      soonShowList,
-      hotList,
       floatTabs,
-      activeTab,
-      isHotHasMore,
-      isSoonHasMore,
-      fetchOptionsSoonShow,
-      fetchOptionsHot,
+      activeTab
     } = this.state;
     return (
       <div className="app-film-container">
-        {this.renderSwiper()}
-        <div className="tag-film-name">
-          <div className="mask"></div>
-          广州
-          <DownOutline />
+        <div className='custom-swiper-wrapper'>
+          <div className="tag-film-name" onClick={()=>{
+            history.push({
+              pathname:'/citys'
+            })
+          }}>
+            <div className="mask"></div>
+              广州
+            <DownOutline />
+          </div>
+          <CustomSwiper/>
         </div>
+        
+        
+        
         <div className={[floatTabs ? "float-tabs-component" : ""]}>
           {floatTabs ? (
             <NavBar

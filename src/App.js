@@ -3,9 +3,10 @@ import { Route, Switch, withRouter } from "react-router-dom";
 import { Film, Cinemas, Mine } from "./view/main/index.js";
 
 import AppFooter from "./components/commons/AppFooter";
-import Citys from "@/view/citys/index";
+import Citys from "@/view/Citys/index";
 import FilmDetail from "@/view/FilmDetail/index";
 import CinemaDetail from "@/view/CinemaDetail/index";
+import SelectCinema from "@/view/main/Cinemas/index";
 
 class App extends Component {
   constructor(props) {
@@ -14,7 +15,6 @@ class App extends Component {
       //			hasFooter:true
     };
   }
-
   //判断是否显示AppFooter组件:方法1
   renderFooter() {
     //因为只要路由变化，属性就会变化，就会重新render，就会执行这个函数
@@ -76,6 +76,7 @@ App.defaultProps = {
     { path: "/citys", component: Citys },
     { path: "/film/detail", component: FilmDetail },
     { path: "/cinema/detail", component: CinemaDetail },
+    { path: "/film/cinema", component: SelectCinema }
   ],
 };
 

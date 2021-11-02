@@ -43,6 +43,7 @@ class Citys extends Component {
       filterList: [],
       hotList: [],
       searchValue: "",
+      currentCity:{}
     };
   }
   componentDidMount() {
@@ -202,6 +203,7 @@ class Citys extends Component {
                       {letter[key].map((it, idx) => (
                         <List.Item
                           key={idx}
+                          clickable={false}
                           onClick={() => {
                             this.setLocationInfo(it);
                           }}
