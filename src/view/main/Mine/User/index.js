@@ -22,17 +22,18 @@ class User extends Component {
     let { userInfo } = this.props;
     return (
       <div className="app-mine-user-page">
-        <div className="header-wrapper"></div>
+        <div className="header-wrapper">
+          <img className="img" src="https://mall.s.maizuo.com/64ee4289878c7370c31544e32f9a09aa.jpg"/>
+          <span>13536681616</span>
+        </div>
 
         <List>
           <List.Item 
-          clickable 
           arrow={true}
           extra='12'
           prefix={<PayCircleOutline />}
           >余额</List.Item>
           <List.Item 
-          clickable 
           arrow={true}
           extra='12'
           prefix={<SetOutline />}

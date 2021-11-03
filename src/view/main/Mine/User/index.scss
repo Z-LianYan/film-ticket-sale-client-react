@@ -5,6 +5,12 @@
         background-size: cover;
         padding: 0.64rem 0 0 0.22rem;
         margin-top: -0.44rem;
+        display: flex;
+        align-items: center;
+        .img{
+            border-radius: 50%;
+            border: 0.01rem solid #fff;
+        }
     }
     
 }
