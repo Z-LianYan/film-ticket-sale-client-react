@@ -7,6 +7,8 @@ import Citys from "@/view/Citys/index";
 import FilmDetail from "@/view/FilmDetail/index";
 import CinemaDetail from "@/view/CinemaDetail/index";
 import SelectCinema from "@/view/main/Cinemas/index";
+import CinemaSearch from "@/view/CinemaSearch/index";
+import SelectSeatBuyTicket from "@/view/SelectSeatBuyTicket/index";
 
 class App extends Component {
   constructor(props) {
@@ -76,7 +78,9 @@ App.defaultProps = {
     { path: "/citys", component: Citys },
     { path: "/film/detail", component: FilmDetail },
     { path: "/cinema/detail", component: CinemaDetail },
-    { path: "/film/cinema", component: SelectCinema }
+    { path: "/film/cinema", component: SelectCinema },
+    { path: "/cinema/search", component: CinemaSearch },
+    { path: "/buy/ticket", component: SelectSeatBuyTicket },
   ],
 };
 

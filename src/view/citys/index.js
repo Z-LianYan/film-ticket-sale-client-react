@@ -6,6 +6,7 @@ import { get_city_list } from "@/api/citys";
 import ChinesePY from "@/utils/ChinesePY";
 import logo from "@/static/svg/city.svg";
 import { GroupCommons } from "@/modules/group";
+import axios from "axios";
 
 class Citys extends Component {
   constructor(props) {
@@ -221,6 +222,12 @@ class Citys extends Component {
       </div>
     );
   }
+  componentWillUnmount = () => {
+    // axios.abort && axios.abort();
+    this.setState = (state, callback) => {
+      return;
+    };
+  };
 }
 
 export default GroupCommons(Citys);

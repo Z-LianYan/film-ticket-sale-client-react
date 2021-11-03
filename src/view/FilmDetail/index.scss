@@ -1,5 +1,6 @@
 @import "@/stylesheets/_base.scss";
 .film-detail-container {
+  margin-bottom: 0.8rem;
   .adm-nav-bar-left{
     .adm-nav-bar-back{
       border-radius: 50%;
@@ -163,6 +164,12 @@
         border-right: none;
       }
     }
+  }
+  .select-seat-buy-btn{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
 }
 

@@ -26,7 +26,11 @@ class List extends Component {
         <div className="header-wrapper">
           <NavBar
             backArrow={false}
-            right={<SearchOutline fontSize={20} />}
+            right={<SearchOutline fontSize={20} onClick={()=>{
+              history.push({
+                pathname:'/cinema/search'
+              })
+            }}/>}
             left={
               location.state && location.state.film_id ? (
                 <LeftOutline
@@ -35,7 +39,11 @@ class List extends Component {
                   }}
                 />
               ) : (
-                <div className="navbar-wrapper">
+                <div className="navbar-wrapper" onClick={()=>{
+                  history.push({
+                    pathname:'/citys'
+                  })
+                }}>
                   <span className="city-name">广州</span>
                   <DownOutline
                     fontSize={12}
@@ -67,6 +75,7 @@ class List extends Component {
               key="all-city"
               title="全城"
               closeOnContentClick={true}
+              closeOnMaskClick={true}
             >
               <Grid
                 columns={4}
@@ -97,6 +106,7 @@ class List extends Component {
               key="recently"
               title="最近去过"
               closeOnContentClick={true}
+              closeOnMaskClick={true}
             >
               <CinemaListItem
                 title="广州中影火山湖电影城东山口店"

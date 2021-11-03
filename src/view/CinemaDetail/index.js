@@ -209,6 +209,12 @@ class FileDetail extends Component {
             price={40}
             onClick={()=>{
               console.log('goupiao')
+              history.push({
+                pathname:'/buy/ticket',
+                state:{
+                  film_id:1234
+                }
+              })
             }}
             />
           </Tabs.TabPane>

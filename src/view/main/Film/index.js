@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./index.scss";
 
-import { get_film_hot, get_film_soon_show } from "@/api/film";
+import { get_film_hot, get_film_soon_show,get_banner } from "@/api/film";
 import { Tabs, InfiniteScroll, PullToRefresh, NavBar } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import FilmListItem from "@/components/FilmListItem/index";
@@ -27,7 +27,7 @@ class Home extends Component {
       isHotHasMore: true,
       isSoonHasMore: true,
       scrollTopHot: 0,
-      scrollTopSoon: 0,
+      scrollTopSoon: 0
     };
   }
 
@@ -41,7 +41,7 @@ class Home extends Component {
     });
   }
   async getHotList() {
-    let { fetchOptionsHot, isHotHasMore, hotList } = this.state;
+    let { fetchOptionsHot, hotList } = this.state;
     let res = await get_film_hot(fetchOptionsHot);
     console.log("正在热映", res);
     this.setState({
@@ -54,7 +54,7 @@ class Home extends Component {
     }
   }
   async getSoonShowList() {
-    let { fetchOptionsSoonShow, isSoonHasMore, soonShowList } = this.state;
+    let { fetchOptionsSoonShow, soonShowList } = this.state;
     return new Promise((resolve, reject) => {
       get_film_soon_show(fetchOptionsSoonShow).then((res) => {
         this.setState({
@@ -79,25 +79,20 @@ class Home extends Component {
     switch (day) {
       case 0:
         return "周日";
-        break;
       case 1:
         return "周一";
-        break;
       case 2:
         return "周二";
-        break;
       case 3:
         return "周三";
-        break;
       case 4:
         return "周四";
-        break;
       case 5:
         return "周五";
-        break;
       case 6:
         return "周六";
-        break;
+      default:
+        return '';
     }
   }
 
@@ -244,10 +239,17 @@ class Home extends Component {
               btnColor="warning"
               btnTxt={item.isPresale ? "预购" : ""}
               onClick={() => {
-                // this.props.history.push({
-                //   pathname: "/cinema/detail",
-                //   state: { film_id: 123 },
-                // });
+                this.props.history.push({
+                  pathname: "/film/detail",
+                  state: { film_id: 123 },
+                });
+              }}
+              onRightClick={() => {
+                console.log("onRightClick");
+                this.props.history.push({
+                  pathname: "/film/cinema",
+                  state: { film_id: "6666" },
+                });
               }}
             />
           );
@@ -279,9 +281,8 @@ class Home extends Component {
       </PullToRefresh>
     );
   }
-
   render() {
-    let { userInfo, locationInfo, history } = this.props;
+    let { history } = this.props;
     let { floatTabs, activeTab } = this.state;
     return (
       <div className="app-film-container">
@@ -298,7 +299,14 @@ class Home extends Component {
             广州
             <DownOutline />
           </div>
-          <CustomSwiper />
+          <CustomSwiper 
+          useSwiperType=""
+          onClick={()=>{
+            history.push({
+              pathname: "/film/detail",
+              state: { film_id: 123 },
+            })
+          }}/>
         </div>
 
         <div className={[floatTabs ? "float-tabs-component" : ""]}>
@@ -322,7 +330,6 @@ class Home extends Component {
           ) : null}
           <Tabs
             defaultActiveKey={"hot"}
-            // className={[floatTabs ? "float-tabs-component" : ""]}
             onChange={(val) => {
               var scrollTop = window.scrollY;
               if (val === "hot") {

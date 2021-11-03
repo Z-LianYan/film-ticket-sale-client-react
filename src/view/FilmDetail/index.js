@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./index.scss";
 import { DownOutline, UpOutline } from "antd-mobile-icons";
-import { List, Image, Mask, NavBar, ImageViewer } from "antd-mobile";
+import { List, Image, Mask, NavBar, ImageViewer,Button } from "antd-mobile";
 class FileDetail extends Component {
   constructor(props) {
     super(props);
@@ -163,6 +163,25 @@ class FileDetail extends Component {
           </div>
         </div>
         {this.renderStill()}
+        <Button 
+        style={{
+          '--border-radius':0
+        }}
+        className="select-seat-buy-btn"  
+        block 
+        color='primary' 
+        fill="solid" 
+        size="large"
+        onClick={()=>{
+          history.push({
+            pathname:'/film/cinema',
+            state:{
+              film_id:234
+            }
+          })
+        }}>
+          选座购票
+        </Button>
       </div>
     );
   }
