@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./index.scss";
 import { NavBar,NoticeBar,Space } from "antd-mobile";
 import { DownOutline } from 'antd-mobile-icons'
+import hammerjs from 'hammerjs'
 class SelectSeatBuyTicket extends Component {
   constructor(props) {
     super(props);
@@ -10,7 +11,14 @@ class SelectSeatBuyTicket extends Component {
     };
   }
   componentDidMount(){
-
+    //创建一个新的hammer对象并且在初始化时指定要处理的dom元素
+    var hammertime = new hammerjs(document.querySelector(".seats-box"));
+    //为该dom元素指定触屏移动事件
+    hammertime.on("pan", function (ev) {
+        //控制台输出
+        console.log('哈哈哈',ev);
+        alert('--')
+    });
   }
   render() {
     let { history } = this.props;
@@ -51,6 +59,9 @@ class SelectSeatBuyTicket extends Component {
         "--text-color":'#e68e1a',
         position:'relative'
       }}/>
+      <div className='seats-box'>
+        123
+      </div>
     </div>
   }
 }
