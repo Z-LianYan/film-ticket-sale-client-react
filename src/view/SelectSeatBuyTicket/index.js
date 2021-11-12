@@ -13,11 +13,13 @@ class SelectSeatBuyTicket extends Component {
   componentDidMount(){
     //创建一个新的hammer对象并且在初始化时指定要处理的dom元素
     var hammertime = new hammerjs(document.querySelector(".seats-box"));
+    hammertime.get('pinch').set({ enable: true });
+    hammertime.get('rotate').set({ enable: true });
     //为该dom元素指定触屏移动事件
     hammertime.on("pan", function (ev) {
         //控制台输出
         console.log('哈哈哈',ev);
-        alert('--')
+        // alert('--')
     });
   }
   render() {
@@ -60,8 +62,13 @@ class SelectSeatBuyTicket extends Component {
         position:'relative'
       }}/>
       <div className='seats-box'>
-        123
+        <div className="box">
+          <div className="wrapper">
+            12345健康大煞风景的拉萨附近数量大幅减少到了福建省劳动法律的房间里都是减肥路上的肌肤立刻删掉
+          </div>
+        </div>
       </div>
+
     </div>
   }
 }
