@@ -1,4 +1,7 @@
+@import "@/stylesheets/_mixin.scss";
 .select-seat-buy-ticket-box{
+    height: 100vh;
+    background-color: #eee;
     .notice-bar-content-detail{
         position: absolute;
         top: 0.28rem;
@@ -30,24 +33,165 @@
         }
     }
     .seats-box{
-        height: 300px;
+        height: 50px;
         // background-color: red;
-        overflow: hidden;
-        width: 100%;
         border: 1px solid red;
-        .box{
-            height: 400px;
-            width: 110vw;
-            // background-color: yellow;
-            border: 1px solid yellow;
-            overflow: hidden;
-            .wrapper{
-                height: 500px;
-                width: 120vw;
-                width: 100%;
-                border: 1px solid purple;
-                // background-color: purple;
+        overflow: hidden;
+        white-space: normal;
+    }
+    .bottom-wrapper{
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        .seat-template-status{
+            display: flex;
+            justify-content: center;
+            .status-item{
+                margin-right: 0.2rem;
+                display: flex;
+                align-items: center;
+                .seat{
+                    font-size: 0.2rem;
+                    margin-right: 0.08rem;
+                    
+                    &::before{
+                    //   background-color: #ff5f16;  
+                    //   border-radius: 0.05rem;
+                    }
+                }
+                .txt{
+                    font-size: 0.13rem;
+                    color: #797d82;
+                }
+                .no-select-seat{
+                    color: #ccc;
+                }
+                .sale-out-seat{
+                    color: #ff5f16;
+                }
+                .can-select{
+                    // color: #fff;
+                }
+                .selected-seat{
+                    color: rgb(49, 188, 73);
+                }
             }
         }
+        .top-box{
+            margin: 0.1rem;
+            padding: 0.15rem 0.1rem 0.15rem 0.1rem;
+            background: #fff;
+            border-radius: 0.05rem;
+            .film-detail{
+                padding-bottom: 0.1rem;
+                .top{
+                    display: flex;
+                    justify-content: space-between;
+                    .film-name{
+                        color: #191a1b;
+                        font-size: 0.15rem;
+                    }
+                    .right{
+                        color: #ff5f16;
+                        font-size: 0.13rem;
+                    }
+                }
+                .bot{
+                    font-size: 0.13rem;
+                    line-height: 0.19rem;
+                    margin-top: 0.04rem;
+                    color: #797d82;
+                }
+            }
+            .shedule-wrapper{
+                margin-bottom: 0.1rem;
+                display: flex;
+                overflow-y: hidden;
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none; /* IE 10+ */
+                &::-webkit-scrollbar {
+                  display: none; /* Chrome Safari */
+                }
+                // border-bottom: 0.01rem solid #f4f4f4;
+                
+                .she-item{
+                    width: 0.7rem;
+                    height: 0.6rem;
+                    // background-color: #fffbfb;
+                    background-color: hsla(0,0%,95.7%,.6);
+                    display: flex;
+                    flex-flow: column nowrap;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 0.05rem;
+                    margin-right: 0.1rem;
+                    .time{
+                        font-size: 0.14rem;
+                        color: #191a1b;
+                        line-height: 0.17rem;
+                    }
+                    .language{
+                        font-size: 0.1rem;
+                        color: #bdc0c5;
+                        width: 0.7rem;
+                        line-height: 0.14rem;
+                        @include ellipsis-one();
+                        margin-top: 0.01rem;
+                        text-align: center;
+                    }
+                    .price{
+                        font-size: 0.13rem;
+                        color: #797d82;
+                    }
+                }
+            }
+            .line{
+                height: 0.01rem;
+                background-color: #f4f4f4;
+            }
+            .selected-seat-list{
+                padding: 0.1rem 0.1rem 0 0.1rem;
+                overflow-y: hidden;
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none; /* IE 10+ */
+                &::-webkit-scrollbar {
+                  display: none; /* Chrome Safari */
+                }
+                display: flex;
+                .seat{
+                    width: 1rem;
+                    padding: 0.04rem 0.1rem;
+                    display: flex;
+                    justify-content: space-between;
+                    background-color: hsla(0,0%,95.7%,.6);
+                    border-radius: 0.05rem;
+                    margin-right: 0.1rem;
+                    .left{
+                        margin-right: 0.1rem;
+                        .seat-txt{
+                            font-size: 0.14rem;
+                            color: #191a1b;
+                            white-space: nowrap;
+                        }
+                        .price{
+                            font-size: 0.13rem;
+                            color: rgb(250, 182, 70);
+                        }
+                    }
+                    .right{
+                        display: flex;
+                        align-items: flex-end;
+                    }
+                }
+            }
+        }
+        .select-seat-buy-btn{
+            // position: fixed;
+            // left: 0;
+            // right: 0;
+            // bottom: 0;
+        }
     }
+    
 }
