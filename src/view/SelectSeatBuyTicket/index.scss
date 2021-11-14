@@ -42,10 +42,11 @@
         user-select: none;
         .seat-list{
             position: absolute;
-            width: 100px;
-            height: 100px;
+            width: 100%;
+            height: 100%;
             background-color: #ff5f16;
             // overflow-x: hidden;
+            // transform: scale(2,2);
             .row{
                 display: flex;
                 .cell{

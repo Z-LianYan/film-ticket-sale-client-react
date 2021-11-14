@@ -13,24 +13,36 @@ class SelectSeatBuyTicket extends Component {
       top: 0,
       deltaX: 0,
       deltaY: 0,
+      scaleX: 1,
+      scaleY: 1,
+      additionalEvent: "",
     };
   }
   componentDidMount() {
     //创建一个新的hammer对象并且在初始化时指定要处理的dom元素
-    var hammertime = new hammerjs(document.querySelector(".seat-list"));
+    var hammertime = new hammerjs(document.querySelector(".seats-box"));
     hammertime.get("pan").set({ direction: hammerjs.DIRECTION_ALL });
     hammertime.get("pinch").set({ enable: true });
     // hammertime.get("rotate").set({ enable: true });
     //为该dom元素指定触屏移动事件
     let _this = this;
-    // hammertime.on("pinch", function (ev) {
-    //   //控制台输出
-    //   console.log("哈哈哈--pinch", ev.additionalEvent);
-    //   _this.setState({
-    //     index: _this.state.index + 1,
-    //   });
-    //   // alert("--" + ev.additionalEvent);
-    // });
+    hammertime.on("pinch", function (ev) {
+      //控制台输出
+      console.log("哈哈哈--pinch", ev.additionalEvent);
+      if (ev.additionalEvent == "pinchin" && _this.state.scaleX <= 1) return;
+      _this.setState({
+        additionalEvent: ev.additionalEvent,
+        scaleX:
+          ev.additionalEvent == "pinchout"
+            ? _this.state.scaleX + 0.01
+            : _this.state.scaleX - 0.01,
+        scaleY:
+          ev.additionalEvent == "pinchout"
+            ? _this.state.scaleY + 0.01
+            : _this.state.scaleY - 0.01,
+      });
+      // alert("--" + ev.additionalEvent);
+    });
     hammertime.on("pan", function (ev) {
       //控制台输出
       console.log("哈哈哈--pinch", ev);
@@ -82,8 +94,17 @@ class SelectSeatBuyTicket extends Component {
   }
   render() {
     let { history } = this.props;
-    let { isShowNoticeDetail, isShowScheduleList, left, top, deltaX, deltaY } =
-      this.state;
+    let {
+      isShowNoticeDetail,
+      isShowScheduleList,
+      left,
+      top,
+      deltaX,
+      deltaY,
+      scaleX,
+      scaleY,
+      additionalEvent,
+    } = this.state;
     return (
       <div className="select-seat-buy-ticket-box">
         <NavBar
@@ -129,8 +150,19 @@ class SelectSeatBuyTicket extends Component {
         <div className="seats-box">
           <ul
             className="seat-list"
-            style={{ left: left + deltaX + "px", top: top + deltaY + "px" }}
+            style={{
+              left: left + deltaX + "px",
+              top: top + deltaY + "px",
+              transform: `scale(${scaleX},${scaleY})`,
+            }}
           >
+            {"deltaX: " +
+              deltaX +
+              " deltaY: " +
+              deltaY +
+              " additionalEvent: " +
+              additionalEvent}
+            <div>{"scaleX: " + scaleX + " scaleY: " + scaleY}</div>
             {/* <li className="row">
               <div className="cell">
                 <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
