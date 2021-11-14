@@ -33,11 +33,26 @@
         }
     }
     .seats-box{
-        height: 50px;
+        min-height: 20vh;
         // background-color: red;
         border: 1px solid red;
         overflow: hidden;
-        white-space: normal;
+        // white-space: normal;
+        position: relative;
+        user-select: none;
+        .seat-list{
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: #ff5f16;
+            // overflow-x: hidden;
+            .row{
+                display: flex;
+                .cell{
+
+                }
+            }
+        }
     }
     .bottom-wrapper{
         position: fixed;
