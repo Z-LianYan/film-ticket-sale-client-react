@@ -16,15 +16,23 @@ class SelectSeatBuyTicket extends Component {
       scaleX: 1,
       scaleY: 1,
       additionalEvent: "",
+      distance: 0,
+      sideDistance: 0,
     };
   }
   componentDidMount() {
+    let seatsList = document.querySelector(".seat-list");
+    let dis = (seatsList.offsetWidth - document.body.clientWidth) / 2;
+    this.setState({
+      left: -dis,
+      sideDistance: dis,
+    });
+    console.log("window", document.body.clientWidth, seatsList.offsetWidth);
     //创建一个新的hammer对象并且在初始化时指定要处理的dom元素
-    
     var hammertime = new hammerjs(document.querySelector(".seats-box"));
     hammertime.get("pan").set({ direction: hammerjs.DIRECTION_ALL });
     hammertime.get("pinch").set({ enable: true });
-    
+
     // hammertime.get("rotate").set({ enable: true });
     //为该dom元素指定触屏移动事件
     let _this = this;
@@ -34,43 +42,83 @@ class SelectSeatBuyTicket extends Component {
       if (ev.additionalEvent == "pinchin" && _this.state.scaleX <= 1) {
         _this.setState({
           additionalEvent: ev.additionalEvent,
-          scaleX:1,
-          scaleY:1,
+          scaleX: 1,
+          scaleY: 1,
         });
         return;
-      };
-      
+      }
+
       _this.setState({
+        distance: ev.distance,
         additionalEvent: ev.additionalEvent,
         scaleX:
           ev.additionalEvent == "pinchout"
-            ? _this.state.scaleX + 0.01
-            : _this.state.scaleX - 0.01,
+            ? _this.state.scaleX + 0.02
+            : _this.state.scaleX - 0.02,
         scaleY:
           ev.additionalEvent == "pinchout"
-            ? _this.state.scaleY + 0.01
-            : _this.state.scaleY - 0.01,
+            ? _this.state.scaleY + 0.02
+            : _this.state.scaleY - 0.02,
       });
     });
     hammertime.on("pan", function (ev) {
       //控制台输出
-      let seatsList = document.querySelector('.seat-list')
-      let x = (seatsList.offsetWidth*_this.state.scaleX)/2-(seatsList.offsetWidth/2);//
-      let y = (seatsList.offsetHeight*_this.state.scaleY)/2-(seatsList.offsetHeight/2);
-      console.log("哈哈哈--pinch-width",x,y);
+      let seatsList = document.querySelector(".seat-list");
+      // let x =
+      //   (seatsList.offsetWidth * _this.state.scaleX) / 2 -
+      //   seatsList.offsetWidth / 2; //
+      let y =
+        (seatsList.offsetHeight * _this.state.scaleY) / 2 -
+        seatsList.offsetHeight / 2;
+      console.log("offsetWidth😄------》", ev);
+      // console.log("哈哈哈--pinch-width------》x，y", x, y);
 
       let offsetW = ev.deltaX + _this.state.left;
       let offsetH = ev.deltaY + _this.state.top;
+      console.log(
+        "offsetW---offsetH",
+        offsetW,
+        offsetH,
+        _this.state.sideDistance
+      );
+      // let min_x = -50 - x;
+      // let max_x = x + 50;
+      let min_y = -50 - y;
+      let max_y = y + 50;
+      // console.log(
+      //   "min_x",
+      //   min_x,
+      //   "max_x",
+      //   max_x,
+      //   "min_y",
+      //   min_y,
+      //   "max_y",
+      //   max_y
+      // );
       if (ev.isFinal) {
-        _this.setState({
-          deltaX: 0,
-          deltaY: 0,
-          left: offsetW>(x+50)?(x+50):offsetW<(-50-x)?(-50-x):offsetW,
-          top: offsetH>(50+y)?(50+y):offsetH<(-50-y)?(-50-y):offsetH,
-        });
+        _this.setState(
+          {
+            deltaX: 0,
+            deltaY: 0,
+            // left: offsetW > max_x ? max_x : offsetW < min_x ? min_x : offsetW,
+            top: offsetH > max_y ? max_y : offsetH < min_y ? min_y : offsetH,
+            left:
+              offsetW > _this.state.sideDistance
+                ? 50
+                : offsetW < -(seatsList.offsetWidth - document.body.clientWidth)
+                ? -(seatsList.offsetWidth - document.body.clientWidth) - 50
+                : offsetW,
+            // top: offsetH>50?50,
+          },
+          () => {
+            console.log("_this.state.left", _this.state.left, _this.state.top);
+          }
+        );
+
         return;
       }
       _this.setState({
+        additionalEvent: ev.additionalEvent,
         deltaX: ev.deltaX,
         deltaY: ev.deltaY,
       });
@@ -88,6 +136,7 @@ class SelectSeatBuyTicket extends Component {
       scaleX,
       scaleY,
       additionalEvent,
+      distance,
     } = this.state;
     return (
       <div className="select-seat-buy-ticket-box">
@@ -135,15 +184,17 @@ class SelectSeatBuyTicket extends Component {
           <ul
             className="seat-list"
             style={{
-              left: left + deltaX + "px",
-              top: top + deltaY + "px",
-              transform: `scale(${scaleX},${scaleY})`,
+              transform: `translate(${left + deltaX}px, ${
+                top + deltaY
+              }px) scale(${scaleX},${scaleY})`,
             }}
           >
             {/* <div>{"scaleX: " + scaleX + " scaleY: " + scaleY}</div> */}
             <li className="row">
               <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select">
+                  {/* {additionalEvent + distance} */}
+                </i>
               </div>
               <div className="cell">
                 <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
@@ -230,99 +281,9 @@ class SelectSeatBuyTicket extends Component {
                 <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
               </div>
               <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-            </li>
-            <li className="row">
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select">
+                  1
+                </i>
               </div>
             </li>
             <li className="row">
@@ -414,7 +375,9 @@ class SelectSeatBuyTicket extends Component {
                 <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
               </div>
               <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select">
+                  1
+                </i>
               </div>
             </li>
             <li className="row">
@@ -506,7 +469,103 @@ class SelectSeatBuyTicket extends Component {
                 <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
               </div>
               <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select">
+                  1
+                </i>
+              </div>
+            </li>
+            <li className="row">
+              <div className="cell">
                 <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select">
+                  1
+                </i>
               </div>
             </li>
           </ul>
