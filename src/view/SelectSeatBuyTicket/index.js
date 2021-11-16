@@ -15,12 +15,10 @@ class SelectSeatBuyTicket extends Component {
       deltaY: 0,
       scaleX: 1,
       scaleY: 1,
-      additionalEvent: "",
-      distance: 0,
-      sideDistance: 0,
     };
   }
   componentDidMount() {
+    let seatsBox = document.querySelector(".seats-box");
     let seatsList = document.querySelector(".seat-list");
     let dis = (seatsList.offsetWidth - document.body.clientWidth) / 2;
     this.setState({
@@ -37,88 +35,47 @@ class SelectSeatBuyTicket extends Component {
     //为该dom元素指定触屏移动事件
     let _this = this;
     hammertime.on("pinch", function (ev) {
-      //控制台输出
-      console.log("哈哈哈--pinch", ev.additionalEvent);
       if (ev.additionalEvent == "pinchin" && _this.state.scaleX <= 1) {
         _this.setState({
-          additionalEvent: ev.additionalEvent,
           scaleX: 1,
           scaleY: 1,
         });
         return;
       }
+      if (ev.additionalEvent == "pinchout" && _this.state.scaleX >= 3) {
+        _this.setState({
+          scaleX: 3,
+          scaleY: 3,
+        });
+        return;
+      }
 
       _this.setState({
-        distance: ev.distance,
-        additionalEvent: ev.additionalEvent,
         scaleX:
           ev.additionalEvent == "pinchout"
-            ? _this.state.scaleX + 0.02
-            : _this.state.scaleX - 0.02,
+            ? _this.state.scaleX + 0.1
+            : _this.state.scaleX - 0.1,
         scaleY:
           ev.additionalEvent == "pinchout"
-            ? _this.state.scaleY + 0.02
-            : _this.state.scaleY - 0.02,
+            ? _this.state.scaleY + 0.1
+            : _this.state.scaleY - 0.1,
       });
     });
     hammertime.on("pan", function (ev) {
-      //控制台输出
-      let seatsList = document.querySelector(".seat-list");
-      // let x =
-      //   (seatsList.offsetWidth * _this.state.scaleX) / 2 -
-      //   seatsList.offsetWidth / 2; //
-      let y =
-        (seatsList.offsetHeight * _this.state.scaleY) / 2 -
-        seatsList.offsetHeight / 2;
-      console.log("offsetWidth😄------》", ev);
-      // console.log("哈哈哈--pinch-width------》x，y", x, y);
-
       let offsetW = ev.deltaX + _this.state.left;
       let offsetH = ev.deltaY + _this.state.top;
-      console.log(
-        "offsetW---offsetH",
-        offsetW,
-        offsetH,
-        _this.state.sideDistance
-      );
-      // let min_x = -50 - x;
-      // let max_x = x + 50;
-      let min_y = -50 - y;
-      let max_y = y + 50;
-      // console.log(
-      //   "min_x",
-      //   min_x,
-      //   "max_x",
-      //   max_x,
-      //   "min_y",
-      //   min_y,
-      //   "max_y",
-      //   max_y
-      // );
       if (ev.isFinal) {
         _this.setState(
           {
             deltaX: 0,
             deltaY: 0,
-            // left: offsetW > max_x ? max_x : offsetW < min_x ? min_x : offsetW,
-            top: offsetH > max_y ? max_y : offsetH < min_y ? min_y : offsetH,
-            left:
-              offsetW > _this.state.sideDistance
-                ? 50
-                : offsetW < -(seatsList.offsetWidth - document.body.clientWidth)
-                ? -(seatsList.offsetWidth - document.body.clientWidth) - 50
-                : offsetW,
-            // top: offsetH>50?50,
-          },
-          () => {
-            console.log("_this.state.left", _this.state.left, _this.state.top);
-          }
-        );
+            left:offsetW,
+            top: offsetH,
+          });
 
         return;
       }
       _this.setState({
-        additionalEvent: ev.additionalEvent,
         deltaX: ev.deltaX,
         deltaY: ev.deltaY,
       });
@@ -134,9 +91,7 @@ class SelectSeatBuyTicket extends Component {
       deltaX,
       deltaY,
       scaleX,
-      scaleY,
-      additionalEvent,
-      distance,
+      scaleY
     } = this.state;
     return (
       <div className="select-seat-buy-ticket-box">
@@ -192,11 +147,6 @@ class SelectSeatBuyTicket extends Component {
             {/* <div>{"scaleX: " + scaleX + " scaleY: " + scaleY}</div> */}
             <li className="row">
               <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select">
-                  {/* {additionalEvent + distance} */}
-                </i>
-              </div>
-              <div className="cell">
                 <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
               </div>
               <div className="cell">
@@ -281,9 +231,10 @@ class SelectSeatBuyTicket extends Component {
                 <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
               </div>
               <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select">
-                  1
-                </i>
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+              </div>
+              <div className="cell">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
               </div>
             </li>
             <li className="row">
@@ -375,9 +326,7 @@ class SelectSeatBuyTicket extends Component {
                 <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
               </div>
               <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select">
-                  1
-                </i>
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
               </div>
             </li>
             <li className="row">
@@ -469,9 +418,7 @@ class SelectSeatBuyTicket extends Component {
                 <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
               </div>
               <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select">
-                  1
-                </i>
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
               </div>
             </li>
             <li className="row">
@@ -563,9 +510,7 @@ class SelectSeatBuyTicket extends Component {
                 <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
               </div>
               <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select">
-                  1
-                </i>
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
               </div>
             </li>
           </ul>

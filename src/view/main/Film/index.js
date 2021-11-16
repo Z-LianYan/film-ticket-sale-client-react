@@ -8,6 +8,9 @@ import FilmListItem from "@/components/FilmListItem/index";
 import { DownOutline } from "antd-mobile-icons";
 import CustomSwiper from "@/components/CustomSwiper/index";
 import dayjs from "dayjs";
+import tools from "@/utils/tools";
+
+
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -39,6 +42,43 @@ class Home extends Component {
         floatTabs: scrollTop >= 200 ? true : false,
       });
     });
+    
+    tools.geolocation({
+      onComplete:(result)=>{
+        console.log('完成定位',result)
+      },
+      onError:(err)=>{
+        console.log('定位失败',err)
+      }
+    })
+    // const AMap = window.AMap;
+    // // var map = new AMap.Map('map-container', {
+    // //   viewMode: '3D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 viewMode: '3D',
+    // //   zoom: 11,//[23.01185,113.38798]
+    // // });
+    // AMap.plugin('AMap.Geolocation', function() {
+    //     var geolocation = new AMap.Geolocation({
+    //         enableHighAccuracy: true,//是否使用高精度定位，默认:true
+    //         timeout: 10000,          //超过10秒后停止定位，默认：5s
+    //         position:'RB',    //定位按钮的停靠位置
+    //         buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+    //         zoomToAccuracy: true,   //定位成功后是否自动调整地图视野到定位点
+    //     });
+    //     map.addControl(geolocation);
+    //     geolocation.getCurrentPosition(function(status,result){
+    //       console.log('result--定位status',status)
+    //         if(status=='complete'){
+    //           console.log('result--定位完成',result)
+    //             // onComplete(result)
+    //             // alert(JSON.stringify(result))
+    //         }else{
+    //           console.log('result--定位失败',result)
+    //         }
+    //     });
+    // });
+    
+    //  释放地图
+    // this.rmap && this.rmap.destory();
   }
   async getHotList() {
     let { fetchOptionsHot, hotList } = this.state;
@@ -362,7 +402,14 @@ class Home extends Component {
           </Tabs>
         </div>
 
-        {activeTab === "hot" ? this.renderHot() : this.renderSoon()}
+        {/* {activeTab === "hot" ? this.renderHot() : this.renderSoon()} */}
+
+
+
+        <div id="map-container" style={{height:'300px','border':'1px solid red'}}></div>
+
+
+
         <div style={{ height: "1rem" }}></div>
       </div>
     );
