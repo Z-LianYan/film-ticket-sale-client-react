@@ -49,23 +49,25 @@ class Citys extends Component {
   }
   componentDidMount() {
     let { letter } = this.state;
+    console.log(ChinesePY.GetQP('朱练炎'));
     get_city_list({}).then((res) => {
       let citys = res.rows;
       let hotList = res.hotList;
       for (let i = 0; i < citys.length; i++) {
-        if (citys[i].id === 110000 || citys[i].id === 120000) {
-          //110000北京 120000天津
-          let str = ChinesePY.getWordsCode(citys[i].name.substr(0, 1));
-          // console.log("省", str);
+        if (citys[i].id === 110100 || citys[i].id === 120100) {
+          //110100北京 120100天津
+          // let str = ChinesePY.getWordsCode(citys[i].name.substr(0, 1));
+          // console.log("省", citys[i].first_letter);
           delete citys[i].children;
-          letter[str].push(citys[i]);
+          letter[citys[i].first_letter].push(citys[i]);
         } else {
           let children = citys[i].children;
           // console.log("市", children);
           for (let j = 0; j < children.length; j++) {
             delete children[j].children;
-            let str = ChinesePY.getWordsCode(children[j].name.substr(0, 1));
-            letter[str].push(children[j]);
+            // let str = ChinesePY.getWordsCode(children[j].name.substr(0, 1));
+            // console.log("市", children[j].first_letter);
+            letter[children[j].first_letter].push(children[j]);
           }
         }
       }
