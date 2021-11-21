@@ -3,7 +3,6 @@ import "./index.scss";
 import { IndexBar, List, Search, NavBar } from "antd-mobile";
 import { CloseOutline } from "antd-mobile-icons";
 import { get_city_list } from "@/api/citys";
-import ChinesePY from "@/utils/ChinesePY";
 import logo from "@/static/svg/city.svg";
 import { GroupCommons } from "@/modules/group";
 import axios from "axios";
@@ -44,35 +43,27 @@ class Citys extends Component {
       filterList: [],
       hotList: [],
       searchValue: "",
-      currentCity:{}
+      currentCity: {},
     };
   }
   componentDidMount() {
     let { letter } = this.state;
-    console.log(ChinesePY.GetQP('朱练炎'));
     get_city_list({}).then((res) => {
       let citys = res.rows;
       let hotList = res.hotList;
       for (let i = 0; i < citys.length; i++) {
         if (citys[i].id === 110100 || citys[i].id === 120100) {
           //110100北京 120100天津
-          // let str = ChinesePY.getWordsCode(citys[i].name.substr(0, 1));
-          // console.log("省", citys[i].first_letter);
           delete citys[i].children;
           letter[citys[i].first_letter].push(citys[i]);
         } else {
           let children = citys[i].children;
-          // console.log("市", children);
           for (let j = 0; j < children.length; j++) {
             delete children[j].children;
-            // let str = ChinesePY.getWordsCode(children[j].name.substr(0, 1));
-            // console.log("市", children[j].first_letter);
             letter[children[j].first_letter].push(children[j]);
           }
         }
       }
-      // console.log("城市列表", citys);
-      // console.log("66666", letter);
       this.setState({
         cityList: citys,
         hotList: hotList,
@@ -87,7 +78,7 @@ class Citys extends Component {
     let filterList = [];
     for (let key in letter) {
       for (let item of letter[key]) {
-        if (item.name.includes(val)) {
+        if (item.name.includes(val) || item.pinyin.includes(val)) {
           filterList.push(item);
         }
       }
@@ -99,15 +90,13 @@ class Citys extends Component {
 
   setLocationInfo(item) {
     let { history } = this.props;
-    this.props.setLocationInfo(item, () => {
-      console.log("12340", this.props.locationInfo);
-      history.goBack();
-    });
+    this.props.locationInfo.city_name = item.name;
+    history.goBack();
   }
 
   render() {
     let { letter, hotList, searchValue, filterList } = this.state;
-    let { history } = this.props;
+    let { history, locationInfo } = this.props;
     return (
       <div>
         <NavBar
@@ -118,11 +107,11 @@ class Citys extends Component {
             history.goBack();
           }}
         >
-          当前城市 -
+          当前城市 - {locationInfo.city_name}
         </NavBar>
         <Search
           value={searchValue}
-          placeholder="输入城市名称"
+          placeholder="输入城市名称或拼音"
           showCancelButton
           onChange={(val) => {
             this.searchChange(val);
@@ -149,16 +138,17 @@ class Citys extends Component {
           {searchValue ? (
             filterList.length ? (
               <List>
-                {filterList.map((item, index) => {
+                {filterList.map((it, index) => {
                   return (
                     <List.Item
                       key={index}
                       arrow={false}
                       onClick={() => {
                         console.log("onclick");
+                        this.setLocationInfo(it);
                       }}
                     >
-                      {item.name}
+                      {it.name}
                     </List.Item>
                   );
                 })}

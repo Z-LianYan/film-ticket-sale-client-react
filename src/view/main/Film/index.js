@@ -1,15 +1,14 @@
 import React, { Component } from "react";
 import "./index.scss";
 
-import { get_film_hot, get_film_soon_show,get_banner } from "@/api/film";
+import { get_film_hot, get_film_soon_show } from "@/api/film";
 import { Tabs, InfiniteScroll, PullToRefresh, NavBar } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import FilmListItem from "@/components/FilmListItem/index";
 import { DownOutline } from "antd-mobile-icons";
 import CustomSwiper from "@/components/CustomSwiper/index";
 import dayjs from "dayjs";
-import tools from "@/utils/tools";
-
+// import tools from "@/utils/tools";
 
 class Home extends Component {
   constructor(props) {
@@ -30,7 +29,7 @@ class Home extends Component {
       isHotHasMore: true,
       isSoonHasMore: true,
       scrollTopHot: 0,
-      scrollTopSoon: 0
+      scrollTopSoon: 0,
     };
   }
 
@@ -42,78 +41,65 @@ class Home extends Component {
         floatTabs: scrollTop >= 200 ? true : false,
       });
     });
-    
-    tools.geolocation({
-      onComplete:(result)=>{
-        console.log('完成定位',result)
-      },
-      onError:(err)=>{
-        console.log('定位失败',err)
-      }
-    })
-    // const AMap = window.AMap;
-    // // var map = new AMap.Map('map-container', {
-    // //   viewMode: '3D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 viewMode: '3D',
-    // //   zoom: 11,//[23.01185,113.38798]
-    // // });
-    // AMap.plugin('AMap.Geolocation', function() {
-    //     var geolocation = new AMap.Geolocation({
-    //         enableHighAccuracy: true,//是否使用高精度定位，默认:true
-    //         timeout: 10000,          //超过10秒后停止定位，默认：5s
-    //         position:'RB',    //定位按钮的停靠位置
-    //         buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-    //         zoomToAccuracy: true,   //定位成功后是否自动调整地图视野到定位点
-    //     });
-    //     map.addControl(geolocation);
-    //     geolocation.getCurrentPosition(function(status,result){
-    //       console.log('result--定位status',status)
-    //         if(status=='complete'){
-    //           console.log('result--定位完成',result)
-    //             // onComplete(result)
-    //             // alert(JSON.stringify(result))
-    //         }else{
-    //           console.log('result--定位失败',result)
-    //         }
-    //     });
+    console.log("src/view/main/Film/index.js");
+
+    this.props.locationInfo.locationReady = () => {
+      console.log("locationReady---");
+    };
+
+    // tools.geolocation({
+    //   onComplete: (result) => {
+    //     console.log("完成定位", result);
+    //     this.props.locationInfo.lng = result.position.lng;
+    //     this.props.locationInfo.lat = result.position.lat;
+    //     console.log("this.props", this.props);
+    //   },
+    //   onError: (err) => {
+    //     console.log("定位失败", err);
+    //   },
     // });
-    
-    //  释放地图
-    // this.rmap && this.rmap.destory();
+    // tools.getLocalCity({
+    //   onComplete: (result) => {
+    //     console.log("code--getLocalCity--😄", result);
+    //     this.props.locationInfo.city_name = result.city;
+    //   },
+    //   onError: (err) => {
+    //     console.log("ip失败", err);
+    //   },
+    // });
   }
-  async getHotList() {
-    let { fetchOptionsHot, hotList } = this.state;
-    let res = await get_film_hot(fetchOptionsHot);
-    console.log("正在热映", res);
-    this.setState({
-      hotList: fetchOptionsHot.page === 1 ? res.rows : hotList.concat(res.rows),
-    });
-    if (this.state.hotList.length >= res.count) {
-      this.setState({
-        isHotHasMore: false,
-      });
-    }
-  }
-  async getSoonShowList() {
-    let { fetchOptionsSoonShow, soonShowList } = this.state;
-    return new Promise((resolve, reject) => {
-      get_film_soon_show(fetchOptionsSoonShow).then((res) => {
-        this.setState({
-          soonShowList:
-            fetchOptionsSoonShow.page === 1
-              ? res.rows
-              : soonShowList.concat(res.rows),
-        });
-        if (this.state.soonShowList.length >= res.count) {
-          this.setState({
-            isSoonHasMore: false,
-          });
-        }
-        resolve();
-      });
-    });
-    // let res = await get_film_soon_show(fetchOptionsSoonShow);
-    // console.log("即将上映", res);
-  }
+  // async getHotList() {
+  //   let { fetchOptionsHot, hotList } = this.state;
+  //   let res = await get_film_hot(fetchOptionsHot);
+  //   console.log("正在热映", res);
+  //   this.setState({
+  //     hotList: fetchOptionsHot.page === 1 ? res.rows : hotList.concat(res.rows),
+  //   });
+  //   if (this.state.hotList.length >= res.count) {
+  //     this.setState({
+  //       isHotHasMore: false,
+  //     });
+  //   }
+  // }
+  // async getSoonShowList() {
+  //   let { fetchOptionsSoonShow, soonShowList } = this.state;
+  //   return new Promise((resolve, reject) => {
+  //     get_film_soon_show(fetchOptionsSoonShow).then((res) => {
+  //       this.setState({
+  //         soonShowList:
+  //           fetchOptionsSoonShow.page === 1
+  //             ? res.rows
+  //             : soonShowList.concat(res.rows),
+  //       });
+  //       if (this.state.soonShowList.length >= res.count) {
+  //         this.setState({
+  //           isSoonHasMore: false,
+  //         });
+  //       }
+  //       resolve();
+  //     });
+  //   });
+  // }
 
   handleWeek(day) {
     switch (day) {
@@ -132,7 +118,7 @@ class Home extends Component {
       case 6:
         return "周六";
       default:
-        return '';
+        return "";
     }
   }
 
@@ -322,7 +308,7 @@ class Home extends Component {
     );
   }
   render() {
-    let { history } = this.props;
+    let { history, locationInfo } = this.props;
     let { floatTabs, activeTab } = this.state;
     return (
       <div className="app-film-container">
@@ -336,17 +322,18 @@ class Home extends Component {
             }}
           >
             <div className="mask"></div>
-            广州
-            <DownOutline />
+            {locationInfo.city_name}
+            <DownOutline className="icon-down" />
           </div>
-          <CustomSwiper 
-          useSwiperType=""
-          onClick={()=>{
-            history.push({
-              pathname: "/film/detail",
-              state: { film_id: 123 },
-            })
-          }}/>
+          <CustomSwiper
+            useSwiperType=""
+            onClick={() => {
+              history.push({
+                pathname: "/film/detail",
+                state: { film_id: 123 },
+              });
+            }}
+          />
         </div>
 
         <div className={[floatTabs ? "float-tabs-component" : ""]}>
@@ -355,11 +342,14 @@ class Home extends Component {
               backArrow={false}
               left={
                 <div className="navbar-wrapper">
-                  <span className="city-name">广州</span>
+                  <span className="city-name">{locationInfo.city_name}</span>
                   <DownOutline
                     fontSize={12}
                     onClick={() => {
                       console.log("13124--DownOutline");
+                      history.push({
+                        pathname: "/citys",
+                      });
                     }}
                   />
                 </div>
@@ -402,13 +392,7 @@ class Home extends Component {
           </Tabs>
         </div>
 
-        {/* {activeTab === "hot" ? this.renderHot() : this.renderSoon()} */}
-
-
-
-        <div id="map-container" style={{height:'300px','border':'1px solid red'}}></div>
-
-
+        {activeTab === "hot" ? this.renderHot() : this.renderSoon()}
 
         <div style={{ height: "1rem" }}></div>
       </div>

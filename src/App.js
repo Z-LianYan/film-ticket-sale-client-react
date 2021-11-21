@@ -9,6 +9,10 @@ import CinemaDetail from "@/view/CinemaDetail/index";
 import SelectCinema from "@/view/main/Cinemas/index";
 import CinemaSearch from "@/view/CinemaSearch/index";
 import SelectSeatBuyTicket from "@/view/SelectSeatBuyTicket/index";
+import { GroupCommons } from "@/modules/group";
+import Cookies from "js-cookie";
+import tools from "@/utils/tools";
+import { Toast } from "antd-mobile";
 
 class App extends Component {
   constructor(props) {
@@ -61,7 +65,53 @@ class App extends Component {
     );
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    console.log("app---->", this.props.locationInfo);
+    // Cookies.set("locationInfo", JSON.stringify(this.props.locationInfo), {
+    //   expires: 0.001,
+    // });
+    // console.log("Cookies", JSON.parse(Cookies.get("locationInfo")));
+    // Cookies.get("zly");
+    let _cookie = Cookies.get("locationInfo");
+    let locationInfo = _cookie ? JSON.parse(_cookie) : "";
+    console.log("_cookie--locationInfo", locationInfo);
+    if (!locationInfo) {
+      tools.geolocation({
+        onComplete: (result) => {
+          console.log("完成定位", result);
+          tools.getLocalCity({
+            onComplete: (res) => {
+              console.log("code--getLocalCity--😄", res);
+              Toast.show({
+                icon: "loading",
+                duration: 2000,
+                content: "您当前所在城市是广州，是否切换到广州？",
+              });
+              this.props.setLocationInfo(
+                {
+                  adcode: res.adcode,
+                  city_name: res.city,
+                  lng: result.position.lng,
+                  lat: result.position.lat,
+                },
+                () => {
+                  this.props.locationInfo.locationReady &&
+                    this.props.locationInfo.locationReady();
+                }
+              );
+            },
+            onError: (err) => {
+              console.log("ip失败", err);
+            },
+          });
+        },
+        onError: (err) => {
+          console.log("定位失败", err);
+        },
+      });
+    }
+    console.log("src/App.js");
+  }
 
   shouldComponentUpdate(props) {
     console.log("shouldComponentUpdate");
@@ -84,4 +134,4 @@ App.defaultProps = {
   ],
 };
 
-export default withRouter(App);
+export default GroupCommons(withRouter(App));

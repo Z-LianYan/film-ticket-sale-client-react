@@ -18,7 +18,6 @@ class SelectSeatBuyTicket extends Component {
     };
   }
   componentDidMount() {
-    let seatsBox = document.querySelector(".seats-box");
     let seatsList = document.querySelector(".seat-list");
     let dis = (seatsList.offsetWidth - document.body.clientWidth) / 2;
     this.setState({
@@ -65,13 +64,12 @@ class SelectSeatBuyTicket extends Component {
       let offsetW = ev.deltaX + _this.state.left;
       let offsetH = ev.deltaY + _this.state.top;
       if (ev.isFinal) {
-        _this.setState(
-          {
-            deltaX: 0,
-            deltaY: 0,
-            left:offsetW,
-            top: offsetH,
-          });
+        _this.setState({
+          deltaX: 0,
+          deltaY: 0,
+          left: offsetW,
+          top: offsetH,
+        });
 
         return;
       }
@@ -91,7 +89,7 @@ class SelectSeatBuyTicket extends Component {
       deltaX,
       deltaY,
       scaleX,
-      scaleY
+      scaleY,
     } = this.state;
     return (
       <div className="select-seat-buy-ticket-box">

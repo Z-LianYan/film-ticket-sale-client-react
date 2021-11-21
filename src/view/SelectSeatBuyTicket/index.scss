@@ -1,6 +1,6 @@
 @import "@/stylesheets/_mixin.scss";
 .select-seat-buy-ticket-box{
-    // height: 100vh;
+    height: 100vh;
     background-color: #eee;
     .notice-bar-content-detail{
         position: absolute;
@@ -53,7 +53,7 @@
             // overflow-x: hidden;
             // transform: scale(2,2);
             // padding: 50px;
-            background-color: #fff;
+            // background-color: #fff;
             .row{
                 display: flex;
                 .cell{

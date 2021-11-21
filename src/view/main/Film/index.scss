@@ -6,14 +6,21 @@
       position: absolute;
       left: 0.07rem;
       top: 0.18rem;
-      width: 0.48rem;
-      height: 0.3rem;
+      // width: 0.48rem;
+      // height: 0.3rem;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
       font-size: 0.12rem;
       z-index: 100;
+      // background: #000;
+      // opacity: 0.4;
+      // border-radius: 0.15rem;
+      padding: 0.05rem 0.05rem;
+      .icon-down{
+        margin-left: 0.02rem;
+      }
       .mask{
         position: absolute;
         z-index: -1;
@@ -23,6 +30,11 @@
         background: #000;
         border-radius: 0.15rem;
       }
+    }
+  }
+  .navbar-wrapper{
+    .city-name{
+      margin-right: 0.05rem;
     }
   }
   

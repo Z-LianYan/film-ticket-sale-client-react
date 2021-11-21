@@ -1,5 +1,4 @@
+import GroupCommons from "./group-commons.js";
+import GroupTemplate from "./template-commons";
 
-
-import GroupCommons from './group-commons.js'
-
-export { GroupCommons }
+export { GroupTemplate, GroupCommons };

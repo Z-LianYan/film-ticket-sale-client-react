@@ -12,25 +12,36 @@ import {
   Grid,
   Tabs,
 } from "antd-mobile";
-class List extends Component {
+import { GroupCommons } from "@/modules/group";
+
+class Cinema extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
-
+  async componentDidMount() {
+    this.props.locationInfo.locationReady = () => {
+      console.log("locationReady---cinema");
+    };
+  }
   render() {
-    let { location, history } = this.props;
+    let { location, history, locationInfo } = this.props;
     console.log("location---", location);
     return (
       <div className="app-cinema-page">
         <div className="header-wrapper">
           <NavBar
             backArrow={false}
-            right={<SearchOutline fontSize={20} onClick={()=>{
-              history.push({
-                pathname:'/cinema/search'
-              })
-            }}/>}
+            right={
+              <SearchOutline
+                fontSize={20}
+                onClick={() => {
+                  history.push({
+                    pathname: "/cinema/search",
+                  });
+                }}
+              />
+            }
             left={
               location.state && location.state.film_id ? (
                 <LeftOutline
@@ -39,12 +50,15 @@ class List extends Component {
                   }}
                 />
               ) : (
-                <div className="navbar-wrapper" onClick={()=>{
-                  history.push({
-                    pathname:'/citys'
-                  })
-                }}>
-                  <span className="city-name">广州</span>
+                <div
+                  className="navbar-wrapper"
+                  onClick={() => {
+                    history.push({
+                      pathname: "/citys",
+                    });
+                  }}
+                >
+                  <span className="city-name">{locationInfo.city_name}</span>
                   <DownOutline
                     fontSize={12}
                     onClick={() => {
@@ -193,4 +207,4 @@ class List extends Component {
   }
 }
 
-export default List;
+export default GroupCommons(Cinema);
