@@ -26,7 +26,7 @@ class Cinema extends Component {
   }
   render() {
     let { location, history, locationInfo } = this.props;
-    console.log("location---", location);
+    // console.log("location---", location);
     return (
       <div className="app-cinema-page">
         <div className="header-wrapper">

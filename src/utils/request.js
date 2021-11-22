@@ -9,6 +9,7 @@ const service = axios.create({
   timeout: 5000 * 200, //1m request timeout
   headers: {
     platform: "film-ticket-sale-zly",
+    "Content-Type": "application/json;charset=UTF-8",
   },
   withCredentials: true,
   crossDomain: true,

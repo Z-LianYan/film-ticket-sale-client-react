@@ -12,7 +12,7 @@ import SelectSeatBuyTicket from "@/view/SelectSeatBuyTicket/index";
 import { GroupCommons } from "@/modules/group";
 import Cookies from "js-cookie";
 import tools from "@/utils/tools";
-import { Toast } from "antd-mobile";
+import { Toast, Dialog } from "antd-mobile";
 import { get_by_city } from "@/api/citys";
 
 class App extends Component {
@@ -67,53 +67,84 @@ class App extends Component {
   }
 
   componentDidMount() {
-    console.log("app---->", this.props.locationInfo);
-    // Cookies.set("locationInfo", JSON.stringify(this.props.locationInfo), {
-    //   expires: 0.001,
-    // });
-    // console.log("Cookies", JSON.parse(Cookies.get("locationInfo")));
-    // Cookies.get("zly");
-    let _cookie = Cookies.get("locationInfo");
-    let locationInfo = _cookie ? JSON.parse(_cookie) : "";
-    console.log("_cookie--locationInfo", locationInfo);
-    if (!locationInfo) {
-      tools.geolocation({
-        onComplete: (result) => {
-          console.log("完成定位", result);
-          tools.getLocalCity({
-            onComplete: async (res) => {
-              console.log("code--getLocalCity--😄", res);
-              Toast.show({
-                icon: "loading",
-                duration: 2000,
-                content: "您当前所在城市是广州，是否切换到广州？",
+    let { history, locationInfo } = this.props;
+    console.log("0000-000");
+    let _cookies = Cookies.get("locationInfo");
+    let _cookiesInfo = _cookies ? JSON.parse(_cookies) : {};
+    this.props.setLocationInfo({ ..._cookiesInfo });
+    tools.geolocation({
+      //定位
+      onComplete: (result) => {
+        console.log("完成定位", result);
+        tools.getLocalCity({
+          //获取城市ip（adcode）
+          onComplete: async (res) => {
+            if (
+              !_cookiesInfo.city_id ||
+              (_cookiesInfo.city_id && _cookiesInfo.city_id != res.adcode)
+            ) {
+              Dialog.confirm({
+                title: `定位显示在 ${res.city}`,
+                content: `是否切换 ${res.city}`,
+                confirmText: `切换 ${res.city}`,
+                cancelText: "关闭",
+                onConfirm: async () => {
+                  console.log("1234--执行了");
+                  let cityInfo = await get_by_city({ city_id: 440103 });
+                  let obj = {
+                    city_id: res.adcode,
+                    city_name: cityInfo.name,
+                    lng: result.position.lng,
+                    lat: result.position.lat,
+                  };
+                  this.props.setLocationInfo(obj, () => {
+                    this.props.locationInfo.locationReady &&
+                      this.props.locationInfo.locationReady();
+                    if (
+                      this.props.location.pathname == "/" ||
+                      this.props.location.pathname == "/cinemas"
+                    ) {
+                      return;
+                    }
+
+                    history.replace({
+                      pathname: "/",
+                    });
+                  });
+                  Cookies.set(
+                    "locationInfo",
+                    JSON.stringify({
+                      city_id: res.adcode,
+                      city_name: cityInfo.name,
+                    }),
+                    {
+                      expires: 0.001,
+                    }
+                  );
+                },
               });
-              let cityInfo = await get_by_city({city_id:res.adcode});
-              console.log('cityInfo',cityInfo)
-              let obj = {
-                adcode: res.adcode,
-                city_name: cityInfo.name,
-                lng: result.position.lng,
-                lat: result.position.lat,
-              }
-              this.props.setLocationInfo(obj,() => {
-                this.props.locationInfo.locationReady && this.props.locationInfo.locationReady();
-              });
-              Cookies.set("locationInfo", JSON.stringify(obj), {
-                expires: 0.001,
-              });
-            },
-            onError: (err) => {
-              console.log("ip失败", err);
-            },
-          });
-        },
-        onError: (err) => {
-          console.log("定位失败", err);
-        },
-      });
-    }
-    console.log("src/App.js");
+            } else {
+              this.props.setLocationInfo(
+                {
+                  lng: result.position.lng,
+                  lat: result.position.lat,
+                },
+                () => {
+                  this.props.locationInfo.locationReady &&
+                    this.props.locationInfo.locationReady();
+                }
+              );
+            }
+          },
+          onError: (err) => {
+            console.log("ip失败", err);
+          },
+        });
+      },
+      onError: (err) => {
+        console.log("定位失败", err);
+      },
+    });
   }
 
   shouldComponentUpdate(props) {

@@ -1,8 +1,14 @@
-import React, { Component,forwardRef } from "react";
+import React, { Component, forwardRef } from "react";
 import "./index.scss";
 
 import { get_film_hot, get_film_soon_show } from "@/api/film";
-import { Tabs, InfiniteScroll, PullToRefresh, NavBar,JumboTabs } from "antd-mobile";
+import {
+  Tabs,
+  InfiniteScroll,
+  PullToRefresh,
+  NavBar,
+  JumboTabs,
+} from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import FilmListItem from "@/components/FilmListItem/index";
 import { DownOutline } from "antd-mobile-icons";
@@ -42,17 +48,12 @@ class Film extends Component {
       });
     });
 
-    console.log("locationReady---😂😂😂😂哈哈",PullToRefresh);
-
     this.props.locationInfo.locationReady = () => {
-      
       this.onRefresh();
     };
-
-    
   }
-  onRefresh(){
-    // console.log("locationReady---😂😂😂😂哈哈",PullToRefresh);
+  onRefresh() {
+    console.log("locationReady---film😂😂😂😂哈哈");
   }
   async onRefreshHotList() {
     let { fetchOptionsHot, hotList } = this.state;
@@ -140,7 +141,7 @@ class Film extends Component {
         //   console.log('ref')
         // }}
         onRefresh={async () => {
-          await this.onRefreshHotList()
+          await this.onRefreshHotList();
         }}
       >
         {hotList.map((item, index) => {
@@ -208,7 +209,7 @@ class Film extends Component {
     return (
       <PullToRefresh
         onRefresh={async () => {
-          await this.onRefreshSoonShowList()
+          await this.onRefreshSoonShowList();
         }}
       >
         {soonShowList.map((item, index) => {
