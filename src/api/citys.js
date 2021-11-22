@@ -15,3 +15,18 @@ export function get_city_list(params) {
     });
   });
 }
+
+export function get_by_city(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.get(Api.GET_BY_CITY, params, "").then((res) => {
+      switch (res.error) {
+        case 0:
+          resolve(res.data);
+          break;
+        default:
+          reject(res.data);
+          break;
+      }
+    });
+  });
+}

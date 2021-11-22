@@ -200,7 +200,7 @@ class FileDetail extends Component {
           <RightOutline fontSize={15}/>
         </div>
         <Tabs defaultActiveKey='fruits'>
-          <Tabs.TabPane title='今天11月2日' key='fruits'>
+          <Tabs.Tab title='今天11月2日' key='fruits'>
             <CellItem 
             startTime={'12:21'} 
             endTime={'12:30'}
@@ -217,13 +217,13 @@ class FileDetail extends Component {
               })
             }}
             />
-          </Tabs.TabPane>
-          <Tabs.TabPane title='今天11月3日' key='vegatables'>
+          </Tabs.Tab>
+          <Tabs.Tab title='今天11月3日' key='vegatables'>
             今天11月3日
-          </Tabs.TabPane>
-          <Tabs.TabPane title='今天11月4日' key='animals1'>
+          </Tabs.Tab>
+          <Tabs.Tab title='今天11月4日' key='animals1'>
             今天11月4日
-          </Tabs.TabPane>
+          </Tabs.Tab>
         </Tabs>
         <MaskComponent onRef={(child)=>{
           this.child = child;

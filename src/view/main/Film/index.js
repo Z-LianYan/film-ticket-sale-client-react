@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React, { Component,forwardRef } from "react";
 import "./index.scss";
 
 import { get_film_hot, get_film_soon_show } from "@/api/film";
-import { Tabs, InfiniteScroll, PullToRefresh, NavBar } from "antd-mobile";
+import { Tabs, InfiniteScroll, PullToRefresh, NavBar,JumboTabs } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import FilmListItem from "@/components/FilmListItem/index";
 import { DownOutline } from "antd-mobile-icons";
@@ -10,7 +10,7 @@ import CustomSwiper from "@/components/CustomSwiper/index";
 import dayjs from "dayjs";
 // import tools from "@/utils/tools";
 
-class Home extends Component {
+class Film extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -41,65 +41,75 @@ class Home extends Component {
         floatTabs: scrollTop >= 200 ? true : false,
       });
     });
-    console.log("src/view/main/Film/index.js");
+
+    console.log("locationReady---😂😂😂😂哈哈",PullToRefresh);
 
     this.props.locationInfo.locationReady = () => {
-      console.log("locationReady---");
+      
+      this.onRefresh();
     };
 
-    // tools.geolocation({
-    //   onComplete: (result) => {
-    //     console.log("完成定位", result);
-    //     this.props.locationInfo.lng = result.position.lng;
-    //     this.props.locationInfo.lat = result.position.lat;
-    //     console.log("this.props", this.props);
-    //   },
-    //   onError: (err) => {
-    //     console.log("定位失败", err);
-    //   },
-    // });
-    // tools.getLocalCity({
-    //   onComplete: (result) => {
-    //     console.log("code--getLocalCity--😄", result);
-    //     this.props.locationInfo.city_name = result.city;
-    //   },
-    //   onError: (err) => {
-    //     console.log("ip失败", err);
-    //   },
-    // });
+    
   }
-  // async getHotList() {
-  //   let { fetchOptionsHot, hotList } = this.state;
-  //   let res = await get_film_hot(fetchOptionsHot);
-  //   console.log("正在热映", res);
-  //   this.setState({
-  //     hotList: fetchOptionsHot.page === 1 ? res.rows : hotList.concat(res.rows),
-  //   });
-  //   if (this.state.hotList.length >= res.count) {
-  //     this.setState({
-  //       isHotHasMore: false,
-  //     });
-  //   }
-  // }
-  // async getSoonShowList() {
-  //   let { fetchOptionsSoonShow, soonShowList } = this.state;
-  //   return new Promise((resolve, reject) => {
-  //     get_film_soon_show(fetchOptionsSoonShow).then((res) => {
-  //       this.setState({
-  //         soonShowList:
-  //           fetchOptionsSoonShow.page === 1
-  //             ? res.rows
-  //             : soonShowList.concat(res.rows),
-  //       });
-  //       if (this.state.soonShowList.length >= res.count) {
-  //         this.setState({
-  //           isSoonHasMore: false,
-  //         });
-  //       }
-  //       resolve();
-  //     });
-  //   });
-  // }
+  onRefresh(){
+    // console.log("locationReady---😂😂😂😂哈哈",PullToRefresh);
+  }
+  async onRefreshHotList() {
+    let { fetchOptionsHot, hotList } = this.state;
+    fetchOptionsHot.page = 1;
+    this.setState(
+      {
+        fetchOptionsHot,
+      },
+      async () => {
+        let result = await get_film_hot(fetchOptionsHot);
+        this.setState(
+          {
+            hotList: result.rows,
+          },
+          () => {
+            if (this.state.hotList.length >= result.count) {
+              this.setState({
+                isHotHasMore: false,
+              });
+            } else {
+              this.setState({
+                isHotHasMore: true,
+              });
+            }
+          }
+        );
+      }
+    );
+  }
+  async onRefreshSoonShowList() {
+    let { fetchOptionsSoonShow, soonShowList } = this.state;
+    fetchOptionsSoonShow.page = 1;
+    this.setState(
+      {
+        fetchOptionsSoonShow,
+      },
+      async () => {
+        let result = await get_film_soon_show(fetchOptionsSoonShow);
+        this.setState(
+          {
+            soonShowList: result.rows,
+          },
+          () => {
+            if (this.state.soonShowList.length >= result.count) {
+              this.setState({
+                isSoonHasMore: false,
+              });
+            } else {
+              this.setState({
+                isSoonHasMore: true,
+              });
+            }
+          }
+        );
+      }
+    );
+  }
 
   handleWeek(day) {
     switch (day) {
@@ -126,32 +136,11 @@ class Home extends Component {
     let { hotList, fetchOptionsHot, isHotHasMore } = this.state;
     return (
       <PullToRefresh
+        // ref={()=>{
+        //   console.log('ref')
+        // }}
         onRefresh={async () => {
-          fetchOptionsHot.page = 1;
-          this.setState(
-            {
-              fetchOptionsHot,
-            },
-            async () => {
-              let result = await get_film_hot(fetchOptionsHot);
-              this.setState(
-                {
-                  hotList: result.rows,
-                },
-                () => {
-                  if (this.state.hotList.length >= result.count) {
-                    this.setState({
-                      isHotHasMore: false,
-                    });
-                  } else {
-                    this.setState({
-                      isHotHasMore: true,
-                    });
-                  }
-                }
-              );
-            }
-          );
+          await this.onRefreshHotList()
         }}
       >
         {hotList.map((item, index) => {
@@ -219,31 +208,7 @@ class Home extends Component {
     return (
       <PullToRefresh
         onRefresh={async () => {
-          fetchOptionsSoonShow.page = 1;
-          this.setState(
-            {
-              fetchOptionsSoonShow,
-            },
-            async () => {
-              let result = await get_film_soon_show(fetchOptionsSoonShow);
-              this.setState(
-                {
-                  soonShowList: result.rows,
-                },
-                () => {
-                  if (this.state.soonShowList.length >= result.count) {
-                    this.setState({
-                      isSoonHasMore: false,
-                    });
-                  } else {
-                    this.setState({
-                      isSoonHasMore: true,
-                    });
-                  }
-                }
-              );
-            }
-          );
+          await this.onRefreshSoonShowList()
         }}
       >
         {soonShowList.map((item, index) => {
@@ -387,8 +352,8 @@ class Home extends Component {
               );
             }}
           >
-            <Tabs.TabPane title="正在热映" key="hot" />
-            <Tabs.TabPane title="即将上映" key="soon" />
+            <Tabs.Tab title="正在热映" key="hot" />
+            <Tabs.Tab title="即将上映" key="soon" />
           </Tabs>
         </div>
 
@@ -406,4 +371,4 @@ class Home extends Component {
   };
 }
 
-export default GroupCommons(Home);
+export default GroupCommons(Film);

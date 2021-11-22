@@ -78,9 +78,9 @@ class Cinema extends Component {
                 console.log("onChange", val);
               }}
             >
-              <Tabs.TabPane title="今天11月2日" key="fruits" />
-              <Tabs.TabPane title="明天11月3日" key="vegetables" />
-              <Tabs.TabPane title="后天11月4日" key="animals" />
+              <Tabs.Tab title="今天11月2日" key="fruits" />
+              <Tabs.Tab title="明天11月3日" key="vegetables" />
+              <Tabs.Tab title="后天11月4日" key="animals" />
             </Tabs>
           ) : null}
 

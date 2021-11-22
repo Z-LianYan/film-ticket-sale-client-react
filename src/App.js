@@ -13,12 +13,13 @@ import { GroupCommons } from "@/modules/group";
 import Cookies from "js-cookie";
 import tools from "@/utils/tools";
 import { Toast } from "antd-mobile";
+import { get_by_city } from "@/api/citys";
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      //			hasFooter:true
+      //hasFooter:true
     };
   }
   //判断是否显示AppFooter组件:方法1
@@ -80,25 +81,27 @@ class App extends Component {
         onComplete: (result) => {
           console.log("完成定位", result);
           tools.getLocalCity({
-            onComplete: (res) => {
+            onComplete: async (res) => {
               console.log("code--getLocalCity--😄", res);
               Toast.show({
                 icon: "loading",
                 duration: 2000,
                 content: "您当前所在城市是广州，是否切换到广州？",
               });
-              this.props.setLocationInfo(
-                {
-                  adcode: res.adcode,
-                  city_name: res.city,
-                  lng: result.position.lng,
-                  lat: result.position.lat,
-                },
-                () => {
-                  this.props.locationInfo.locationReady &&
-                    this.props.locationInfo.locationReady();
-                }
-              );
+              let cityInfo = await get_by_city({city_id:res.adcode});
+              console.log('cityInfo',cityInfo)
+              let obj = {
+                adcode: res.adcode,
+                city_name: cityInfo.name,
+                lng: result.position.lng,
+                lat: result.position.lat,
+              }
+              this.props.setLocationInfo(obj,() => {
+                this.props.locationInfo.locationReady && this.props.locationInfo.locationReady();
+              });
+              Cookies.set("locationInfo", JSON.stringify(obj), {
+                expires: 0.001,
+              });
             },
             onError: (err) => {
               console.log("ip失败", err);

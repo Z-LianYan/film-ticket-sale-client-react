@@ -9,7 +9,10 @@ const reducer = (previousState = state, action) => {
       break;
     case SET_LOCATION_INFO:
       console.log("action.locationInfo", action.locationInfo);
-      new_state.locationInfo = action.locationInfo;
+      new_state.locationInfo = {
+        ...new_state.locationInfo,
+        ...action.locationInfo
+      };
       break;
 
     default:

@@ -5,3 +5,5 @@ export const GET_FILM_SOONSHOW = "/api/film/soonShow";
 export const GET_CITY_LIST = "/api/city/list";
 
 export const GET_BANNER = "/api/film/banner";
+
+export const GET_BY_CITY = "/api/city/getByCity";
