@@ -27,10 +27,12 @@ class Film extends Component {
       fetchOptionsHot: {
         page: 0,
         limit: 6,
+        city_id:''
       },
       fetchOptionsSoonShow: {
         page: 0,
         limit: 6,
+        city_id:''
       },
       isHotHasMore: true,
       isSoonHasMore: true,
@@ -53,7 +55,19 @@ class Film extends Component {
     };
   }
   onRefresh() {
-    console.log("locationReady---film😂😂😂😂哈哈");
+    let { fetchOptionsHot, fetchOptionsSoonShow } = this.state;
+    let { locationInfo } = this.props;
+    fetchOptionsHot.city_id = locationInfo.city_id;
+    fetchOptionsSoonShow.city_id = locationInfo.city_id;
+    this.setState({
+      fetchOptionsHot:fetchOptionsHot,
+      fetchOptionsSoonShow:fetchOptionsSoonShow,
+      isSoonHasMore: false,//防止快速点击切换tabs 获取 即将上映列表 死循环
+    })
+    this.onRefreshHotList();
+    this.onRefreshSoonShowList();
+    console.log("locationReady---film😂😂😂😂哈哈",this.props.locationInfo);
+
   }
   async onRefreshHotList() {
     let { fetchOptionsHot, hotList } = this.state;
@@ -179,10 +193,7 @@ class Film extends Component {
             this.setState({ fetchOptionsHot });
             let result = await get_film_hot(fetchOptionsHot);
             this.setState({
-              hotList:
-                fetchOptionsHot.page === 1
-                  ? result.rows
-                  : hotList.concat(result.rows),
+              hotList: fetchOptionsHot.page === 1? result.rows : hotList.concat(result.rows),
             });
             if (this.state.hotList.length >= result.count) {
               this.setState({
@@ -247,7 +258,7 @@ class Film extends Component {
           );
         })}
         <InfiniteScroll
-          threshold="100"
+          threshold="200"
           loadMore={async () => {
             fetchOptionsSoonShow.page += 1;
             this.setState({ fetchOptionsSoonShow });

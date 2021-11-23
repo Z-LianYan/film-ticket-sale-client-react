@@ -67,11 +67,22 @@ class App extends Component {
   }
 
   componentDidMount() {
+    this.handlerLocation();
+  }
+  handlerLocation(){
     let { history, locationInfo } = this.props;
-    console.log("0000-000");
     let _cookies = Cookies.get("locationInfo");
-    let _cookiesInfo = _cookies ? JSON.parse(_cookies) : {};
-    this.props.setLocationInfo({ ..._cookiesInfo });
+    let _cookiesInfo = null
+    if(_cookies){
+      _cookiesInfo = JSON.parse(_cookies);
+      console.log('cookies有值',_cookiesInfo);
+      this.props.setLocationInfo({ 
+        isInLocation:true,
+        ..._cookiesInfo 
+      });
+    }else{
+      this.props.setLocationInfo({ isInLocation:true });
+    }
     tools.geolocation({
       //定位
       onComplete: (result) => {
@@ -79,24 +90,39 @@ class App extends Component {
         tools.getLocalCity({
           //获取城市ip（adcode）
           onComplete: async (res) => {
-            if (
-              !_cookiesInfo.city_id ||
-              (_cookiesInfo.city_id && _cookiesInfo.city_id != res.adcode)
-            ) {
+            let cityInfo = await get_by_city({ city_id: res.adcode });
+            this.props.setLocationInfo({
+              isInLocation:false,//结束城市列表页的定位中的状态
+              realLocation:{
+                city_id:res.adcode,
+                city_name:cityInfo.name,
+                lng:result.position.lng,
+                lat:result.position.lat
+              },
+            })
+            if ( this.props.locationInfo.city_id != res.adcode) {
               Dialog.confirm({
                 title: `定位显示在 ${res.city}`,
-                content: `是否切换 ${res.city}`,
-                confirmText: `切换 ${res.city}`,
+                content: `是否切换到 ${res.city}？`,
+                confirmText: `切换到 ${res.city}`,
                 cancelText: "关闭",
                 onConfirm: async () => {
-                  console.log("1234--执行了");
-                  let cityInfo = await get_by_city({ city_id: 440103 });
                   let obj = {
                     city_id: res.adcode,
                     city_name: cityInfo.name,
                     lng: result.position.lng,
                     lat: result.position.lat,
                   };
+                  Cookies.set(
+                    "locationInfo",
+                    JSON.stringify({
+                      city_id: res.adcode,
+                      city_name: cityInfo.name,
+                    }),
+                    {
+                      expires: 1,
+                    }
+                  );
                   this.props.setLocationInfo(obj, () => {
                     this.props.locationInfo.locationReady &&
                       this.props.locationInfo.locationReady();
@@ -111,23 +137,20 @@ class App extends Component {
                       pathname: "/",
                     });
                   });
-                  Cookies.set(
-                    "locationInfo",
-                    JSON.stringify({
-                      city_id: res.adcode,
-                      city_name: cityInfo.name,
-                    }),
-                    {
-                      expires: 0.001,
-                    }
-                  );
+                  
                 },
+                onCancel:()=>{
+                  this.props.setLocationInfo({
+                    isInLocation:false,//结束城市列表页的定位中的状态
+                  });
+                }
               });
             } else {
               this.props.setLocationInfo(
                 {
                   lng: result.position.lng,
                   lat: result.position.lat,
+                  isInLocation:false,//结束城市列表页的定位中的状态
                 },
                 () => {
                   this.props.locationInfo.locationReady &&
@@ -138,11 +161,13 @@ class App extends Component {
           },
           onError: (err) => {
             console.log("ip失败", err);
+            this.props.setLocationInfo({ isInLocation:false });
           },
         });
       },
       onError: (err) => {
         console.log("定位失败", err);
+        this.props.setLocationInfo({ isInLocation:false });
       },
     });
   }

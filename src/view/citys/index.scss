@@ -18,7 +18,7 @@
       display: flex;
       flex-flow: row wrap;
       .item-tag{
-        width: 0.9rem;
+        min-width: 0.9rem;
         height: 0.30rem;
         line-height: 0.30rem;
         background-color: #ededed;
@@ -27,6 +27,7 @@
         font-size: 0.14rem;
         margin: 0 0.075rem;
         margin-bottom: 0.15rem;
+        padding: 0 0.1rem;
       }
     }
     
