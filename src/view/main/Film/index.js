@@ -15,6 +15,7 @@ import { DownOutline } from "antd-mobile-icons";
 import CustomSwiper from "@/components/CustomSwiper/index";
 import dayjs from "dayjs";
 // import tools from "@/utils/tools";
+import Cookies from "js-cookie";
 
 class Film extends Component {
   constructor(props) {
@@ -27,18 +28,29 @@ class Film extends Component {
       fetchOptionsHot: {
         page: 0,
         limit: 6,
-        city_id:''
+        city_id: "",
       },
       fetchOptionsSoonShow: {
         page: 0,
         limit: 6,
-        city_id:''
+        city_id: "",
       },
       isHotHasMore: true,
       isSoonHasMore: true,
       scrollTopHot: 0,
       scrollTopSoon: 0,
     };
+    // let _cookies = Cookies.get("locationInfo");
+    // let _cookiesInfo = null;
+    // if (_cookies) {
+    //   _cookiesInfo = JSON.parse(_cookies);
+    // }
+    // this.state.fetchOptionsHot.city_id = _cookiesInfo
+    //   ? _cookiesInfo.city_id
+    //   : props.city_id;
+    // this.state.fetchOptionsSoonShow.city_id = _cookiesInfo
+    //   ? _cookiesInfo.city_id
+    //   : props.city_id;
   }
 
   async componentDidMount() {
@@ -55,19 +67,12 @@ class Film extends Component {
     };
   }
   onRefresh() {
-    let { fetchOptionsHot, fetchOptionsSoonShow } = this.state;
-    let { locationInfo } = this.props;
-    fetchOptionsHot.city_id = locationInfo.city_id;
-    fetchOptionsSoonShow.city_id = locationInfo.city_id;
     this.setState({
-      fetchOptionsHot:fetchOptionsHot,
-      fetchOptionsSoonShow:fetchOptionsSoonShow,
-      isSoonHasMore: false,//防止快速点击切换tabs 获取 即将上映列表 死循环
-    })
+      isSoonHasMore: false, //防止快速点击切换tabs 获取 即将上映列表 死循环
+    });
     this.onRefreshHotList();
     this.onRefreshSoonShowList();
-    console.log("locationReady---film😂😂😂😂哈哈",this.props.locationInfo);
-
+    // console.log("locationReady---film😂😂😂😂哈哈", this.props.locationInfo);
   }
   async onRefreshHotList() {
     let { fetchOptionsHot, hotList } = this.state;
@@ -77,7 +82,10 @@ class Film extends Component {
         fetchOptionsHot,
       },
       async () => {
-        let result = await get_film_hot(fetchOptionsHot);
+        let result = await get_film_hot({
+          ...fetchOptionsHot,
+          city_id: this.props.locationInfo.city_id,
+        });
         this.setState(
           {
             hotList: result.rows,
@@ -105,7 +113,10 @@ class Film extends Component {
         fetchOptionsSoonShow,
       },
       async () => {
-        let result = await get_film_soon_show(fetchOptionsSoonShow);
+        let result = await get_film_soon_show({
+          ...fetchOptionsSoonShow,
+          city_id: this.props.locationInfo.city_id,
+        });
         this.setState(
           {
             soonShowList: result.rows,
@@ -155,6 +166,7 @@ class Film extends Component {
         //   console.log('ref')
         // }}
         onRefresh={async () => {
+          console.log("有哦嘛", this.props.locationInfo.city_id);
           await this.onRefreshHotList();
         }}
       >
@@ -191,9 +203,15 @@ class Film extends Component {
           loadMore={async () => {
             fetchOptionsHot.page += 1;
             this.setState({ fetchOptionsHot });
-            let result = await get_film_hot(fetchOptionsHot);
+            let result = await get_film_hot({
+              ...fetchOptionsHot,
+              city_id: this.props.locationInfo.city_id,
+            });
             this.setState({
-              hotList: fetchOptionsHot.page === 1? result.rows : hotList.concat(result.rows),
+              hotList:
+                fetchOptionsHot.page === 1
+                  ? result.rows
+                  : hotList.concat(result.rows),
             });
             if (this.state.hotList.length >= result.count) {
               this.setState({
@@ -262,7 +280,10 @@ class Film extends Component {
           loadMore={async () => {
             fetchOptionsSoonShow.page += 1;
             this.setState({ fetchOptionsSoonShow });
-            let result = await get_film_soon_show(fetchOptionsSoonShow);
+            let result = await get_film_soon_show({
+              ...fetchOptionsSoonShow,
+              city_id: this.props.locationInfo.city_id,
+            });
             this.setState(
               {
                 soonShowList:

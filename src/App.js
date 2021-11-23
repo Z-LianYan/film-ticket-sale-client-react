@@ -69,19 +69,19 @@ class App extends Component {
   componentDidMount() {
     this.handlerLocation();
   }
-  handlerLocation(){
+  handlerLocation() {
     let { history, locationInfo } = this.props;
     let _cookies = Cookies.get("locationInfo");
-    let _cookiesInfo = null
-    if(_cookies){
+    let _cookiesInfo = null;
+    if (_cookies) {
       _cookiesInfo = JSON.parse(_cookies);
-      console.log('cookies有值',_cookiesInfo);
-      this.props.setLocationInfo({ 
-        isInLocation:true,
-        ..._cookiesInfo 
+      console.log("cookies有值", _cookiesInfo);
+      this.props.setLocationInfo({
+        isInLocation: true,
+        ..._cookiesInfo,
       });
-    }else{
-      this.props.setLocationInfo({ isInLocation:true });
+    } else {
+      this.props.setLocationInfo({ isInLocation: true });
     }
     tools.geolocation({
       //定位
@@ -92,15 +92,15 @@ class App extends Component {
           onComplete: async (res) => {
             let cityInfo = await get_by_city({ city_id: res.adcode });
             this.props.setLocationInfo({
-              isInLocation:false,//结束城市列表页的定位中的状态
-              realLocation:{
-                city_id:res.adcode,
-                city_name:cityInfo.name,
-                lng:result.position.lng,
-                lat:result.position.lat
+              isInLocation: false, //结束城市列表页的定位中的状态
+              realLocation: {
+                city_id: res.adcode,
+                city_name: cityInfo.name,
+                lng: result.position.lng,
+                lat: result.position.lat,
               },
-            })
-            if ( this.props.locationInfo.city_id != res.adcode) {
+            });
+            if (this.props.locationInfo.city_id != res.adcode) {
               Dialog.confirm({
                 title: `定位显示在 ${res.city}`,
                 content: `是否切换到 ${res.city}？`,
@@ -137,20 +137,27 @@ class App extends Component {
                       pathname: "/",
                     });
                   });
-                  
                 },
-                onCancel:()=>{
-                  this.props.setLocationInfo({
-                    isInLocation:false,//结束城市列表页的定位中的状态
-                  });
-                }
+                onCancel: () => {
+                  this.props.setLocationInfo(
+                    {
+                      // lng: result.position.lng,
+                      // lat: result.position.lat,
+                      isInLocation: false, //结束城市列表页的定位中的状态
+                    },
+                    () => {
+                      // this.props.locationInfo.locationReady &&
+                      //   this.props.locationInfo.locationReady();
+                    }
+                  );
+                },
               });
             } else {
               this.props.setLocationInfo(
                 {
                   lng: result.position.lng,
                   lat: result.position.lat,
-                  isInLocation:false,//结束城市列表页的定位中的状态
+                  isInLocation: false, //结束城市列表页的定位中的状态
                 },
                 () => {
                   this.props.locationInfo.locationReady &&
@@ -161,19 +168,19 @@ class App extends Component {
           },
           onError: (err) => {
             console.log("ip失败", err);
-            this.props.setLocationInfo({ isInLocation:false });
+            this.props.setLocationInfo({ isInLocation: false });
           },
         });
       },
       onError: (err) => {
         console.log("定位失败", err);
-        this.props.setLocationInfo({ isInLocation:false });
+        this.props.setLocationInfo({ isInLocation: false });
       },
     });
   }
 
   shouldComponentUpdate(props) {
-    console.log("shouldComponentUpdate");
+    // console.log("shouldComponentUpdate");
     return true;
   }
 }
