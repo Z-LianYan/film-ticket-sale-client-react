@@ -3,17 +3,17 @@ import "./index.scss";
 import CinemaListItem from "@/components/CinemaListItem/index";
 import { SearchOutline, DownOutline, LeftOutline } from "antd-mobile-icons";
 import {
-  Button,
   InfiniteScroll,
   PullToRefresh,
   NavBar,
   Dropdown,
-  Toast,
   Grid,
   Tabs,
 } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import { get_cinema_list } from "@/api/cinema";
+import { get_city_district_list } from "@/api/citys";
+import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
 
 class Cinema extends Component {
   constructor(props) {
@@ -23,14 +23,17 @@ class Cinema extends Component {
         page: 0,
         limit: 8,
         city_id: "",
-        lat:'',
-        lng:'',
+        district_id: "",
+        lat: "",
+        lng: "",
       },
-      list:[],
-      isHasMore:true,
+      list: [],
+      isHasMore: true,
+      city_district_list: [],
     };
   }
   async componentDidMount() {
+    this.getDistrictList();
     this.props.locationInfo.locationReady = () => {
       console.log("locationReady---cinema");
       this.onRefresh();
@@ -41,6 +44,7 @@ class Cinema extends Component {
       isHasMore: false, //防止执行 this.props.locationInfo.locationReady方法时 死循环
     });
     this.onRefreshList();
+    this.getDistrictList();
   }
   async onRefreshList() {
     let { fetchOptions, hotList } = this.state;
@@ -53,8 +57,8 @@ class Cinema extends Component {
         let result = await get_cinema_list({
           ...fetchOptions,
           city_id: this.props.locationInfo.city_id,
-          lat:this.props.locationInfo.lat,
-          lng:this.props.locationInfo.lng
+          lat: this.props.locationInfo.lat,
+          lng: this.props.locationInfo.lng,
         });
         this.setState(
           {
@@ -75,9 +79,25 @@ class Cinema extends Component {
       }
     );
   }
+  async getDistrictList() {
+    let { city_id } = this.props.locationInfo;
+    let result = await get_city_district_list({ city_id: city_id });
+    console.log("result---", result);
+    result.rows.unshift({
+      first_letter: null,
+      id: "",
+      is_hot: null,
+      module_id: "",
+      name: "全部",
+      pinyin: "quanbu",
+    });
+    this.setState({
+      city_district_list: result.rows,
+    });
+  }
   render() {
     let { location, history, locationInfo } = this.props;
-    let { list,fetchOptions,isHasMore } = this.state;
+    let { list, fetchOptions, isHasMore, city_district_list } = this.state;
     // console.log("location---", location);
     return (
       <div className="app-cinema-page">
@@ -151,21 +171,35 @@ class Cinema extends Component {
                   "--gap-vertical": "0.15rem",
                 }}
               >
-                <Grid.Item>
-                  <div className="area-wrapper active">番禺区</div>
-                </Grid.Item>
-                <Grid.Item>
-                  <div className="area-wrapper">番禺区</div>
-                </Grid.Item>
-                <Grid.Item>
-                  <div className="area-wrapper">番禺区</div>
-                </Grid.Item>
-                <Grid.Item>
-                  <div className="area-wrapper">番禺区</div>
-                </Grid.Item>
-                <Grid.Item>
-                  <div className="area-wrapper">番禺区</div>
-                </Grid.Item>
+                {city_district_list.map((item, index) => {
+                  return (
+                    <Grid.Item
+                      key={index}
+                      onClick={() => {
+                        console.log("1234");
+                        let { fetchOptions } = this.state;
+                        fetchOptions.district_id = item.id;
+                        this.setState({
+                          fetchOptions: fetchOptions,
+                          isHasMore: false,
+                        });
+                        this.onRefreshList();
+                      }}
+                    >
+                      <div
+                        className={[
+                          `area-wrapper ${
+                            this.state.fetchOptions.district_id == item.id
+                              ? "active"
+                              : ""
+                          }`,
+                        ]}
+                      >
+                        {item.name}
+                      </div>
+                    </Grid.Item>
+                  );
+                })}
               </Grid>
             </Dropdown.Item>
             <Dropdown.Item
@@ -194,10 +228,9 @@ class Cinema extends Component {
             await this.onRefreshList();
           }}
         >
-          
-          {
-            list.map((item,index)=>{
-              return <CinemaListItem
+          {list.map((item, index) => {
+            return (
+              <CinemaListItem
                 key={index}
                 title={item.name}
                 value={item.low_price}
@@ -211,25 +244,24 @@ class Cinema extends Component {
                   });
                 }}
               />
-            })
-          }
-          
-          
-
-          
-
+            );
+          })}
           <InfiniteScroll
-            threshold="100"
+            threshold="50"
             loadMore={async () => {
               fetchOptions.page += 1;
               this.setState({ fetchOptions });
               let result = await get_cinema_list({
                 ...fetchOptions,
-                lat:this.props.locationInfo.lat,
-                lng:this.props.locationInfo.lng
+                city_id: this.props.locationInfo.city_id,
+                lat: this.props.locationInfo.lat,
+                lng: this.props.locationInfo.lng,
               });
               this.setState({
-                list:fetchOptions.page === 1? result.rows:list.concat(result.rows),
+                list:
+                  fetchOptions.page === 1
+                    ? result.rows
+                    : list.concat(result.rows),
               });
               if (this.state.list.length >= result.count) {
                 this.setState({
@@ -238,10 +270,14 @@ class Cinema extends Component {
               }
             }}
             hasMore={isHasMore}
-          />
+          >
+            <InfiniteScrollContent
+              noContent={!isHasMore && !this.state.list.length}
+              hasMore={isHasMore}
+            />
+          </InfiniteScroll>
           <div style={{ height: "1rem" }}></div>
         </PullToRefresh>
-        
       </div>
     );
   }

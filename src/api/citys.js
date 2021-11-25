@@ -30,3 +30,18 @@ export function get_by_city(params) {
     });
   });
 }
+
+export function get_city_district_list(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.get(Api.GET_CITY_DISTRICT_LIST, params, "").then((res) => {
+      switch (res.error) {
+        case 0:
+          resolve(res.data);
+          break;
+        default:
+          reject(res.data);
+          break;
+      }
+    });
+  });
+}

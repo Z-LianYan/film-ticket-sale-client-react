@@ -16,6 +16,7 @@ import CustomSwiper from "@/components/CustomSwiper/index";
 import dayjs from "dayjs";
 // import tools from "@/utils/tools";
 import Cookies from "js-cookie";
+import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
 
 class Film extends Component {
   constructor(props) {
@@ -220,7 +221,13 @@ class Film extends Component {
             }
           }}
           hasMore={isHotHasMore}
-        />
+        >
+          <InfiniteScrollContent
+            text="暂无影片放映哦"
+            noContent={!isHotHasMore && !this.state.hotList.length}
+            hasMore={isHotHasMore}
+          />
+        </InfiniteScroll>
       </PullToRefresh>
     );
   }
@@ -301,7 +308,13 @@ class Film extends Component {
             );
           }}
           hasMore={isSoonHasMore}
-        />
+        >
+          <InfiniteScrollContent
+            text="暂无即将上映的影片哦"
+            noContent={!isSoonHasMore && !this.state.soonShowList.length}
+            hasMore={isSoonHasMore}
+          />
+        </InfiniteScroll>
       </PullToRefresh>
     );
   }

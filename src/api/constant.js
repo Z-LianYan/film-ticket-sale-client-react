@@ -8,3 +8,4 @@ export const GET_BANNER = "/film/banner";
 
 export const GET_BY_CITY = "/city/getByCity";
 export const GET_CINEMA_LIST = "/cinema/list";
+export const GET_CITY_DISTRICT_LIST = "/city/getCityDistrictList";
