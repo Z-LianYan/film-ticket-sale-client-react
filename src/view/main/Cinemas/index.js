@@ -13,19 +13,71 @@ import {
   Tabs,
 } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
+import { get_cinema_list } from "@/api/cinema";
 
 class Cinema extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      fetchOptions: {
+        page: 0,
+        limit: 8,
+        city_id: "",
+        lat:'',
+        lng:'',
+      },
+      list:[],
+      isHasMore:true,
+    };
   }
   async componentDidMount() {
     this.props.locationInfo.locationReady = () => {
       console.log("locationReady---cinema");
+      this.onRefresh();
     };
+  }
+  onRefresh() {
+    this.setState({
+      isHasMore: false, //防止执行 this.props.locationInfo.locationReady方法时 死循环
+    });
+    this.onRefreshList();
+  }
+  async onRefreshList() {
+    let { fetchOptions, hotList } = this.state;
+    fetchOptions.page = 1;
+    this.setState(
+      {
+        fetchOptions,
+      },
+      async () => {
+        let result = await get_cinema_list({
+          ...fetchOptions,
+          city_id: this.props.locationInfo.city_id,
+          lat:this.props.locationInfo.lat,
+          lng:this.props.locationInfo.lng
+        });
+        this.setState(
+          {
+            list: result.rows,
+          },
+          () => {
+            if (this.state.list.length >= result.count) {
+              this.setState({
+                isHasMore: false,
+              });
+            } else {
+              this.setState({
+                isHasMore: true,
+              });
+            }
+          }
+        );
+      }
+    );
   }
   render() {
     let { location, history, locationInfo } = this.props;
+    let { list,fetchOptions,isHasMore } = this.state;
     // console.log("location---", location);
     return (
       <div className="app-cinema-page">
@@ -139,69 +191,57 @@ class Cinema extends Component {
         ></div>
         <PullToRefresh
           onRefresh={async () => {
-            // fetchOptionsHot.page = 1;
-            // this.setState(
-            //   {
-            //     fetchOptionsHot,
-            //   },
-            //   async () => {
-            //     let result = await get_film_hot(fetchOptionsHot);
-            //     this.setState(
-            //       {
-            //         hotList: result.rows,
-            //       },
-            //       () => {
-            //         this.setState({
-            //           isHotHasMore: true,
-            //         });
-            //       }
-            //     );
-            //     if (this.state.hotList.length >= result.count) {
-            //       this.setState({
-            //         isHotHasMore: false,
-            //       });
-            //     }
-            //   }
-            // );
+            await this.onRefreshList();
           }}
         >
-          <CinemaListItem
-            title="广州中影火山湖电影城东山口店"
-            value="40"
-            label="广州市越秀区农林下路4-6号锦轩现代城四楼飞机失联飞机老师"
-            distance="距离未知"
-            onClick={() => {
-              console.log("12345");
-              this.props.history.push({
-                pathname: "/cinema/detail",
-                state: { cinema_id: 123 },
-              });
-            }}
-          />
+          
+          {
+            list.map((item,index)=>{
+              return <CinemaListItem
+                key={index}
+                title={item.name}
+                value={item.low_price}
+                label={item.address}
+                distance={item.distance}
+                onClick={() => {
+                  console.log("12345");
+                  this.props.history.push({
+                    pathname: "/cinema/detail",
+                    state: { cinema_id: item.id },
+                  });
+                }}
+              />
+            })
+          }
+          
+          
 
-          <div style={{ height: "1rem" }}></div>
+          
 
           <InfiniteScroll
             threshold="100"
             loadMore={async () => {
-              // fetchOptionsHot.page += 1;
-              // this.setState({ fetchOptionsHot });
-              // let result = await get_film_hot(fetchOptionsHot);
-              // this.setState({
-              //   hotList:
-              //     fetchOptionsHot.page === 1
-              //       ? result.rows
-              //       : hotList.concat(result.rows),
-              // });
-              // if (this.state.hotList.length >= result.count) {
-              //   this.setState({
-              //     isHotHasMore: false,
-              //   });
-              // }
+              fetchOptions.page += 1;
+              this.setState({ fetchOptions });
+              let result = await get_cinema_list({
+                ...fetchOptions,
+                lat:this.props.locationInfo.lat,
+                lng:this.props.locationInfo.lng
+              });
+              this.setState({
+                list:fetchOptions.page === 1? result.rows:list.concat(result.rows),
+              });
+              if (this.state.list.length >= result.count) {
+                this.setState({
+                  isHasMore: false,
+                });
+              }
             }}
-            hasMore={false}
+            hasMore={isHasMore}
           />
+          <div style={{ height: "1rem" }}></div>
         </PullToRefresh>
+        
       </div>
     );
   }
