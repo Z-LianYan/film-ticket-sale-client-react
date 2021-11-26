@@ -14,6 +14,7 @@ import { GroupCommons } from "@/modules/group";
 import { get_cinema_list } from "@/api/cinema";
 import { get_city_district_list } from "@/api/citys";
 import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
+import Cookies from "js-cookie";
 
 class Cinema extends Component {
   constructor(props) {
@@ -21,7 +22,7 @@ class Cinema extends Component {
     this.state = {
       fetchOptions: {
         page: 0,
-        limit: 8,
+        limit: 15,
         city_id: "",
         district_id: "",
         lat: "",
@@ -44,7 +45,7 @@ class Cinema extends Component {
       isHasMore: false, //防止执行 this.props.locationInfo.locationReady方法时 死循环
     });
     this.onRefreshList();
-    this.getDistrictList();
+    
   }
   async onRefreshList() {
     let { fetchOptions, hotList } = this.state;
@@ -81,7 +82,12 @@ class Cinema extends Component {
   }
   async getDistrictList() {
     let { city_id } = this.props.locationInfo;
-    let result = await get_city_district_list({ city_id: city_id });
+    let _cookies = Cookies.get("locationInfo");
+    let _cookiesInfo = null;
+    if (_cookies) {
+      _cookiesInfo = JSON.parse(_cookies);
+    }
+    let result = await get_city_district_list({ city_id: (_cookiesInfo && _cookiesInfo.city_id)?_cookiesInfo.city_id:city_id });
     console.log("result---", result);
     result.rows.unshift({
       first_letter: null,
@@ -94,6 +100,15 @@ class Cinema extends Component {
     this.setState({
       city_district_list: result.rows,
     });
+  }
+  onDistrictName(){
+    let { fetchOptions,city_district_list } = this.state;
+    if(!fetchOptions.district_id) return '全城'
+    return city_district_list.map(item=>{
+      if(item.id == fetchOptions.district_id){
+        return item.name
+      }
+    })
   }
   render() {
     let { location, history, locationInfo } = this.props;
@@ -159,7 +174,7 @@ class Cinema extends Component {
           <Dropdown>
             <Dropdown.Item
               key="all-city"
-              title="全城"
+              title={this.onDistrictName()}
               closeOnContentClick={true}
               closeOnMaskClick={true}
             >
@@ -272,6 +287,7 @@ class Cinema extends Component {
             hasMore={isHasMore}
           >
             <InfiniteScrollContent
+              text="此区域没有影院哦"
               noContent={!isHasMore && !this.state.list.length}
               hasMore={isHasMore}
             />

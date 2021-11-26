@@ -2,18 +2,20 @@ import React, { Component } from "react";
 import "./index.scss";
 import { DownOutline, UpOutline } from "antd-mobile-icons";
 import { List, Image, Mask, NavBar, ImageViewer,Button } from "antd-mobile";
+import { get_film_detail } from "@/api/film";
 class FileDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isVisibleMask: false,
       isShowNavBar: "",
+      detail:{}
     };
   }
   componentDidMount() {
-    let { history } = this.props;
-    let { location } = history;
-    console.log("props---", location.state);
+    // let { history } = this.props;
+    // let { location } = history;
+    // console.log("props---", location.state);
     window.addEventListener("scroll", (e) => {
       var scrollTop = window.scrollY;
       // console.log("scrollTop", scrollTop);
@@ -21,10 +23,24 @@ class FileDetail extends Component {
         isShowNavBar: scrollTop >= 20 ? true : false,
       });
     });
+    this.getFilmDetail();
+  }
+  async getFilmDetail(){
+    let { history } = this.props;
+    let { film_id } = history.location.state;
+    console.log('film_id',film_id)
+    let result = await get_film_detail({
+      film_id:film_id
+    });
+    this.setState({
+      detail:result
+    })
+    // this.detail = result;
+    console.log('电影详情',result);
   }
 
   renderStill() {
-    let { isVisibleMask } = this.state;
+    let { isVisibleMask,detail } = this.state;
     return (
       <Mask visible={isVisibleMask}>
         <div className="still-mask-container">
@@ -33,26 +49,27 @@ class FileDetail extends Component {
               this.setState({ isVisibleMask: false });
             }}
           >
-            剧照（5）
+            剧照（{detail.stage_photo && detail.stage_photo.length}）
           </NavBar>
           <div className="img-box">
-            <Image
-              className="image"
-              src="https://pic.maizuo.com/usr/2021/043db08398739865623b677ef36405d9.jpg?x-oss-process=image/quality,Q_70"
-              width="33.33333%"
-              height="1.24rem"
-              fit="fill"
-              onClick={() => {
-                ImageViewer.Multi.show({
-                  defaultIndex: 0,
-                  images: [
-                    "https://pic.maizuo.com/usr/2021/043db08398739865623b677ef36405d9.jpg?x-oss-process=image/quality,Q_70",
-                    "https://pic.maizuo.com/usr/2021/72f41e416a15292c48aef36099c721ee.jpg?x-oss-process=image/quality,Q_70",
-                    "https://pic.maizuo.com/usr/2021/a3eff794a8361970ecafc8f5a27baf89.jpg?x-oss-process=image/quality,Q_70",
-                  ],
-                });
-              }}
-            />
+            {
+              detail && detail.stage_photo?detail.stage_photo.map((item,index)=>{
+                return <Image
+                  key={index}
+                  className="image"
+                  src={item}
+                  width="33.33333%"
+                  height="1.24rem"
+                  fit="fill"
+                  onClick={() => {
+                    ImageViewer.Multi.show({
+                      defaultIndex: 0,
+                      images: detail.stage_photo,
+                    });
+                  }}
+                />
+              }):null
+            }
           </div>
         </div>
       </Mask>
@@ -60,7 +77,7 @@ class FileDetail extends Component {
   }
 
   render() {
-    let { isShowNavBar } = this.state;
+    let { isShowNavBar,detail } = this.state;
     let { history } = this.props;
     return (
       <div className="film-detail-container">
@@ -80,19 +97,19 @@ class FileDetail extends Component {
             history.goBack();
           }}
         >
-          {isShowNavBar ? "电影名称" : ""}
+          {isShowNavBar ? detail.film_name : ""}
         </NavBar>
         <div className="header-wrapper">
           <img
             className="image"
-            src="https://pic.maizuo.com/usr/movie/723b7f946f894c63146d6159d57f92a1.jpg@1024h_768w_50Q?x-oss-process=image/quality,Q_70"
+            src={detail.poster_img}
             alt=""
           ></img>
         </div>
         <div className="film-detail">
           <div className="film-name-score">
             <h3 className="film-name">
-              演员 <span className="show-type">2D</span>
+              {detail.film_name} <span className="show-type">{detail.play_type}D</span>
             </h3>
             <span className="score-val">
               7.6<span className="score">分</span>
@@ -100,7 +117,7 @@ class FileDetail extends Component {
           </div>
 
           <div className="record-film">纪录片</div>
-          <div className="show-date"> 2021-10-30上映 </div>
+          <div className="show-date"> {detail.show_time}上映 </div>
           <div className="area-and-play-time">中国大陆 | 93分钟</div>
           <div className="abstract">
             <input id="label-input" className="label-input" type="checkbox" />
@@ -109,7 +126,7 @@ class FileDetail extends Component {
                 <DownOutline className="down-out-line" />
                 <UpOutline className="up-out-line" />
               </label>
-              《演员》是中国首部探讨演员德艺的电影。影片以“新中国二十二大电影明星”为切入点，历时五年、以多重形式进行记录，讲述于蓝、秦怡、田华、于洋、王晓棠、金迪、谢芳、祝希娟、牛犇等老一辈艺术家的从影经历和艺术成就，挖掘他们对于演员这一职业超过半个世纪的感悟和思考，并以他们塑造的经典电影形象向百年中国电影致敬。
+              {detail.abstract}
             </p>
           </div>
         </div>
@@ -122,23 +139,27 @@ class FileDetail extends Component {
           演员
         </List.Item>
         <div className="actors-wrapper">
-          <div className="actor-item">
-            <Image
-              src="https://pic.maizuo.com/usr/movie/34f3660dc618fc7d420b9997a8f6c377.jpg?x-oss-process=image/quality,Q_70"
-              width="100%"
-              height="1rem"
-              fit="fill"
-            />
-            <p className="name">名字</p>
-            <p className="role">角色繁花似锦看到哈开会</p>
-          </div>
+          {
+            detail&&detail.actors?detail.actors.map((item,index)=>{
+              return <div key={index} className="actor-item">
+                <Image
+                  src={item.avatar}
+                  width="100%"
+                  height="1rem"
+                  fit="fill"
+                />
+                <p className="name">{item.name}</p>
+                <p className="role">{item.role}</p>
+              </div>
+            }):null
+          }
         </div>
         <div className="separator"></div>
         <List.Item
           style={{
             "--adm-border-color": "transparent",
           }}
-          extra={"全部(5)"}
+          extra={`全部(${detail.stage_photo?detail.stage_photo.length:0})`}
           onClick={() => {
             this.setState({ isVisibleMask: true });
             console.log("剧照");
@@ -147,7 +168,7 @@ class FileDetail extends Component {
           剧照
         </List.Item>
         <div className="actors-wrapper">
-          <div className="actor-item still">
+          {/* <div className="actor-item still">
             <img
               className="image"
               src="https://pic.maizuo.com/usr/movie/34f3660dc618fc7d420b9997a8f6c377.jpg?x-oss-process=image/quality,Q_70"
@@ -160,7 +181,18 @@ class FileDetail extends Component {
               src="https://pic.maizuo.com/usr/2021/043db08398739865623b677ef36405d9.jpg?x-oss-process=image/quality,Q_70"
               alt=""
             />
-          </div>
+          </div> */}
+          {
+            detail.stage_photo?detail.stage_photo.map((item,index)=>{
+              return <div key={index} className="actor-item still">
+                <img
+                  className="image"
+                  src={item}
+                  alt=""
+                />
+              </div>
+            }):null
+          }
         </div>
         {this.renderStill()}
         <Button 
