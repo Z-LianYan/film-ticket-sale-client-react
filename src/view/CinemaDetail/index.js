@@ -1,29 +1,35 @@
 import React, { Component } from "react";
 import "./index.scss";
 import { List, Image, Mask, NavBar, Tag, Tabs } from "antd-mobile";
-import { RightOutline,CloseOutline } from "antd-mobile-icons";
+import { RightOutline, CloseOutline } from "antd-mobile-icons";
+import { get_cinema_detail } from "@/api/cinema";
 
 import Swiper from "swiper";
 import "swiper/css/swiper.min.css";
-function CellItem(obj={}){
-  return <div className="cell-item-container">
-    <div className="left-box">
-      <div className="left-item">
-        <p>{obj.startTime}</p>
-        <p className="bottom">{obj.endTime}散场</p>
+function CellItem(obj = {}) {
+  return (
+    <div className="cell-item-container">
+      <div className="left-box">
+        <div className="left-item">
+          <p>{obj.startTime}</p>
+          <p className="bottom">{obj.endTime}散场</p>
+        </div>
+        <div className="left-item">
+          <p>{obj.showType}</p>
+          <p className="bottom">{obj.hall}</p>
+        </div>
       </div>
-      <div className="left-item">
-        <p>{obj.showType}</p>
-        <p className="bottom">{obj.hall}</p>
+      <div className="right-box">
+        <div className="price">{obj.price}</div>
+        <div
+          className="btn"
+          onClick={() => {
+            obj.onClick && obj.onClick();
+          }}
+        ></div>
       </div>
     </div>
-    <div className="right-box">
-      <div className="price">{obj.price}</div>
-      <div className="btn" onClick={()=>{
-        obj.onClick && obj.onClick();
-      }}></div>
-    </div>
-  </div>
+  );
 }
 class FileDetail extends Component {
   constructor(props) {
@@ -53,6 +59,7 @@ class FileDetail extends Component {
         },
       ],
       activeBgImg: "",
+      cinemaDetail: {},
     };
   }
   componentDidMount() {
@@ -68,6 +75,21 @@ class FileDetail extends Component {
     this.setState({
       activeBgImg: this.state.filmList[0].film_img_url,
     });
+    this.newSwiper();
+    this.getCinemaDetail();
+  }
+  async getCinemaDetail() {
+    let { history } = this.props;
+    let { location } = history;
+    let result = await get_cinema_detail({
+      cinema_id: location.state.cinema_id,
+    });
+    console.log("result---", result);
+    this.setState({
+      cinemaDetail: result.rows,
+    });
+  }
+  newSwiper() {
     let _this = this;
     new Swiper(".swiper-container", {
       direction: "horizontal", // 垂直切换选项
@@ -83,7 +105,7 @@ class FileDetail extends Component {
           });
         },
         click: function (e) {
-          this.slideTo(this.clickedIndex,500)
+          this.slideTo(this.clickedIndex, 500);
         },
       },
     });
@@ -116,7 +138,7 @@ class FileDetail extends Component {
     );
   }
   render() {
-    let { isShowNavBarTitle } = this.state;
+    let { isShowNavBarTitle, cinemaDetail } = this.state;
     let { history } = this.props;
     return (
       <div className="cinema-detail-container">
@@ -128,10 +150,13 @@ class FileDetail extends Component {
         >
           {isShowNavBarTitle ? "电影" : ""}
         </NavBar>
-        <div className="header-title">广州中影火山湖电影城东山口店</div>
-        <div className="services-wrapper" onClick={()=>{
-          this.child.open();
-        }}>
+        <div className="header-title">{cinemaDetail.name}</div>
+        <div
+          className="services-wrapper"
+          onClick={() => {
+            this.child.open();
+          }}
+        >
           <div className="tags">
             <Tag className="tag-item" color="#ffb232" fill="outline">
               Primary
@@ -156,11 +181,9 @@ class FileDetail extends Component {
               fill="#cccccc"
             ></path>
           </svg>
-          <div className="addr">
-            广州市海珠区海珠叠景路157—170号（双号）合生广场L5-01/17号单位
-          </div>
+          <div className="addr">{cinemaDetail.address}</div>
           <div className="phone-icon">
-            <a href="tel:10086">
+            <a href={"tel:" + cinemaDetail.phone}>
               <svg
                 t="1635787436480"
                 className="icon"
@@ -178,56 +201,64 @@ class FileDetail extends Component {
                 ></path>
               </svg>
             </a>
-            
           </div>
         </div>
 
         {this.renderSwiper()}
-        <div className="film-info-wrapper" onClick={()=>{
-          history.push({
-            pathname: "/film/detail",
-            state: { film_id: 123 },
-          })
-        }}>
+        <div
+          className="film-info-wrapper"
+          onClick={() => {
+            history.push({
+              pathname: "/film/detail",
+              state: { film_id: 123 },
+            });
+          }}
+        >
           <div className="info">
             <p className="film-name-score">
-              入殓师<span className="score">7.6<span className="unit">分</span></span>
+              入殓师
+              <span className="score">
+                7.6<span className="unit">分</span>
+              </span>
             </p>
-            <p className='plot'>
-              剧情 | 131分钟 | 离开圣诞节快到了沙发极乐世界弗兰克的世界里睡大觉啦卡拉胶
+            <p className="plot">
+              剧情 | 131分钟 |
+              离开圣诞节快到了沙发极乐世界弗兰克的世界里睡大觉啦卡拉胶
             </p>
           </div>
-          <RightOutline fontSize={15}/>
+          <RightOutline fontSize={15} />
         </div>
-        <Tabs defaultActiveKey='fruits'>
-          <Tabs.Tab title='今天11月2日' key='fruits'>
-            <CellItem 
-            startTime={'12:21'} 
-            endTime={'12:30'}
-            showType={'原版3D'}
-            hall={'12号厅'}
-            price={40}
-            onClick={()=>{
-              console.log('goupiao')
-              history.push({
-                pathname:'/buy/ticket',
-                state:{
-                  film_id:1234
-                }
-              })
-            }}
+        <Tabs defaultActiveKey="fruits">
+          <Tabs.Tab title="今天11月2日" key="fruits">
+            <CellItem
+              startTime={"12:21"}
+              endTime={"12:30"}
+              showType={"原版3D"}
+              hall={"12号厅"}
+              price={40}
+              onClick={() => {
+                console.log("goupiao");
+                history.push({
+                  pathname: "/buy/ticket",
+                  state: {
+                    film_id: 1234,
+                  },
+                });
+              }}
             />
           </Tabs.Tab>
-          <Tabs.Tab title='今天11月3日' key='vegatables'>
+          <Tabs.Tab title="今天11月3日" key="vegatables">
             今天11月3日
           </Tabs.Tab>
-          <Tabs.Tab title='今天11月4日' key='animals1'>
+          <Tabs.Tab title="今天11月4日" key="animals1">
             今天11月4日
           </Tabs.Tab>
         </Tabs>
-        <MaskComponent onRef={(child)=>{
-          this.child = child;
-        }}/>
+        <MaskComponent
+          onRef={(child) => {
+            this.child = child;
+          }}
+        />
       </div>
     );
   }
@@ -240,57 +271,55 @@ class FileDetail extends Component {
 
 export default FileDetail;
 
-
 class MaskComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isVisibleMask:false
+      isVisibleMask: false,
     };
   }
-  static defaultProps = {
-  };
+  static defaultProps = {};
   render() {
-    let { isVisibleMask } = this.state
-    return <Mask visible={isVisibleMask}>
-      <div className="cinema-detail-service-mask-container">
-        <div className="header-wrapper">
-          <NavBar
-            backArrow={<CloseOutline />}
-            onBack={() => {
-              this.setState({ isVisibleMask: false });
-            }}
-          />
-          <div className="header-title">广州中影火山湖电影城东山口店</div>
+    let { isVisibleMask } = this.state;
+    return (
+      <Mask visible={isVisibleMask}>
+        <div className="cinema-detail-service-mask-container">
+          <div className="header-wrapper">
+            <NavBar
+              backArrow={<CloseOutline />}
+              onBack={() => {
+                this.setState({ isVisibleMask: false });
+              }}
+            />
+            <div className="header-title">广州中影火山湖电影城东山口店</div>
+          </div>
+          <div className="service-default-contianer">
+            <ul className="service-default-box">
+              <li className="service-item">
+                <Tag className="tag" color="#ffb232" fill="outline">
+                  Primary
+                </Tag>
+                <div className="service-content">
+                  该影院支持卖座卡前台兑换，您可前往影院服务台，出示卖座卡卡号和密码，凭卡换取纸质电影票，入场观影。
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div className="service-default-contianer">
-          <ul className="service-default-box">
-            <li className="service-item">
-              <Tag className="tag" color="#ffb232"  fill="outline">
-                Primary
-              </Tag>
-              <div className="service-content">
-                该影院支持卖座卡前台兑换，您可前往影院服务台，出示卖座卡卡号和密码，凭卡换取纸质电影票，入场观影。
-              </div>
-            </li>
-            
-          </ul>
-        </div>
-        
-      </div>
-    </Mask>;
+      </Mask>
+    );
   }
-  componentDidMount(){
+  componentDidMount() {
     this.props.onRef(this);
   }
-  open(){
+  open() {
     this.setState({
-      isVisibleMask:true
-    })
+      isVisibleMask: true,
+    });
   }
-  close(){
+  close() {
     this.setState({
-      isVisibleMask:false
-    })
+      isVisibleMask: false,
+    });
   }
 }

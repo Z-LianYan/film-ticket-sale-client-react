@@ -5,7 +5,7 @@ import { CloseOutline } from "antd-mobile-icons";
 import { get_city_list } from "@/api/citys";
 import logo from "@/static/svg/city.svg";
 import { GroupCommons } from "@/modules/group";
-// import axios from "axios"; 
+// import axios from "axios";
 import tools from "@/utils/tools";
 import Cookies from "js-cookie";
 
@@ -72,7 +72,6 @@ class Citys extends Component {
         hotList: hotList,
       });
     });
-
   }
   searchChange(val) {
     let { letter } = this.state;
@@ -92,26 +91,30 @@ class Citys extends Component {
     });
   }
 
-  setLocationInfo(item,type) {
+  setLocationInfo(item, type) {
     let { history } = this.props;
-    if(!item.name) return;
+    if (!item.name) return;
     Cookies.set(
       "locationInfo",
       JSON.stringify({
         city_id: item.id,
         city_name: item.name,
-      }),{
+      }),
+      {
         expires: 1,
       }
     );
-    this.props.setLocationInfo({ 
-      city_id: item.id,
-      city_name: item.name,
-      lng:item.lng?item.lng:'',
-      lat:item.lat?item.lat:''
-    },()=>{
-      history.goBack();
-    });
+    this.props.setLocationInfo(
+      {
+        city_id: item.id,
+        city_name: item.name,
+        lng: this.props.locationInfo.realLocation.lng,
+        lat: this.props.locationInfo.realLocation.lat,
+      },
+      () => {
+        history.goBack();
+      }
+    );
   }
 
   render() {
@@ -185,16 +188,29 @@ class Citys extends Component {
                 <div className="row">
                   <p className="title">GPS定位您所在城市</p>
                   <div className="item-tag-wrapper">
-                    <div className="item-tag">{locationInfo.isInLocation? "定位中...":<span onClick={async () => {
-                      if(!locationInfo.realLocation) return;
-                      this.setLocationInfo({
-                        id:locationInfo.realLocation.city_id,
-                        name:locationInfo.realLocation.city_name,
-                        lng:locationInfo.realLocation.lng,
-                        lat:locationInfo.realLocation.lat,
-                      },'location');
-                    }}>{(locationInfo.realLocation && locationInfo.realLocation.city_name)?locationInfo.realLocation.city_name:'定位失败'}</span>
-                    }</div>
+                    <div className="item-tag">
+                      {locationInfo.isInLocation ? (
+                        "定位中..."
+                      ) : (
+                        <span
+                          onClick={async () => {
+                            if (!locationInfo.realLocation) return;
+                            this.setLocationInfo(
+                              {
+                                id: locationInfo.realLocation.city_id,
+                                name: locationInfo.realLocation.city_name,
+                              },
+                              "location"
+                            );
+                          }}
+                        >
+                          {locationInfo.realLocation &&
+                          locationInfo.realLocation.city_name
+                            ? locationInfo.realLocation.city_name
+                            : "定位失败"}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="row">

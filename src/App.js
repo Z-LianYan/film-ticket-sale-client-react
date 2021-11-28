@@ -141,13 +141,12 @@ class App extends Component {
                 onCancel: () => {
                   this.props.setLocationInfo(
                     {
-                      // lng: result.position.lng,
-                      // lat: result.position.lat,
-                      isInLocation: false, //结束城市列表页的定位中的状态
+                      lng: result.position.lng,
+                      lat: result.position.lat,
                     },
                     () => {
-                      // this.props.locationInfo.locationReady &&
-                      //   this.props.locationInfo.locationReady();
+                      this.props.locationInfo.locationReady &&
+                        this.props.locationInfo.locationReady();
                     }
                   );
                 },
@@ -157,11 +156,12 @@ class App extends Component {
                 {
                   lng: result.position.lng,
                   lat: result.position.lat,
-                  isInLocation: false, //结束城市列表页的定位中的状态
                 },
                 () => {
-                  this.props.locationInfo.locationReady &&
-                    this.props.locationInfo.locationReady();
+                  if (this.props.location.pathname == "/cinemas") {
+                    this.props.locationInfo.locationReady &&
+                      this.props.locationInfo.locationReady();
+                  }
                 }
               );
             }
