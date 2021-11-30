@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import "./index.scss";
 import { List, Image, Mask, NavBar, Tag, Tabs } from "antd-mobile";
 import { RightOutline, CloseOutline } from "antd-mobile-icons";
-import { get_cinema_detail } from "@/api/cinema";
+import { get_cinema_detail, get_date_schedule } from "@/api/cinema";
 
 import Swiper from "swiper";
 import "swiper/css/swiper.min.css";
+import dayjs from "dayjs";
 function CellItem(obj = {}) {
   return (
     <div className="cell-item-container">
@@ -38,9 +39,10 @@ class FileDetail extends Component {
       isShowNavBarTitle: false,
       activeBgImg: "",
       cinemaDetail: {},
-      filmDetail:{},
-      filmList:[],
-      defaultActiveKey:''
+      filmDetail: {},
+      filmList: [],
+      scheduleList: [],
+      defaultActiveKey: 0,
     };
   }
   componentDidMount() {
@@ -56,7 +58,7 @@ class FileDetail extends Component {
     // this.setState({
     //   activeBgImg: this.state.filmList[0].film_img_url,
     // });
-    
+
     this.getCinemaDetail();
   }
   async getCinemaDetail() {
@@ -66,18 +68,41 @@ class FileDetail extends Component {
       cinema_id: location.state.cinema_id,
     });
     console.log("result---", result);
-    this.setState({
-      cinemaDetail: result,
-      filmDetail: result.filmList[0],
-      filmList:result.filmList,
-      activeBgImg:result.filmList.length && result.filmList[0].poster_img,
-      defaultActiveKey:'2022-01-28'
-    });
+    this.setState(
+      {
+        cinemaDetail: result,
+        filmDetail: result.filmList[0],
+        filmList: result.filmList,
+        activeBgImg: result.filmList.length && result.filmList[0].poster_img,
+      },
+      () => {
+        if (
+          this.state.filmDetail.show_date &&
+          this.state.filmDetail.show_date.length
+        ) {
+          this.getDateScheduleList(this.state.filmDetail.show_date[0]);
+        }
+      }
+    );
     this.newSwiper();
-    
+  }
+  async getDateScheduleList(date) {
+    let { cinemaDetail, filmDetail } = this.state;
+    this.setState({
+      scheduleList: [],
+    });
+    let result = await get_date_schedule({
+      cinema_id: cinemaDetail.id,
+      film_id: filmDetail.film_id,
+      date: date,
+    });
+    console.log("排片列表", result);
+    this.setState({
+      scheduleList: result.rows,
+    });
   }
   newSwiper() {
-    let { cinemaDetail } = this.state; 
+    let { cinemaDetail } = this.state;
     let _this = this;
     new Swiper(".swiper-container", {
       direction: "horizontal", // 垂直切换选项
@@ -88,10 +113,15 @@ class FileDetail extends Component {
       centeredSlides: true,
       on: {
         slideChangeTransitionStart: function (e) {
-          _this.setState({
-            activeBgImg: _this.state.filmList[this.activeIndex].poster_img,
-            filmDetail: _this.state.filmList[this.activeIndex]
-          });
+          _this.setState(
+            {
+              activeBgImg: _this.state.filmList[this.activeIndex].poster_img,
+              filmDetail: _this.state.filmList[this.activeIndex],
+            },
+            () => {
+              _this.getDateScheduleList(_this.state.filmDetail.show_date[0]);
+            }
+          );
         },
         click: function (e) {
           this.slideTo(this.clickedIndex, 500);
@@ -100,7 +130,7 @@ class FileDetail extends Component {
     });
   }
   renderSwiper() {
-    let { activeBgImg,cinemaDetail,filmList } = this.state;
+    let { activeBgImg, cinemaDetail, filmList } = this.state;
     return (
       <div className="wrapper-container">
         <div
@@ -111,15 +141,17 @@ class FileDetail extends Component {
         ></div>
         <div className="swiper-container">
           <div className="swiper-wrapper">
-            {filmList? filmList.map((item, index) => {
-              return (
-                <div className="swiper-slide" key={index}>
-                  <div className="img-wraper">
-                    <img src={item.poster_img} />
-                  </div>
-                </div>
-              );
-            }):null}
+            {filmList
+              ? filmList.map((item, index) => {
+                  return (
+                    <div className="swiper-slide" key={index}>
+                      <div className="img-wraper">
+                        <img src={item.poster_img} />
+                      </div>
+                    </div>
+                  );
+                })
+              : null}
           </div>
         </div>
         <div className="bottom-arrow"></div>
@@ -127,7 +159,13 @@ class FileDetail extends Component {
     );
   }
   render() {
-    let { isShowNavBarTitle, cinemaDetail, filmDetail,defaultActiveKey } = this.state;
+    let {
+      isShowNavBarTitle,
+      cinemaDetail,
+      filmDetail,
+      scheduleList,
+      defaultActiveKey,
+    } = this.state;
     let { history } = this.props;
     return (
       <div className="cinema-detail-container">
@@ -207,33 +245,44 @@ class FileDetail extends Component {
             <p className="film-name-score">
               {filmDetail && filmDetail.film_name}
               <span className="score">
-              {filmDetail && filmDetail.grade}<span className="unit">分</span>
+                {filmDetail && filmDetail.grade}
+                <span className="unit">分</span>
               </span>
             </p>
-            {
-              filmDetail && filmDetail.category_names?<p className="plot">
-              {filmDetail.category_names} | {filmDetail.runtime}分钟 |
-              {filmDetail.actors}
-              </p>:null
-            }
+            {filmDetail && filmDetail.category_names ? (
+              <p className="plot">
+                {filmDetail.category_names} | {filmDetail.runtime}分钟 |
+                {filmDetail.actors}
+              </p>
+            ) : null}
           </div>
           <RightOutline fontSize={15} />
         </div>
-        <Tabs defaultActiveKey={defaultActiveKey}>
-          {
-            filmDetail &&filmDetail.show_date && filmDetail.show_date.map((date,index)=>{
-              return <Tabs.Tab key={date} title={date} >
-              {defaultActiveKey}
-            </Tabs.Tab>
-            })
-          }
-          {/* <Tabs.Tab title="今天11月2日" key="fruits">
+        <Tabs
+          defaultActiveKey={defaultActiveKey}
+          onChange={(val) => {
+            console.log("val", val);
+            let { filmDetail } = this.state;
+            this.getDateScheduleList(filmDetail.show_date[val]);
+          }}
+        >
+          {filmDetail &&
+            filmDetail.show_date &&
+            filmDetail.show_date.map((date, index) => {
+              return <Tabs.Tab key={index} title={date}></Tabs.Tab>;
+            })}
+        </Tabs>
+        {scheduleList.map((item, index) => {
+          return (
             <CellItem
-              startTime={"12:21"}
-              endTime={"12:30"}
-              showType={"原版3D"}
-              hall={"12号厅"}
-              price={40}
+              key={index}
+              startTime={dayjs(item.start_runtime).format("HH:mm")}
+              endTime={dayjs(item.end_runtime).format("HH:mm")}
+              showType={item.language}
+              hall={item.hall_name}
+              price={
+                item.is_section == 1 ? item.sectionPrice[0].price : item.price
+              }
               onClick={() => {
                 console.log("goupiao");
                 history.push({
@@ -244,14 +293,8 @@ class FileDetail extends Component {
                 });
               }}
             />
-          </Tabs.Tab>
-          <Tabs.Tab title="今天11月3日" key="vegatables">
-            今天11月3日
-          </Tabs.Tab>
-          <Tabs.Tab title="今天11月4日" key="animals1">
-            今天11月4日
-          </Tabs.Tab> */}
-        </Tabs>
+          );
+        })}
         <MaskComponent
           onRef={(child) => {
             this.child = child;
@@ -310,6 +353,11 @@ class MaskComponent extends Component {
   componentDidMount() {
     this.props.onRef(this);
   }
+  componentWillUnmount = () => {
+    this.setState = (state, callback) => {
+      return;
+    };
+  };
   open() {
     this.setState({
       isVisibleMask: true,

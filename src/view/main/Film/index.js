@@ -200,8 +200,9 @@ class Film extends Component {
         })}
 
         <InfiniteScroll
-          threshold="100"
+          threshold="500"
           loadMore={async () => {
+            console.log("热更新");
             fetchOptionsHot.page += 1;
             this.setState({ fetchOptionsHot });
             let result = await get_film_hot({

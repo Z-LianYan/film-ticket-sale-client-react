@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./index.scss";
-import { IndexBar, List, Search, NavBar } from "antd-mobile";
+import { IndexBar, List, SearchBar, NavBar } from "antd-mobile";
 import { CloseOutline } from "antd-mobile-icons";
 import { get_city_list } from "@/api/citys";
 import logo from "@/static/svg/city.svg";
@@ -132,7 +132,7 @@ class Citys extends Component {
         >
           当前城市 - {locationInfo.city_name}
         </NavBar>
-        <Search
+        <SearchBar
           value={searchValue}
           placeholder="输入城市名称或拼音"
           showCancelButton
