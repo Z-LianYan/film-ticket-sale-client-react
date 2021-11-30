@@ -36,30 +36,11 @@ class FileDetail extends Component {
     super(props);
     this.state = {
       isShowNavBarTitle: false,
-      filmList: [
-        {
-          film_img_url:
-            "https://pic.maizuo.com/usr/movie/aa9819a58933cb4797cd0ac568210aff.jpg",
-        },
-        {
-          film_img_url:
-            "https://pic.maizuo.com/usr/movie/fe5f0ef6c6cbf8d87f206cbd9835bd96.jpg",
-        },
-        {
-          film_img_url:
-            "https://pic.maizuo.com/usr/movie/602506deba12aa489ffc30184dca1b08.jpg",
-        },
-        {
-          film_img_url:
-            "https://pic.maizuo.com/usr/movie/94b567a409dbdbab6aaddfe7ee0853dc.jpg",
-        },
-        {
-          film_img_url:
-            "https://pic.maizuo.com/usr/movie/f01d1a5b47e2700f337ea738fb1d2754.jpg",
-        },
-      ],
       activeBgImg: "",
       cinemaDetail: {},
+      filmDetail:{},
+      filmList:[],
+      defaultActiveKey:''
     };
   }
   componentDidMount() {
@@ -72,10 +53,10 @@ class FileDetail extends Component {
         isShowNavBarTitle: scrollTop >= 100 ? true : false,
       });
     });
-    this.setState({
-      activeBgImg: this.state.filmList[0].film_img_url,
-    });
-    this.newSwiper();
+    // this.setState({
+    //   activeBgImg: this.state.filmList[0].film_img_url,
+    // });
+    
     this.getCinemaDetail();
   }
   async getCinemaDetail() {
@@ -86,10 +67,17 @@ class FileDetail extends Component {
     });
     console.log("result---", result);
     this.setState({
-      cinemaDetail: result.rows,
+      cinemaDetail: result,
+      filmDetail: result.filmList[0],
+      filmList:result.filmList,
+      activeBgImg:result.filmList.length && result.filmList[0].poster_img,
+      defaultActiveKey:'2022-01-28'
     });
+    this.newSwiper();
+    
   }
   newSwiper() {
+    let { cinemaDetail } = this.state; 
     let _this = this;
     new Swiper(".swiper-container", {
       direction: "horizontal", // 垂直切换选项
@@ -101,7 +89,8 @@ class FileDetail extends Component {
       on: {
         slideChangeTransitionStart: function (e) {
           _this.setState({
-            activeBgImg: _this.state.filmList[this.activeIndex].film_img_url,
+            activeBgImg: _this.state.filmList[this.activeIndex].poster_img,
+            filmDetail: _this.state.filmList[this.activeIndex]
           });
         },
         click: function (e) {
@@ -111,7 +100,7 @@ class FileDetail extends Component {
     });
   }
   renderSwiper() {
-    let { filmList, activeBgImg } = this.state;
+    let { activeBgImg,cinemaDetail,filmList } = this.state;
     return (
       <div className="wrapper-container">
         <div
@@ -122,15 +111,15 @@ class FileDetail extends Component {
         ></div>
         <div className="swiper-container">
           <div className="swiper-wrapper">
-            {filmList.map((item, index) => {
+            {filmList? filmList.map((item, index) => {
               return (
                 <div className="swiper-slide" key={index}>
                   <div className="img-wraper">
-                    <img src={item.film_img_url} />
+                    <img src={item.poster_img} />
                   </div>
                 </div>
               );
-            })}
+            }):null}
           </div>
         </div>
         <div className="bottom-arrow"></div>
@@ -138,7 +127,7 @@ class FileDetail extends Component {
     );
   }
   render() {
-    let { isShowNavBarTitle, cinemaDetail } = this.state;
+    let { isShowNavBarTitle, cinemaDetail, filmDetail,defaultActiveKey } = this.state;
     let { history } = this.props;
     return (
       <div className="cinema-detail-container">
@@ -148,7 +137,7 @@ class FileDetail extends Component {
             history.goBack();
           }}
         >
-          {isShowNavBarTitle ? "电影" : ""}
+          {isShowNavBarTitle ? cinemaDetail.name : ""}
         </NavBar>
         <div className="header-title">{cinemaDetail.name}</div>
         <div
@@ -172,8 +161,8 @@ class FileDetail extends Component {
             version="1.1"
             xmlns="http://www.w3.org/2000/svg"
             p-id="2446"
-            width="30"
-            height="30"
+            width="25"
+            height="25"
           >
             <path
               d="M512 32c176.448 0 320 151.392 320 337.504 0 60.992-15.616 120.8-45.12 172.896l-247.552 435.936a26.432 26.432 0 0 1-22.688 13.664h-0.192a26.4 26.4 0 0 1-22.656-13.28L239.776 546.976A350.592 350.592 0 0 1 192 369.504C192 183.36 335.552 32 512 32z m219.808 478.272A288.192 288.192 0 0 0 768 370.112C768 219.168 653.12 96 512.096 96S256 219.168 256 370.112c0 50.976 13.536 100.736 38.464 143.872L515.968 896l215.84-385.728zM512 192c88.224 0 160 71.776 160 160 0 86.72-69.504 160-160 160-89.376 0-160-72.32-160-160 0-88.224 71.776-160 160-160z m0.064 256A95.936 95.936 0 0 0 608 352c0-52.768-43.104-96-95.936-96A96.384 96.384 0 0 0 416 352c0 52.896 43.008 96 96.064 96z"
@@ -210,26 +199,35 @@ class FileDetail extends Component {
           onClick={() => {
             history.push({
               pathname: "/film/detail",
-              state: { film_id: 123 },
+              state: { film_id: filmDetail.film_id },
             });
           }}
         >
           <div className="info">
             <p className="film-name-score">
-              入殓师
+              {filmDetail && filmDetail.film_name}
               <span className="score">
-                7.6<span className="unit">分</span>
+              {filmDetail && filmDetail.grade}<span className="unit">分</span>
               </span>
             </p>
-            <p className="plot">
-              剧情 | 131分钟 |
-              离开圣诞节快到了沙发极乐世界弗兰克的世界里睡大觉啦卡拉胶
-            </p>
+            {
+              filmDetail && filmDetail.category_names?<p className="plot">
+              {filmDetail.category_names} | {filmDetail.runtime}分钟 |
+              {filmDetail.actors}
+              </p>:null
+            }
           </div>
           <RightOutline fontSize={15} />
         </div>
-        <Tabs defaultActiveKey="fruits">
-          <Tabs.Tab title="今天11月2日" key="fruits">
+        <Tabs defaultActiveKey={defaultActiveKey}>
+          {
+            filmDetail &&filmDetail.show_date && filmDetail.show_date.map((date,index)=>{
+              return <Tabs.Tab key={date} title={date} >
+              {defaultActiveKey}
+            </Tabs.Tab>
+            })
+          }
+          {/* <Tabs.Tab title="今天11月2日" key="fruits">
             <CellItem
               startTime={"12:21"}
               endTime={"12:30"}
@@ -252,7 +250,7 @@ class FileDetail extends Component {
           </Tabs.Tab>
           <Tabs.Tab title="今天11月4日" key="animals1">
             今天11月4日
-          </Tabs.Tab>
+          </Tabs.Tab> */}
         </Tabs>
         <MaskComponent
           onRef={(child) => {
