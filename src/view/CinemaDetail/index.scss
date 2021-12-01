@@ -2,6 +2,15 @@
 @import "@/stylesheets/_base.scss";
 
 .cinema-detail-container {
+  .skeleton-box{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background-color: #fff;
+    z-index: 10;
+  }
   .header-title {
     height: 0.44rem;
     padding: 0 0.15rem;

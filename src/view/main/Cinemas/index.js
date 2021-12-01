@@ -287,7 +287,7 @@ class Cinema extends Component {
             hasMore={isHasMore}
           >
             <InfiniteScrollContent
-              text="此区域没有影院哦"
+              text="此区域没有排片的影院哦"
               noContent={!isHasMore && !this.state.list.length}
               hasMore={isHasMore}
             />

@@ -224,7 +224,7 @@ class Film extends Component {
           hasMore={isHotHasMore}
         >
           <InfiniteScrollContent
-            text="暂无影片放映哦"
+            text="当前区域暂无影片放映哦"
             noContent={!isHotHasMore && !this.state.hotList.length}
             hasMore={isHotHasMore}
           />

@@ -1,5 +1,6 @@
 import * as HttpUtils from "@/utils/request";
 import * as Api from "@/api/constant";
+import { Toast } from "antd-mobile";
 
 export function get_cinema_list(params) {
   return new Promise((resolve, reject) => {
@@ -9,29 +10,17 @@ export function get_cinema_list(params) {
           resolve(res.data);
           break;
         default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
           reject(res.data);
           break;
       }
     });
   });
 }
-export function get_date_schedule(params) {
-  return new Promise((resolve, reject) => {
-    HttpUtils.get(Api.GET_DATE_SCHEDULE, params, "努力加载中...").then(
-      (res) => {
-        switch (res.error) {
-          case 0:
-            resolve(res.data);
-            break;
-          default:
-            reject(res.data);
-            break;
-        }
-      }
-    );
-  });
-}
-
 export function get_cinema_detail(params) {
   return new Promise((resolve, reject) => {
     HttpUtils.get(Api.GET_CINEMA_DETAIL, params, "努力加载中...").then(
@@ -41,6 +30,32 @@ export function get_cinema_detail(params) {
             resolve(res.data);
             break;
           default:
+            Toast.show({
+              icon: "fail",
+              duration: 2000,
+              content: res.message,
+            });
+            reject(res.data);
+            break;
+        }
+      }
+    );
+  });
+}
+export function get_date_schedule(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.get(Api.GET_DATE_SCHEDULE, params, "").then(
+      (res) => {
+        switch (res.error) {
+          case 0:
+            resolve(res.data);
+            break;
+          default:
+            Toast.show({
+              icon: "fail",
+              duration: 2000,
+              content: res.message,
+            });
             reject(res.data);
             break;
         }

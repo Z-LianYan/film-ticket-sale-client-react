@@ -39,10 +39,13 @@ class FileDetail extends Component {
       isShowNavBarTitle: false,
       activeBgImg: "",
       cinemaDetail: {},
-      filmDetail: {},
+      filmDetail: {
+        show_date:[]
+      },
       filmList: [],
       scheduleList: [],
-      defaultActiveKey: 0,
+      activeKey: 0,
+      isSkeleton:true
     };
   }
   componentDidMount() {
@@ -74,10 +77,11 @@ class FileDetail extends Component {
         filmDetail: result.filmList[0],
         filmList: result.filmList,
         activeBgImg: result.filmList.length && result.filmList[0].poster_img,
+        isSkeleton:false
       },
       () => {
         if (
-          this.state.filmDetail.show_date &&
+          this.state.filmDetail && this.state.filmDetail.show_date &&
           this.state.filmDetail.show_date.length
         ) {
           this.getDateScheduleList(this.state.filmDetail.show_date[0]);
@@ -117,8 +121,10 @@ class FileDetail extends Component {
             {
               activeBgImg: _this.state.filmList[this.activeIndex].poster_img,
               filmDetail: _this.state.filmList[this.activeIndex],
+              activeKey:0
             },
             () => {
+              console.log('activeKey',_this.state.activeKey)
               _this.getDateScheduleList(_this.state.filmDetail.show_date[0]);
             }
           );
@@ -164,11 +170,13 @@ class FileDetail extends Component {
       cinemaDetail,
       filmDetail,
       scheduleList,
-      defaultActiveKey,
+      activeKey,
+      isSkeleton
     } = this.state;
     let { history } = this.props;
     return (
       <div className="cinema-detail-container">
+        {isSkeleton?<div className="skeleton-box"></div>:null}
         <NavBar
           backArrow={true}
           onBack={() => {
@@ -235,10 +243,12 @@ class FileDetail extends Component {
         <div
           className="film-info-wrapper"
           onClick={() => {
-            history.push({
-              pathname: "/film/detail",
-              state: { film_id: filmDetail.film_id },
-            });
+            if(filmDetail && filmDetail.film_id){
+              history.push({
+                pathname: "/film/detail",
+                state: { film_id: filmDetail.film_id },
+              });
+            }
           }}
         >
           <div className="info">
@@ -251,25 +261,30 @@ class FileDetail extends Component {
             </p>
             {filmDetail && filmDetail.category_names ? (
               <p className="plot">
-                {filmDetail.category_names} | {filmDetail.runtime}分钟 |
-                {filmDetail.actors}
+                {filmDetail.category_names} | {filmDetail.runtime}分钟 | {filmDetail.actors}
               </p>
             ) : null}
           </div>
           <RightOutline fontSize={15} />
         </div>
         <Tabs
-          defaultActiveKey={defaultActiveKey}
+          activeKey={Number(this.state.activeKey)}
           onChange={(val) => {
             console.log("val", val);
+            this.setState({
+              activeKey:val
+            })
             let { filmDetail } = this.state;
             this.getDateScheduleList(filmDetail.show_date[val]);
           }}
+          stretch={false}
         >
           {filmDetail &&
             filmDetail.show_date &&
             filmDetail.show_date.map((date, index) => {
-              return <Tabs.Tab key={index} title={date}></Tabs.Tab>;
+              return <Tabs.Tab key={index} title={date}>
+                {this.state.activeKey}
+              </Tabs.Tab>;
             })}
         </Tabs>
         {scheduleList.map((item, index) => {
