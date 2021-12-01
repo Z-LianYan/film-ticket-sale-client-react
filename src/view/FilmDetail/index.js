@@ -190,26 +190,29 @@ class FileDetail extends Component {
         </div>
 
         {this.renderStill()}
-        <Button
-          style={{
-            "--border-radius": 0,
-          }}
-          className="select-seat-buy-btn"
-          block
-          color="primary"
-          fill="solid"
-          size="large"
-          onClick={() => {
-            history.push({
-              pathname: "/film/cinema",
-              state: {
-                film_id: 234,
-              },
-            });
-          }}
-        >
-          选座购票
-        </Button>
+
+        {detail.hasSchedule ? (
+          <Button
+            style={{
+              "--border-radius": 0,
+            }}
+            className="select-seat-buy-btn"
+            block
+            color="primary"
+            fill="solid"
+            size="large"
+            onClick={() => {
+              history.push({
+                pathname: "/film/cinema",
+                state: {
+                  film_id: 234,
+                },
+              });
+            }}
+          >
+            选座购票
+          </Button>
+        ) : null}
       </div>
     );
   }
