@@ -26,6 +26,7 @@ class Cinema extends Component {
         limit: 15,
         city_id: "",
         district_id: "",
+        date: "",
         lat: "",
         lng: "",
       },
@@ -67,7 +68,9 @@ class Cinema extends Component {
     });
     console.log("date---", result);
     if (!result) return;
-    this.setState({ dateList: result.rows });
+    this.setState({
+      dateList: result.rows,
+    });
     this.onRefresh();
   }
   onRefresh() {
