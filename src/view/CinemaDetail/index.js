@@ -12,12 +12,12 @@ function CellItem(obj = {}) {
     <div className="cell-item-container">
       <div className="left-box">
         <div className="left-item">
-          <p>{obj.startTime}</p>
-          <p className="bottom">{obj.endTime}散场</p>
+          <div>{obj.startTime}</div>
+          <div className="bottom">{obj.endTime}散场</div>
         </div>
         <div className="left-item">
-          <p>{obj.showType}</p>
-          <p className="bottom">{obj.hall}</p>
+          <div>{obj.showType}</div>
+          <div className="bottom">{obj.hall}</div>
         </div>
       </div>
       <div className="right-box">
@@ -51,7 +51,7 @@ class FileDetail extends Component {
   componentDidMount() {
     let { history } = this.props;
     let { location } = history;
-    console.log("props---cinema", location.state);
+    // console.log("props---cinema", location.state);
     window.addEventListener("scroll", (e) => {
       var scrollTop = window.scrollY;
       this.setState({
@@ -70,7 +70,7 @@ class FileDetail extends Component {
     let result = await get_cinema_detail({
       cinema_id: location.state.cinema_id,
     });
-    console.log("result---", result);
+    // console.log("result---", result);
     this.setState(
       {
         cinemaDetail: result,
@@ -101,7 +101,7 @@ class FileDetail extends Component {
       film_id: filmDetail.film_id,
       date: date,
     });
-    console.log("排片列表", result);
+    // console.log("排片列表", result);
     this.setState({
       scheduleList: result.rows,
     });
@@ -125,7 +125,7 @@ class FileDetail extends Component {
               activeKey: 0,
             },
             () => {
-              console.log("activeKey", _this.state.activeKey);
+              // console.log("activeKey", _this.state.activeKey);
               _this.getDateScheduleList(_this.state.filmDetail.show_date[0]);
             }
           );
@@ -165,6 +165,32 @@ class FileDetail extends Component {
       </div>
     );
   }
+  handerDate(date){
+    console.log('date');
+    let cur_y = dayjs(date).format('YYYY');
+    let y = dayjs().format('YYYY');
+    return this.handleWeek(dayjs(date).day())+dayjs(date).format(cur_y==y?'MM月DD日':'YYYY年MM月DD日');
+  }
+  handleWeek(day) {
+    switch (day) {
+      case 0:
+        return "周日";
+      case 1:
+        return "周一";
+      case 2:
+        return "周二";
+      case 3:
+        return "周三";
+      case 4:
+        return "周四";
+      case 5:
+        return "周五";
+      case 6:
+        return "周六";
+      default:
+        return "";
+    }
+  }
   render() {
     let {
       isShowNavBarTitle,
@@ -190,13 +216,17 @@ class FileDetail extends Component {
         <div
           className="services-wrapper"
           onClick={() => {
-            this.child.open();
+            this.serviceChild.open(this.state.cinemaDetail.service,cinemaDetail.name);
           }}
         >
           <div className="tags">
-            <Tag className="tag-item" color="#ffb232" fill="outline">
-              Primary
-            </Tag>
+            {
+              cinemaDetail.service?cinemaDetail.service.map((item,index)=>{
+                return <Tag key={index} className="tag-item" color="#ffb232" fill="outline">
+                  {item.label}
+                </Tag>
+              }):null
+            }
           </div>
           <RightOutline color="#ffb232" />
         </div>
@@ -270,9 +300,9 @@ class FileDetail extends Component {
           <RightOutline fontSize={15} />
         </div>
         <Tabs
-          activeKey={Number(this.state.activeKey)}
+          activeKey={this.state.activeKey.toString()}
           onChange={(val) => {
-            console.log("val", val);
+            // console.log("val", val);
             this.setState({
               activeKey: val,
             });
@@ -280,13 +310,13 @@ class FileDetail extends Component {
             this.getDateScheduleList(filmDetail.show_date[val]);
           }}
           stretch={false}
+          activeLineMode="auto"
         >
           {filmDetail &&
             filmDetail.show_date &&
             filmDetail.show_date.map((date, index) => {
               return (
-                <Tabs.Tab key={index} title={date}>
-                  {this.state.activeKey}
+                <Tabs.Tab key={index} title={this.handerDate(date)}>
                 </Tabs.Tab>
               );
             })}
@@ -303,7 +333,7 @@ class FileDetail extends Component {
                 item.is_section == 1 ? item.sectionPrice[0].price : item.price
               }
               onClick={() => {
-                console.log("goupiao");
+                // console.log("goupiao");
                 history.push({
                   pathname: "/buy/ticket",
                   state: {
@@ -316,7 +346,7 @@ class FileDetail extends Component {
         })}
         <MaskComponent
           onRef={(child) => {
-            this.child = child;
+            this.serviceChild = child;
           }}
         />
       </div>
@@ -336,11 +366,13 @@ class MaskComponent extends Component {
     super(props);
     this.state = {
       isVisibleMask: false,
+      service:[],
+      cinema_name:''
     };
   }
   static defaultProps = {};
   render() {
-    let { isVisibleMask } = this.state;
+    let { isVisibleMask,service } = this.state;
     return (
       <Mask visible={isVisibleMask}>
         <div className="cinema-detail-service-mask-container">
@@ -351,18 +383,24 @@ class MaskComponent extends Component {
                 this.setState({ isVisibleMask: false });
               }}
             />
-            <div className="header-title">广州中影火山湖电影城东山口店</div>
+            <div className="header-title">{this.state.cinema_name}</div>
           </div>
           <div className="service-default-contianer">
             <ul className="service-default-box">
-              <li className="service-item">
-                <Tag className="tag" color="#ffb232" fill="outline">
-                  Primary
-                </Tag>
-                <div className="service-content">
-                  该影院支持卖座卡前台兑换，您可前往影院服务台，出示卖座卡卡号和密码，凭卡换取纸质电影票，入场观影。
-                </div>
-              </li>
+              {
+                service.map((item,index)=>{
+                  return <li key={index} className="service-item">
+                    <div className="tag-wrappr">
+                      <Tag className="tag" color="#ffb232" fill="outline">
+                        {item.label}
+                      </Tag>
+                    </div>
+                    <div className="service-content">
+                      {item.content}
+                    </div>
+                  </li>
+                })
+              }
             </ul>
           </div>
         </div>
@@ -377,8 +415,10 @@ class MaskComponent extends Component {
       return;
     };
   };
-  open() {
+  open(service,cinema_name) {
     this.setState({
+      service,
+      cinema_name,
       isVisibleMask: true,
     });
   }

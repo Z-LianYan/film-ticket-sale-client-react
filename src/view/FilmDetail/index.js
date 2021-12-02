@@ -10,6 +10,7 @@ class FileDetail extends Component {
       isVisibleMask: false,
       isShowNavBar: "",
       detail: {},
+      isSkeleton:true
     };
   }
   componentDidMount() {
@@ -34,6 +35,7 @@ class FileDetail extends Component {
     });
     this.setState({
       detail: result,
+      isSkeleton:false
     });
     // this.detail = result;
     console.log("电影详情", result);
@@ -79,10 +81,11 @@ class FileDetail extends Component {
   }
 
   render() {
-    let { isShowNavBar, detail } = this.state;
+    let { isShowNavBar, detail,isSkeleton } = this.state;
     let { history } = this.props;
     return (
       <div className="film-detail-container">
+        {isSkeleton ? <div className="skeleton-box"></div> : null}
         <NavBar
           style={{
             position: "fixed",

@@ -169,10 +169,14 @@
   .left-box{
     flex: 1;
     display: flex;
+    // align-items: center;
     .left-item{
       font-size: 0.15rem;
       color: #191a1b;
       margin-right: 0.3rem;
+      display: flex;
+      flex-flow: column;
+      justify-content: space-between;
       .bottom{
         font-size: 0.13rem;
         color: #797d82;
@@ -235,13 +239,19 @@
     .service-item{
       display: flex;
       margin-top: 0.2rem;
-      .tag{
-        height: 0.20rem;
-        line-height: 0.2rem;
-        margin-right: 0.1rem;
+      .tag-wrappr{
         margin-top: 0.03rem;
-        padding: 0.0rem 0.02rem;
+        min-width: 60px;
+        text-align: right;
+        .tag{
+          height: 0.20rem;
+          line-height: 0.2rem;
+          margin-right: 0.1rem;
+          
+          padding: 0.0rem 0.02rem;
+        }
       }
+      
       .service-content{
         // line-height: 0.18rem;
         color: #797d82;
