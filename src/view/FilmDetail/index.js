@@ -10,7 +10,7 @@ class FileDetail extends Component {
       isVisibleMask: false,
       isShowNavBar: "",
       detail: {},
-      isSkeleton:true
+      isSkeleton: true,
     };
   }
   componentDidMount() {
@@ -35,7 +35,7 @@ class FileDetail extends Component {
     });
     this.setState({
       detail: result,
-      isSkeleton:false
+      isSkeleton: false,
     });
     // this.detail = result;
     console.log("电影详情", result);
@@ -81,7 +81,7 @@ class FileDetail extends Component {
   }
 
   render() {
-    let { isShowNavBar, detail,isSkeleton } = this.state;
+    let { isShowNavBar, detail, isSkeleton } = this.state;
     let { history } = this.props;
     return (
       <div className="film-detail-container">
@@ -208,7 +208,7 @@ class FileDetail extends Component {
               history.push({
                 pathname: "/film/cinema",
                 state: {
-                  film_id: 234,
+                  film_id: detail.id,
                 },
               });
             }}

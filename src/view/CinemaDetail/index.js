@@ -165,11 +165,14 @@ class FileDetail extends Component {
       </div>
     );
   }
-  handerDate(date){
-    console.log('date');
-    let cur_y = dayjs(date).format('YYYY');
-    let y = dayjs().format('YYYY');
-    return this.handleWeek(dayjs(date).day())+dayjs(date).format(cur_y==y?'MM月DD日':'YYYY年MM月DD日');
+  handerDate(date) {
+    console.log("date");
+    let cur_y = dayjs(date).format("YYYY");
+    let y = dayjs().format("YYYY");
+    return (
+      this.handleWeek(dayjs(date).day()) +
+      dayjs(date).format(cur_y == y ? "MM月DD日" : "YYYY年MM月DD日")
+    );
   }
   handleWeek(day) {
     switch (day) {
@@ -213,23 +216,36 @@ class FileDetail extends Component {
           {isShowNavBarTitle ? cinemaDetail.name : ""}
         </NavBar>
         <div className="header-title">{cinemaDetail.name}</div>
-        <div
-          className="services-wrapper"
-          onClick={() => {
-            this.serviceChild.open(this.state.cinemaDetail.service,cinemaDetail.name);
-          }}
-        >
-          <div className="tags">
-            {
-              cinemaDetail.service?cinemaDetail.service.map((item,index)=>{
-                return <Tag key={index} className="tag-item" color="#ffb232" fill="outline">
-                  {item.label}
-                </Tag>
-              }):null
-            }
+        {this.state.cinemaDetail.service &&
+        this.state.cinemaDetail.service.length ? (
+          <div
+            className="services-wrapper"
+            onClick={() => {
+              this.serviceChild.open(
+                this.state.cinemaDetail.service,
+                cinemaDetail.name
+              );
+            }}
+          >
+            <div className="tags">
+              {cinemaDetail.service
+                ? cinemaDetail.service.map((item, index) => {
+                    return (
+                      <Tag
+                        key={index}
+                        className="tag-item"
+                        color="#ffb232"
+                        fill="outline"
+                      >
+                        {item.label}
+                      </Tag>
+                    );
+                  })
+                : null}
+            </div>
+            <RightOutline className="arrow-rigght" color="#ffb232" />
           </div>
-          <RightOutline color="#ffb232" />
-        </div>
+        ) : null}
         <div className="location-wrapper">
           <svg
             t="1635787316258"
@@ -316,8 +332,7 @@ class FileDetail extends Component {
             filmDetail.show_date &&
             filmDetail.show_date.map((date, index) => {
               return (
-                <Tabs.Tab key={index} title={this.handerDate(date)}>
-                </Tabs.Tab>
+                <Tabs.Tab key={index} title={this.handerDate(date)}></Tabs.Tab>
               );
             })}
         </Tabs>
@@ -366,13 +381,13 @@ class MaskComponent extends Component {
     super(props);
     this.state = {
       isVisibleMask: false,
-      service:[],
-      cinema_name:''
+      service: [],
+      cinema_name: "",
     };
   }
   static defaultProps = {};
   render() {
-    let { isVisibleMask,service } = this.state;
+    let { isVisibleMask, service } = this.state;
     return (
       <Mask visible={isVisibleMask}>
         <div className="cinema-detail-service-mask-container">
@@ -387,20 +402,18 @@ class MaskComponent extends Component {
           </div>
           <div className="service-default-contianer">
             <ul className="service-default-box">
-              {
-                service.map((item,index)=>{
-                  return <li key={index} className="service-item">
+              {service.map((item, index) => {
+                return (
+                  <li key={index} className="service-item">
                     <div className="tag-wrappr">
                       <Tag className="tag" color="#ffb232" fill="outline">
                         {item.label}
                       </Tag>
                     </div>
-                    <div className="service-content">
-                      {item.content}
-                    </div>
+                    <div className="service-content">{item.content}</div>
                   </li>
-                })
-              }
+                );
+              })}
             </ul>
           </div>
         </div>
@@ -415,7 +428,7 @@ class MaskComponent extends Component {
       return;
     };
   };
-  open(service,cinema_name) {
+  open(service, cinema_name) {
     this.setState({
       service,
       cinema_name,

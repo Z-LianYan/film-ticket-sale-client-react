@@ -192,7 +192,7 @@ class Film extends Component {
                 console.log("onRightClick");
                 this.props.history.push({
                   pathname: "/film/cinema",
-                  state: { film_id: "6666" },
+                  state: { film_id: item.film_id },
                 });
               }}
             />

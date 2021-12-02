@@ -1,5 +1,6 @@
 import * as HttpUtils from "@/utils/request";
 import * as Api from "@/api/constant";
+import { Toast } from "antd-mobile";
 
 export function get_film_hot(params) {
   return new Promise((resolve, reject) => {
@@ -9,6 +10,11 @@ export function get_film_hot(params) {
           resolve(res.data);
           break;
         default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
           reject(res.data);
           break;
       }
@@ -24,6 +30,11 @@ export function get_film_soon_show(params) {
             resolve(res.data);
             break;
           default:
+            Toast.show({
+              icon: "fail",
+              duration: 2000,
+              content: res.message,
+            });
             reject(res.data);
             break;
         }
@@ -40,13 +51,17 @@ export function get_banner(params) {
           resolve(res.data);
           break;
         default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
           reject(res.data);
           break;
       }
     });
   });
 }
-
 
 export function get_film_detail(params) {
   return new Promise((resolve, reject) => {
@@ -56,6 +71,11 @@ export function get_film_detail(params) {
           resolve(res.data.rows);
           break;
         default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
           reject(res.data);
           break;
       }

@@ -11,10 +11,11 @@ import {
   Tabs,
 } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
-import { get_cinema_list } from "@/api/cinema";
+import { get_cinema_list, get_film_in_schedule_dates } from "@/api/cinema";
 import { get_city_district_list } from "@/api/citys";
 import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
 import Cookies from "js-cookie";
+import dayjs from "dayjs";
 
 class Cinema extends Component {
   constructor(props) {
@@ -31,21 +32,49 @@ class Cinema extends Component {
       list: [],
       isHasMore: true,
       city_district_list: [],
+      dateList: [],
+      dateActiveKey: 0,
     };
   }
   async componentDidMount() {
+    let { location, locationInfo } = this.props;
+    if (location.state && location.state.film_id) {
+      this.getFilmInScheduleDates();
+    }
     this.getDistrictList();
     this.props.locationInfo.locationReady = () => {
       console.log("locationReady---cinema");
-      this.onRefresh();
+      if (location.state && location.state.film_id) {
+        this.getFilmInScheduleDates();
+      } else {
+        this.onRefresh();
+      }
     };
+  }
+  async getFilmInScheduleDates() {
+    let { location, locationInfo } = this.props;
+    let _cookies = Cookies.get("locationInfo");
+    let _cookiesInfo = null;
+    if (_cookies) {
+      _cookiesInfo = JSON.parse(_cookies);
+    }
+    let result = await get_film_in_schedule_dates({
+      city_id:
+        _cookiesInfo && _cookiesInfo.city_id
+          ? _cookiesInfo.city_id
+          : locationInfo.city_id,
+      film_id: location.state.film_id,
+    });
+    console.log("date---", result);
+    if (!result) return;
+    this.setState({ dateList: result.rows });
+    this.onRefresh();
   }
   onRefresh() {
     this.setState({
       isHasMore: false, //防止执行 this.props.locationInfo.locationReady方法时 死循环
     });
     this.onRefreshList();
-    
   }
   async onRefreshList() {
     let { fetchOptions, hotList } = this.state;
@@ -87,7 +116,10 @@ class Cinema extends Component {
     if (_cookies) {
       _cookiesInfo = JSON.parse(_cookies);
     }
-    let result = await get_city_district_list({ city_id: (_cookiesInfo && _cookiesInfo.city_id)?_cookiesInfo.city_id:city_id });
+    let result = await get_city_district_list({
+      city_id:
+        _cookiesInfo && _cookiesInfo.city_id ? _cookiesInfo.city_id : city_id,
+    });
     console.log("result---", result);
     result.rows.unshift({
       first_letter: null,
@@ -101,18 +133,71 @@ class Cinema extends Component {
       city_district_list: result.rows,
     });
   }
-  onDistrictName(){
-    let { fetchOptions,city_district_list } = this.state;
-    if(!fetchOptions.district_id) return '全城'
-    return city_district_list.map(item=>{
-      if(item.id == fetchOptions.district_id){
-        return item.name
+  onDistrictName() {
+    let { fetchOptions, city_district_list } = this.state;
+    if (!fetchOptions.district_id) return "全城";
+    return city_district_list.map((item) => {
+      if (item.id == fetchOptions.district_id) {
+        return item.name;
       }
-    })
+    });
+  }
+  handerDate(date) {
+    console.log("date");
+    let today = dayjs().format("YYYY-MM-DD");
+    let tomorrow = dayjs().add(1, "day").format("YYYY-MM-DD");
+    let houtian = dayjs().add(2, "day").format("YYYY-MM-DD");
+    console.log("today", today, tomorrow, houtian);
+    let cur_y = dayjs(date).format("YYYY");
+    let y = dayjs().format("YYYY");
+    switch (dayjs(date).format("YYYY-MM-DD")) {
+      case today:
+        return "今天" + dayjs(date).format("MM月DD日");
+      case tomorrow:
+        return "明天" + dayjs(date).format("MM月DD日");
+      case houtian:
+        return "后天" + dayjs(date).format("MM月DD日");
+      default:
+        return (
+          this.handleWeek(dayjs(date).day()) +
+          dayjs(date).format(cur_y == y ? "MM月DD日" : "YYYY年MM月DD日")
+        );
+    }
+    // return (
+    //   this.handleWeek(dayjs(date).day()) +
+    //   dayjs(date).format(cur_y == y ? "MM月DD日" : "YYYY年MM月DD日")
+    // );
+  }
+  handleWeek(day) {
+    switch (day) {
+      case 0:
+        return "周日";
+      case 1:
+        return "周一";
+      case 2:
+        return "周二";
+      case 3:
+        return "周三";
+      case 4:
+        return "周四";
+      case 5:
+        return "周五";
+      case 6:
+        return "周六";
+      default:
+        return "";
+    }
   }
   render() {
     let { location, history, locationInfo } = this.props;
-    let { list, fetchOptions, isHasMore, city_district_list } = this.state;
+    let {
+      list,
+      fetchOptions,
+      isHasMore,
+      city_district_list,
+      dateList,
+      dateActiveKey,
+    } = this.state;
     // console.log("location---", location);
     return (
       <div className="app-cinema-page">
@@ -160,14 +245,17 @@ class Cinema extends Component {
           </NavBar>
           {location.state && location.state.film_id ? (
             <Tabs
-              defaultActiveKey="vegetables"
+              activeKey={dateActiveKey.toString()}
               onChange={(val) => {
                 console.log("onChange", val);
+                this.setState({ dateActiveKey: val });
               }}
+              stretch={false}
+              activeLineMode="auto"
             >
-              <Tabs.Tab title="今天11月2日" key="fruits" />
-              <Tabs.Tab title="明天11月3日" key="vegetables" />
-              <Tabs.Tab title="后天11月4日" key="animals" />
+              {dateList.map((date, index) => {
+                return <Tabs.Tab title={this.handerDate(date)} key={index} />;
+              })}
             </Tabs>
           ) : null}
 

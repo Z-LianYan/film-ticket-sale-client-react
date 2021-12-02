@@ -12,3 +12,4 @@ export const GET_CINEMA_DETAIL = "/cinema/getByid"; //影院详情
 export const GET_DATE_SCHEDULE = "/date/schedule"; //某日排期
 export const GET_CITY_DISTRICT_LIST = "/city/getCityDistrictList";
 export const GET_FILM_DETAIL = "/film/filmDetail";
+export const GET_FILM_IN_SCHEDULE_DATES = "/getFilmInScheduleDates";
