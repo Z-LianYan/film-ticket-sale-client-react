@@ -23,7 +23,7 @@ class Cinema extends Component {
     this.state = {
       fetchOptions: {
         page: 0,
-        limit: 15,
+        limit: 6,
         city_id: "",
         district_id: "",
         date: "",
@@ -31,7 +31,7 @@ class Cinema extends Component {
         lng: "",
       },
       list: [],
-      isHasMore: true,
+      isHasMore: false,
       city_district_list: [],
       dateList: [],
       dateActiveKey: 0,
@@ -146,11 +146,11 @@ class Cinema extends Component {
     });
   }
   handerDate(date) {
-    console.log("date");
+    // console.log("date");
     let today = dayjs().format("YYYY-MM-DD");
     let tomorrow = dayjs().add(1, "day").format("YYYY-MM-DD");
     let houtian = dayjs().add(2, "day").format("YYYY-MM-DD");
-    console.log("today", today, tomorrow, houtian);
+    // console.log("today", today, tomorrow, houtian);
     let cur_y = dayjs(date).format("YYYY");
     let y = dayjs().format("YYYY");
     switch (dayjs(date).format("YYYY-MM-DD")) {
@@ -163,7 +163,7 @@ class Cinema extends Component {
       default:
         return (
           this.handleWeek(dayjs(date).day()) +
-          dayjs(date).format(cur_y == y ? "MM月DD日" : "YYYY年MM月DD日")
+          dayjs(date).format(cur_y == y ? "MM月DD日" : "YY年MM月DD日")
         );
     }
     // return (

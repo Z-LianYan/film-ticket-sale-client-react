@@ -171,7 +171,7 @@ class FileDetail extends Component {
     let y = dayjs().format("YYYY");
     return (
       this.handleWeek(dayjs(date).day()) +
-      dayjs(date).format(cur_y == y ? "MM月DD日" : "YYYY年MM月DD日")
+      dayjs(date).format(cur_y == y ? "MM月DD日" : "YY年MM月DD日")
     );
   }
   handleWeek(day) {
