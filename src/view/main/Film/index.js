@@ -8,6 +8,7 @@ import {
   PullToRefresh,
   NavBar,
   JumboTabs,
+  Button,
 } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import FilmListItem from "@/components/FilmListItem/index";
@@ -277,7 +278,7 @@ class Film extends Component {
                 console.log("onRightClick");
                 this.props.history.push({
                   pathname: "/film/cinema",
-                  state: { film_id: "6666" },
+                  state: { film_id: item.id },
                 });
               }}
             />
@@ -319,8 +320,36 @@ class Film extends Component {
       </PullToRefresh>
     );
   }
+  stopBubble(e) {
+    // var e = arguments.callee.call er.arguments[0] || event; //若省略此句，下面的e改为event，IE运行可以，但是其他浏览器就不兼容
+    if (e && e.stopPropagation) {
+      e.stopPropagation();
+    } else if (window.event) {
+      window.event.cancelBubble = true;
+    }
+  }
+  onSwitchCity() {
+    let { realLocation } = this.props;
+    Cookies.set(
+      "locationInfo",
+      JSON.stringify({
+        city_id: realLocation && realLocation.city_id,
+        city_name: realLocation && realLocation.city_name,
+      }),
+      {
+        expires: 1,
+      }
+    );
+    this.props.setLocationInfo({
+      city_id: realLocation && realLocation.city_id,
+      city_name: realLocation && realLocation.city_name,
+      lat: realLocation && realLocation.lat,
+      lng: realLocation && realLocation.lng,
+      isShowSwitchLocationModal: false,
+    });
+  }
   render() {
-    let { history, locationInfo } = this.props;
+    let { history, locationInfo, realLocation } = this.props;
     let { floatTabs, activeTab } = this.state;
     return (
       <div className="app-film-container">
@@ -336,6 +365,26 @@ class Film extends Component {
             <div className="mask"></div>
             {locationInfo.city_name}
             <DownOutline className="icon-down" />
+
+            {!realLocation && locationInfo.isShowSwitchLocationModal ? (
+              <div className="location-show-box">
+                <div className="location-mask"></div>
+                <div className="top-arrow"></div>
+                <div className="left-txt">
+                  定位显示您在{realLocation && realLocation.city_name}
+                </div>
+                <Button
+                  color="primary"
+                  size="mini"
+                  onClick={(e) => {
+                    this.stopBubble(e);
+                    this.onSwitchCity();
+                  }}
+                >
+                  切换到广州
+                </Button>
+              </div>
+            ) : null}
           </div>
           <CustomSwiper
             useSwiperType=""

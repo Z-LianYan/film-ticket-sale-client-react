@@ -27,6 +27,7 @@ class Cinema extends Component {
         city_id: "",
         district_id: "",
         date: "",
+        film_id: "",
         lat: "",
         lng: "",
       },
@@ -39,21 +40,16 @@ class Cinema extends Component {
   }
   async componentDidMount() {
     let { location, locationInfo } = this.props;
+    this.getDistrictList();
     if (location.state && location.state.film_id) {
       this.getFilmInScheduleDates();
+    } else {
+      this.onRefresh();
     }
-    this.getDistrictList();
-    this.props.locationInfo.locationReady = () => {
-      console.log("locationReady---cinema");
-      if (location.state && location.state.film_id) {
-        this.getFilmInScheduleDates();
-      } else {
-        this.onRefresh();
-      }
-    };
   }
   async getFilmInScheduleDates() {
     let { location, locationInfo } = this.props;
+    let { fetchOptions } = this.state;
     let _cookies = Cookies.get("locationInfo");
     let _cookiesInfo = null;
     if (_cookies) {
@@ -66,9 +62,12 @@ class Cinema extends Component {
           : locationInfo.city_id,
       film_id: location.state.film_id,
     });
-    console.log("date---", result);
+    console.log("date---", result, result[0]);
     if (!result) return;
+    fetchOptions.date = result.rows[0];
+    fetchOptions.film_id = location.state && location.state.film_id;
     this.setState({
+      fetchOptions,
       dateList: result.rows,
     });
     this.onRefresh();
@@ -146,11 +145,9 @@ class Cinema extends Component {
     });
   }
   handerDate(date) {
-    // console.log("date");
     let today = dayjs().format("YYYY-MM-DD");
     let tomorrow = dayjs().add(1, "day").format("YYYY-MM-DD");
     let houtian = dayjs().add(2, "day").format("YYYY-MM-DD");
-    // console.log("today", today, tomorrow, houtian);
     let cur_y = dayjs(date).format("YYYY");
     let y = dayjs().format("YYYY");
     switch (dayjs(date).format("YYYY-MM-DD")) {
@@ -166,10 +163,6 @@ class Cinema extends Component {
           dayjs(date).format(cur_y == y ? "MM月DD日" : "YY年MM月DD日")
         );
     }
-    // return (
-    //   this.handleWeek(dayjs(date).day()) +
-    //   dayjs(date).format(cur_y == y ? "MM月DD日" : "YYYY年MM月DD日")
-    // );
   }
   handleWeek(day) {
     switch (day) {
@@ -201,7 +194,6 @@ class Cinema extends Component {
       dateList,
       dateActiveKey,
     } = this.state;
-    // console.log("location---", location);
     return (
       <div className="app-cinema-page">
         <div className="header-wrapper">
@@ -251,7 +243,12 @@ class Cinema extends Component {
               activeKey={dateActiveKey.toString()}
               onChange={(val) => {
                 console.log("onChange", val);
-                this.setState({ dateActiveKey: val });
+                fetchOptions.date = dateList[val];
+                this.setState({
+                  fetchOptions,
+                  dateActiveKey: val,
+                });
+                this.onRefresh();
               }}
               stretch={false}
               activeLineMode="auto"

@@ -30,6 +30,45 @@
         background: #000;
         border-radius: 0.15rem;
       }
+
+      .location-show-box{
+        position: absolute;
+        left: 0;
+        top: 0.4rem;
+        width: 80vw;
+        // padding: 0.03rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.05rem;
+        
+        .location-mask{
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          background: #000;
+          opacity: 0.6;
+          border-radius: 0.05rem;
+          z-index: -1;
+        }
+        .left-txt{
+          margin-left: 0.03rem;
+        }
+        
+        .top-arrow{
+          position: absolute;
+          top: -0.2rem;
+          left: 0.1rem;
+          border-width: 0.1rem;
+          border-color: transparent;
+          border-style: solid;
+          border-bottom: 0.1rem solid #000;
+          opacity: 0.6;
+        }
+
+      }
+
+
     }
   }
   .navbar-wrapper{

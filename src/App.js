@@ -93,6 +93,7 @@ class App extends Component {
             let cityInfo = await get_by_city({ city_id: res.adcode });
             this.props.setLocationInfo({
               isInLocation: false, //结束城市列表页的定位中的状态
+              isShowSwitchLocationModal: true,
               realLocation: {
                 city_id: res.adcode,
                 city_name: cityInfo.name,
@@ -100,81 +101,93 @@ class App extends Component {
                 lat: result.position.lat,
               },
             });
-            if (this.props.locationInfo.city_id != res.adcode) {
-              Dialog.confirm({
-                title: `定位显示在 ${res.city}`,
-                content: `是否切换到 ${res.city}？`,
-                confirmText: `切换到 ${res.city}`,
-                cancelText: "关闭",
-                onConfirm: async () => {
-                  let obj = {
-                    city_id: res.adcode,
-                    city_name: cityInfo.name,
-                    lng: result.position.lng,
-                    lat: result.position.lat,
-                  };
-                  Cookies.set(
-                    "locationInfo",
-                    JSON.stringify({
-                      city_id: res.adcode,
-                      city_name: cityInfo.name,
-                    }),
-                    {
-                      expires: 1,
-                    }
-                  );
-                  this.props.setLocationInfo(obj, () => {
-                    this.props.locationInfo.locationReady &&
-                      this.props.locationInfo.locationReady();
-                    if (
-                      this.props.location.pathname == "/" ||
-                      this.props.location.pathname == "/cinemas"
-                    ) {
-                      return;
-                    }
 
-                    history.replace({
-                      pathname: "/",
-                    });
-                  });
-                },
-                onCancel: () => {
-                  this.props.setLocationInfo(
-                    {
-                      lng: result.position.lng,
-                      lat: result.position.lat,
-                    },
-                    () => {
-                      this.props.locationInfo.locationReady &&
-                        this.props.locationInfo.locationReady();
-                    }
-                  );
-                },
+            setTimeout(() => {
+              this.props.setLocationInfo({
+                isShowSwitchLocationModal: false, //关闭首页（film）banner 里的，切换城市的模态框
               });
-            } else {
-              this.props.setLocationInfo(
-                {
-                  lng: result.position.lng,
-                  lat: result.position.lat,
-                },
-                () => {
-                  if (this.props.location.pathname == "/cinemas") {
-                    this.props.locationInfo.locationReady &&
-                      this.props.locationInfo.locationReady();
-                  }
-                }
-              );
-            }
+            }, 5000);
+            // if (this.props.locationInfo.city_id != res.adcode) {
+            //   Dialog.confirm({
+            //     title: `定位显示在 ${res.city}`,
+            //     content: `是否切换到 ${res.city}？`,
+            //     confirmText: `切换到 ${res.city}`,
+            //     cancelText: "关闭",
+            //     onConfirm: async () => {
+            //       let obj = {
+            //         city_id: res.adcode,
+            //         city_name: cityInfo.name,
+            //         lng: result.position.lng,
+            //         lat: result.position.lat,
+            //       };
+            //       Cookies.set(
+            //         "locationInfo",
+            //         JSON.stringify({
+            //           city_id: res.adcode,
+            //           city_name: cityInfo.name,
+            //         }),
+            //         {
+            //           expires: 1,
+            //         }
+            //       );
+            //       this.props.setLocationInfo(obj, () => {
+            //         this.props.locationInfo.locationReady &&
+            //           this.props.locationInfo.locationReady();
+            //         if (
+            //           this.props.location.pathname == "/" ||
+            //           this.props.location.pathname == "/cinemas"
+            //         ) {
+            //           return;
+            //         }
+
+            //         history.replace({
+            //           pathname: "/",
+            //         });
+            //       });
+            //     },
+            //     onCancel: () => {
+            //       this.props.setLocationInfo(
+            //         {
+            //           lng: result.position.lng,
+            //           lat: result.position.lat,
+            //         },
+            //         () => {
+            //           this.props.locationInfo.locationReady &&
+            //             this.props.locationInfo.locationReady();
+            //         }
+            //       );
+            //     },
+            //   });
+            // } else {
+            //   this.props.setLocationInfo(
+            //     {
+            //       lng: result.position.lng,
+            //       lat: result.position.lat,
+            //     },
+            //     () => {
+            //       // if (this.props.location.pathname == "/cinemas") {
+            //       this.props.locationInfo.locationReady &&
+            //         this.props.locationInfo.locationReady();
+            //       // }
+            //     }
+            //   );
+            // }
           },
           onError: (err) => {
-            console.log("ip失败", err);
-            this.props.setLocationInfo({ isInLocation: false });
+            console.log("获取城市ip失败", err); //获取城市编码adcode
+            this.props.setLocationInfo({ isInLocation: false }, () => {
+              this.props.locationInfo.locationReady &&
+                this.props.locationInfo.locationReady();
+            });
           },
         });
       },
       onError: (err) => {
         console.log("定位失败", err);
-        this.props.setLocationInfo({ isInLocation: false });
+        this.props.setLocationInfo({ isInLocation: false }, () => {
+          this.props.locationInfo.locationReady &&
+            this.props.locationInfo.locationReady();
+        });
       },
     });
   }
