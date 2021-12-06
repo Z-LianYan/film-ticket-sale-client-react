@@ -57,13 +57,16 @@ class CinemaSearch extends Component {
           keywords: val,
         });
         // if (type) {
-          this.setState({
-            distanceRecentlyList: result.rows.length
-              ? result.rows.slice(0, result.rows.length>=5?5:result.rows.length)
-              : [],
-          });
-          // console.log(this.state.distanceRecentlyList);
-          // return;
+        this.setState({
+          distanceRecentlyList: result.rows.length
+            ? result.rows.slice(
+                0,
+                result.rows.length >= 5 ? 5 : result.rows.length
+              )
+            : [],
+        });
+        // console.log(this.state.distanceRecentlyList);
+        // return;
         // }
         this.setState(
           {
@@ -149,29 +152,30 @@ class CinemaSearch extends Component {
 
   render() {
     let { searchValue, distanceRecentlyList } = this.state;
-    let { history,locationInfo } = this.props;
+    let { history, locationInfo } = this.props;
     let { realLocation } = locationInfo;
     return (
       <div className="cinema-search-container">
-        <CustomSearch 
-        value={searchValue}
-        placeholder="输入影城名称"
-        showCancelButton={true}
-        onChange={(val) => {
-          this.setState({
-            searchValue: val,
-          });
-          this.searchChange(val);
-        }}
-        onClear={() => {
-          this.setState({
-            searchValue: "",
-          });
-        }}
-        showCancelButton={true}
-        onCancel={() => {
-          history.goBack();
-        }}/>
+        <CustomSearch
+          value={searchValue}
+          placeholder="输入影城名称"
+          showCancelButton={true}
+          onChange={(val) => {
+            this.setState({
+              searchValue: val,
+            });
+            this.searchChange(val);
+          }}
+          onClear={() => {
+            this.setState({
+              searchValue: "",
+            });
+          }}
+          showCancelButton={true}
+          onCancel={() => {
+            history.goBack();
+          }}
+        />
         {searchValue ? (
           this.renderCinemaList()
         ) : distanceRecentlyList.length && realLocation ? (

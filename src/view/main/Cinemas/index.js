@@ -36,28 +36,28 @@ class Cinema extends Component {
       city_district_list: [],
       dateList: [],
       dateActiveKey: 0,
-      isSkeleton:true,
+      isSkeleton: true,
     };
   }
   async componentDidMount() {
     let { location, locationInfo } = this.props;
     this.getDistrictList();
-    locationInfo.locationReady = ()=>{
+    locationInfo.locationReady = () => {
       this.getData();
-    }
+    };
 
-    if(!locationInfo.isInLocation){
+    if (!locationInfo.isInLocation) {
       this.getData();
-    }else{
-      setTimeout(() => {//防止浏览器定位慢的时候页面无内容
-        if(this.state.isSkeleton){
+    } else {
+      setTimeout(() => {
+        //防止浏览器定位慢的时候页面无内容
+        if (this.state.isSkeleton) {
           this.getData();
         }
       }, 800);
     }
-    
   }
-  getData(){
+  getData() {
     let { location, locationInfo } = this.props;
     if (location.state && location.state.film_id) {
       this.getFilmInScheduleDates();
@@ -108,12 +108,12 @@ class Cinema extends Component {
           ...fetchOptions,
           city_id: this.props.locationInfo.city_id,
           lat: this.props.locationInfo.lat,
-          lng: this.props.locationInfo.lng
+          lng: this.props.locationInfo.lng,
         });
         this.setState(
           {
             list: result.rows,
-            isSkeleton:false
+            isSkeleton: false,
           },
           () => {
             if (this.state.list.length >= result.count) {
@@ -205,7 +205,7 @@ class Cinema extends Component {
   }
   render() {
     let { location, history, locationInfo } = this.props;
-    
+
     let {
       list,
       fetchOptions,
@@ -217,7 +217,9 @@ class Cinema extends Component {
     } = this.state;
     return (
       <div className="app-cinema-page">
-        {isSkeleton && location.pathname=='/film/cinema' ? <div className="skeleton-box"></div> : null}
+        {isSkeleton && location.pathname == "/film/cinema" ? (
+          <div className="skeleton-box"></div>
+        ) : null}
         <div className="header-wrapper">
           <NavBar
             backArrow={false}
@@ -258,7 +260,9 @@ class Cinema extends Component {
               )
             }
           >
-            {location.state && location.state.film_name ? location.state.film_name : "影院"}
+            {location.state && location.state.film_name
+              ? location.state.film_name
+              : "影院"}
           </NavBar>
           {location.state && location.state.film_id ? (
             <Tabs
@@ -397,7 +401,9 @@ class Cinema extends Component {
             hasMore={isHasMore}
           >
             <InfiniteScrollContent
-              text="此区域没有排片的影院哦"
+              text={`该区域没有排${
+                location.state && location.state.film_id ? "此" : ""
+              }片的影院哦`}
               noContent={!isHasMore && !this.state.list.length}
               hasMore={isHasMore}
             />
