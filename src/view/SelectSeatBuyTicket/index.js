@@ -3,6 +3,7 @@ import "./index.scss";
 import { NavBar, NoticeBar, Space, Button } from "antd-mobile";
 import { DownOutline, UpOutline, CloseOutline } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
+import { get_cinema_detail, get_date_schedule } from "@/api/cinema";
 class SelectSeatBuyTicket extends Component {
   constructor(props) {
     super(props);
@@ -15,9 +16,18 @@ class SelectSeatBuyTicket extends Component {
       deltaY: 0,
       scaleX: 1,
       scaleY: 1,
+
+      cinemaDetail:{},
+      isSkeleton:true,
+      scheduleList:[],
     };
   }
   componentDidMount() {
+    console.log('this.props',this.props)
+    this.onGestureHander();
+    this.getCinemaDetail();
+  }
+  onGestureHander(){
     let seatsList = document.querySelector(".seat-list");
     let dis = (seatsList.offsetWidth - document.body.clientWidth) / 2;
     this.setState({
@@ -79,8 +89,42 @@ class SelectSeatBuyTicket extends Component {
       });
     });
   }
+  async getCinemaDetail() {
+    let { history,location } = this.props;
+    let result = await get_cinema_detail({
+      cinema_id: location.state.cinema_id,
+      isHasFilmList:false
+    });
+    // console.log("result---", result);
+    this.setState(
+      {
+        cinemaDetail: result,
+        isSkeleton: false,
+      },
+      () => {
+        this.getDateScheduleList(location.state.schedule_id);
+      }
+    );
+    // this.newSwiper();
+  }
+  async getDateScheduleList() {
+    // let { cinemaDetail, filmDetail } = this.state;
+    let { history,location } = this.props;
+    this.setState({
+      scheduleList: [],
+    });
+    let result = await get_date_schedule({
+      cinema_id: location.state.cinema_id,
+      film_id: location.state.film_id,
+      date: location.state.date,
+    });
+    // console.log("排片列表", result);
+    this.setState({
+      scheduleList: result.rows,
+    });
+  }
   render() {
-    let { history } = this.props;
+    let { history,location } = this.props;
     let {
       isShowNoticeDetail,
       isShowScheduleList,
@@ -100,7 +144,7 @@ class SelectSeatBuyTicket extends Component {
             history.goBack();
           }}
         >
-          中影国线巨幕影城（花都狮岭店）
+          {location.state && location.state.cinema_name}
         </NavBar>
         <NoticeBar
           content={"来得及弗拉索夫加拉加斯房间里是否就是开了房间的"}
@@ -153,364 +197,10 @@ class SelectSeatBuyTicket extends Component {
               <div className="cell">
                 <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
               </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
             </li>
-            <li className="row">
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-            </li>
-            <li className="row">
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-            </li>
-            <li className="row">
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-            </li>
+            
+            
+            
           </ul>
         </div>
 

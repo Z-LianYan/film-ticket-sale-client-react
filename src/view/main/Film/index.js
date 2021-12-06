@@ -193,7 +193,10 @@ class Film extends Component {
                 console.log("onRightClick");
                 this.props.history.push({
                   pathname: "/film/cinema",
-                  state: { film_id: item.film_id },
+                  state: { 
+                    film_id: item.film_id ,
+                    film_name: item.film_name 
+                  },
                 });
               }}
             />
@@ -278,7 +281,10 @@ class Film extends Component {
                 console.log("onRightClick");
                 this.props.history.push({
                   pathname: "/film/cinema",
-                  state: { film_id: item.id },
+                  state: { 
+                    film_id: item.id,
+                    film_name: item.film_name 
+                  },
                 });
               }}
             />
@@ -329,7 +335,8 @@ class Film extends Component {
     }
   }
   onSwitchCity() {
-    let { realLocation } = this.props;
+    let { locationInfo } = this.props;
+    let { realLocation,locationReady } = locationInfo;
     Cookies.set(
       "locationInfo",
       JSON.stringify({
@@ -346,10 +353,13 @@ class Film extends Component {
       lat: realLocation && realLocation.lat,
       lng: realLocation && realLocation.lng,
       isShowSwitchLocationModal: false,
+    },()=>{
+      locationReady && locationReady()
     });
   }
   render() {
-    let { history, locationInfo, realLocation } = this.props;
+    let { history, locationInfo } = this.props;
+    let { realLocation } = locationInfo;
     let { floatTabs, activeTab } = this.state;
     return (
       <div className="app-film-container">
@@ -366,7 +376,7 @@ class Film extends Component {
             {locationInfo.city_name}
             <DownOutline className="icon-down" />
 
-            {!realLocation && locationInfo.isShowSwitchLocationModal ? (
+            {realLocation && realLocation.city_id!=locationInfo.city_id &&  locationInfo.isShowSwitchLocationModal ? (
               <div className="location-show-box">
                 <div className="location-mask"></div>
                 <div className="top-arrow"></div>
@@ -388,10 +398,10 @@ class Film extends Component {
           </div>
           <CustomSwiper
             useSwiperType=""
-            onClick={() => {
+            onClick={(item) => {
               history.push({
                 pathname: "/film/detail",
-                state: { film_id: 123 },
+                state: { film_id: item.film_id },
               });
             }}
           />
@@ -407,7 +417,6 @@ class Film extends Component {
                   <DownOutline
                     fontSize={12}
                     onClick={() => {
-                      console.log("13124--DownOutline");
                       history.push({
                         pathname: "/citys",
                       });

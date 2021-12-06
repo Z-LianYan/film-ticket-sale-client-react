@@ -92,7 +92,8 @@ class Citys extends Component {
   }
 
   setLocationInfo(item, type) {
-    let { history } = this.props;
+    let { history,locationInfo } = this.props;
+    let { realLocation } = locationInfo;
     if (!item.name) return;
     Cookies.set(
       "locationInfo",
@@ -108,8 +109,9 @@ class Citys extends Component {
       {
         city_id: item.id,
         city_name: item.name,
-        lng: this.props.locationInfo.realLocation.lng,
-        lat: this.props.locationInfo.realLocation.lat,
+        lng: realLocation && realLocation.lng,
+        lat: realLocation && realLocation.lat,
+        isShowSwitchLocationModal: false, //关闭首页（film）banner 里的，切换城市的模态框
       },
       () => {
         history.goBack();
@@ -120,6 +122,7 @@ class Citys extends Component {
   render() {
     let { letter, hotList, searchValue, filterList } = this.state;
     let { history, locationInfo } = this.props;
+    let { realLocation } = locationInfo;
     return (
       <div>
         <NavBar
@@ -194,19 +197,19 @@ class Citys extends Component {
                       ) : (
                         <span
                           onClick={async () => {
-                            if (!locationInfo.realLocation) return;
+                            if (!realLocation) return;
                             this.setLocationInfo(
                               {
-                                id: locationInfo.realLocation.city_id,
-                                name: locationInfo.realLocation.city_name,
+                                id: realLocation && realLocation.city_id,
+                                name: realLocation && realLocation.city_name,
                               },
                               "location"
                             );
                           }}
                         >
-                          {locationInfo.realLocation &&
-                          locationInfo.realLocation.city_name
-                            ? locationInfo.realLocation.city_name
+                          {realLocation &&
+                          realLocation.city_name
+                            ? realLocation.city_name
                             : "定位失败"}
                         </span>
                       )}

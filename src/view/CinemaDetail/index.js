@@ -69,6 +69,7 @@ class FileDetail extends Component {
     let { location } = history;
     let result = await get_cinema_detail({
       cinema_id: location.state.cinema_id,
+      isHasFilmList:true
     });
     // console.log("result---", result);
     this.setState(
@@ -352,7 +353,12 @@ class FileDetail extends Component {
                 history.push({
                   pathname: "/buy/ticket",
                   state: {
-                    film_id: 1234,
+                    cinema_id: cinemaDetail.id,
+                    cinema_name: cinemaDetail.name,
+                    hall_id: item.id,
+                    film_id: item.film_id,
+                    schedule_id:item.id,
+                    date:filmDetail.show_date[this.state.activeKey]
                   },
                 });
               }}

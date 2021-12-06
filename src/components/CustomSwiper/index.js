@@ -20,6 +20,7 @@ class CustomSwiper extends Component {
     let { useSwiperType,onClick } = this.props;
     await this.getBanneer();
     if(useSwiperType=='antdMobile') return;
+    let _this = this;
     new _Swiper ('.custom-swiper-container', {
       direction: 'horizontal', // 垂直切换选项
       loop: true, // 循环模式选项
@@ -37,8 +38,7 @@ class CustomSwiper extends Component {
       },
       on: {
         click: function (e) {
-          console.log('click',this.clickedIndex)
-          onClick && onClick();
+          onClick && onClick(_this.state.bannerList[this.activeIndex-1]);
         },
       },
       

@@ -23,7 +23,7 @@ class Cinema extends Component {
     this.state = {
       fetchOptions: {
         page: 0,
-        limit: 6,
+        limit: 15,
         city_id: "",
         district_id: "",
         date: "",
@@ -36,11 +36,29 @@ class Cinema extends Component {
       city_district_list: [],
       dateList: [],
       dateActiveKey: 0,
+      isSkeleton:true,
     };
   }
   async componentDidMount() {
     let { location, locationInfo } = this.props;
     this.getDistrictList();
+    locationInfo.locationReady = ()=>{
+      this.getData();
+    }
+
+    if(!locationInfo.isInLocation){
+      this.getData();
+    }else{
+      setTimeout(() => {//防止浏览器定位慢的时候页面无内容
+        if(this.state.isSkeleton){
+          this.getData();
+        }
+      }, 800);
+    }
+    
+  }
+  getData(){
+    let { location, locationInfo } = this.props;
     if (location.state && location.state.film_id) {
       this.getFilmInScheduleDates();
     } else {
@@ -90,11 +108,12 @@ class Cinema extends Component {
           ...fetchOptions,
           city_id: this.props.locationInfo.city_id,
           lat: this.props.locationInfo.lat,
-          lng: this.props.locationInfo.lng,
+          lng: this.props.locationInfo.lng
         });
         this.setState(
           {
             list: result.rows,
+            isSkeleton:false
           },
           () => {
             if (this.state.list.length >= result.count) {
@@ -186,6 +205,7 @@ class Cinema extends Component {
   }
   render() {
     let { location, history, locationInfo } = this.props;
+    
     let {
       list,
       fetchOptions,
@@ -193,9 +213,11 @@ class Cinema extends Component {
       city_district_list,
       dateList,
       dateActiveKey,
+      isSkeleton,
     } = this.state;
     return (
       <div className="app-cinema-page">
+        {isSkeleton && location.pathname=='/film/cinema' ? <div className="skeleton-box"></div> : null}
         <div className="header-wrapper">
           <NavBar
             backArrow={false}
@@ -236,7 +258,7 @@ class Cinema extends Component {
               )
             }
           >
-            {location.state && location.state.film_id ? "长津湖" : "影院"}
+            {location.state && location.state.film_name ? location.state.film_name : "影院"}
           </NavBar>
           {location.state && location.state.film_id ? (
             <Tabs
@@ -385,6 +407,11 @@ class Cinema extends Component {
       </div>
     );
   }
+  componentWillUnmount = () => {
+    this.setState = (state, callback) => {
+      return;
+    };
+  };
 }
 
 export default GroupCommons(Cinema);

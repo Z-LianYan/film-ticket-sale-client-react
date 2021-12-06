@@ -69,6 +69,7 @@ class CustomSearch extends Component {
           }}
           style={{
             "--background": "#f4f4f4",
+            flex: 1,
             padding: 0,
             ...style,
           }}

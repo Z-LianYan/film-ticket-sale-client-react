@@ -56,15 +56,15 @@ class CinemaSearch extends Component {
           lng: this.props.locationInfo.lng,
           keywords: val,
         });
-        if (type) {
+        // if (type) {
           this.setState({
             distanceRecentlyList: result.rows.length
-              ? result.rows.slice(0, 5)
+              ? result.rows.slice(0, result.rows.length>=5?5:result.rows.length)
               : [],
           });
-          console.log(this.state.distanceRecentlyList);
-          return;
-        }
+          // console.log(this.state.distanceRecentlyList);
+          // return;
+        // }
         this.setState(
           {
             list: result.rows,
@@ -145,50 +145,15 @@ class CinemaSearch extends Component {
         <div style={{ height: "1rem" }}></div>
       </PullToRefresh>
     );
-
-    //   return <CinemaListItem
-    //   title="广州中影火山湖电影城东山口店"
-    //   value="40"
-    //   label="广州市越秀区农林下路4-6号锦轩现代城四楼飞机失联飞机老师"
-    //   distance="距离未知"
-    //   onClick={()=>{
-    //     history.push({
-    //       pathname:'/cinema/detail',
-    //       state:{
-    //         cinema_id:123
-    //       }
-    //     })
-    //   }}
-    // />
   }
 
   render() {
     let { searchValue, distanceRecentlyList } = this.state;
-    let { history } = this.props;
+    let { history,locationInfo } = this.props;
+    let { realLocation } = locationInfo;
     return (
       <div className="cinema-search-container">
-        <div style={{ padding: "0.1rem" }}>
-          <SearchBar
-            placeholder="输入影城名称"
-            showCancelButton={() => true}
-            onChange={(val) => {
-              this.setState({
-                searchValue: val,
-              });
-              this.searchChange(val);
-            }}
-            onClear={() => {
-              this.setState({
-                searchValue: "",
-              });
-            }}
-            onCancel={() => {
-              history.goBack();
-            }}
-          />
-        </div>
-
-        {/* <CustomSearch 
+        <CustomSearch 
         value={searchValue}
         placeholder="输入影城名称"
         showCancelButton={true}
@@ -206,10 +171,10 @@ class CinemaSearch extends Component {
         showCancelButton={true}
         onCancel={() => {
           history.goBack();
-        }}/> */}
+        }}/>
         {searchValue ? (
           this.renderCinemaList()
-        ) : distanceRecentlyList.length ? (
+        ) : distanceRecentlyList.length && realLocation ? (
           <div className="distance-recently-wrapper">
             <h4 className="head-title">离你最近</h4>
             {distanceRecentlyList.map((item, index) => {

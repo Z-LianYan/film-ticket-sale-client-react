@@ -1,6 +1,14 @@
 @import "@/stylesheets/_base.scss";
 .app-cinema-page{
-  // padding-top: 0.87;
+  .skeleton-box{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background-color: #fff;
+    z-index: 1000;
+  }
   .header-wrapper{
     position: fixed;
     left: 0;

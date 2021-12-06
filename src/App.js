@@ -77,12 +77,10 @@ class App extends Component {
       _cookiesInfo = JSON.parse(_cookies);
       console.log("cookies有值", _cookiesInfo);
       this.props.setLocationInfo({
-        isInLocation: true,
         ..._cookiesInfo,
       });
-    } else {
-      this.props.setLocationInfo({ isInLocation: true });
     }
+    // this.props.setLocationInfo({ isInLocation: true });
     tools.geolocation({
       //定位
       onComplete: (result) => {
@@ -94,6 +92,8 @@ class App extends Component {
             this.props.setLocationInfo({
               isInLocation: false, //结束城市列表页的定位中的状态
               isShowSwitchLocationModal: true,
+              lng: result.position.lng,
+              lat: result.position.lat,
               realLocation: {
                 city_id: res.adcode,
                 city_name: cityInfo.name,
@@ -106,7 +106,12 @@ class App extends Component {
               this.props.setLocationInfo({
                 isShowSwitchLocationModal: false, //关闭首页（film）banner 里的，切换城市的模态框
               });
-            }, 5000);
+            }, 10000);
+            console.log('获取城市ip（adcode）',this.props.location.pathname)
+            if (this.props.location.pathname == "/cinemas" || this.props.location.pathname=='/film/cinema') {
+              this.props.locationInfo.locationReady && this.props.locationInfo.locationReady()
+            }
+
             // if (this.props.locationInfo.city_id != res.adcode) {
             //   Dialog.confirm({
             //     title: `定位显示在 ${res.city}`,
