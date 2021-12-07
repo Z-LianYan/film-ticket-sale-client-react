@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./index.scss";
-import { NavBar, NoticeBar, Space, Button,Toast } from "antd-mobile";
+import { NavBar, NoticeBar, Space, Button, Toast } from "antd-mobile";
 import { DownOutline, UpOutline, CloseOutline } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
 import { get_schedule_info, get_seat } from "@/api/selectSeatBuyTicket";
@@ -18,20 +18,20 @@ class SelectSeatBuyTicket extends Component {
       scaleX: 1,
       scaleY: 1,
 
-      scheduleInfo:{},
-      isSkeleton:true,
-      scheduleList:[],
-      selectedSchedule:{},
-      seatList:{},
-      selectedSeat:[]
+      scheduleInfo: {},
+      isSkeleton: true,
+      scheduleList: [],
+      selectedSchedule: {},
+      seatList: {},
+      selectedSeat: [],
     };
   }
   componentDidMount() {
-    console.log('this.props',this.props)
+    console.log("this.props", this.props);
     this.onGestureHander();
     this.getCinemaDetail();
   }
-  onGestureHander(){
+  onGestureHander() {
     let seatsList = document.querySelector(".seat-list");
     let dis = (seatsList.offsetWidth - document.body.clientWidth) / 2;
     this.setState({
@@ -134,33 +134,36 @@ class SelectSeatBuyTicket extends Component {
     }
   }
   async getCinemaDetail() {
-    let { history,location } = this.props;
+    let { history, location } = this.props;
     let result = await get_schedule_info({
       cinema_id: location.state.cinema_id,
-      film_id:location.state.film_id,
-      date:location.state.date,
+      film_id: location.state.film_id,
+      date: location.state.date,
     });
     this.setState({
       scheduleInfo: result,
       scheduleList: result.film.schedule,
     });
-    if(location.state.hall_id){
-      result.film.schedule.map((item,index)=>{
-        if(item.id == location.state.schedule_id){
-          this.setState({
-            selectedSchedule:item
-          },()=>{
-            this.getSeatList()
-          })
+    if (location.state.hall_id) {
+      result.film.schedule.map((item, index) => {
+        if (item.id == location.state.schedule_id) {
+          this.setState(
+            {
+              selectedSchedule: item,
+            },
+            () => {
+              this.getSeatList();
+            }
+          );
         }
-      })
+      });
     }
   }
-  async getSeatList(){
+  async getSeatList() {
     let { selectedSchedule } = this.state;
     // console.log('座位列表',selectedSchedule)
     let result = await get_seat({
-      hall_id:selectedSchedule.hall_id
+      hall_id: selectedSchedule.hall_id,
     });
 
     let seat = result.seat;
@@ -173,90 +176,98 @@ class SelectSeatBuyTicket extends Component {
       }
     }
     this.setState({
-      seatList:obj
-    })
-    console.log('result',this.state.seatList);
+      seatList: obj,
+      selectedSeat: [],
+    });
+    console.log("result", this.state.seatList);
   }
 
-  handlerSectionPrice(sectionPrice){
+  handlerSectionPrice(sectionPrice) {
     let price = 0;
-    sectionPrice.map((item,index)=>{
+    let num = 0;
+    sectionPrice.map((item, index) => {
       item.price = Number(item.price);
-      if(price===0){
-        price = item.price
-      }else if(item.price<price){
+      if (price === Number(item.price) && index !== 0) {
+        num += 1;
+      }
+      if (price === 0) {
+        price = item.price;
+      } else if (item.price < price) {
         price = item.price;
       }
-    })
-    return price+' 起'
+    });
+    return price + (num + 1 == sectionPrice.length ? "" : " 起");
   }
-  renderNotice(){
-    let { scheduleInfo,isShowNoticeDetail } = this.state;
-    return scheduleInfo.notices && scheduleInfo.notices.length?<NoticeBar
-      content={scheduleInfo.notices && scheduleInfo.notices.map(item=>item.text).join(' ')}
-      color="alert"
-      extra={
-        <Space>
-          <span
-            onClick={() => {
-              this.setState({
-                isShowNoticeDetail: !this.state.isShowNoticeDetail,
-              });
-            }}
-          >
-            {scheduleInfo.notices.length}个通知 <DownOutline />
-            {isShowNoticeDetail ? (
-              <div className="notice-bar-content-detail">
-                <h3 className="notice-title">温馨提示：</h3>
-                {
-                  scheduleInfo.notices.map((item,index)=>{
-                    return <div className="detail-content" key={index}>
-                      <div className="content">
-                        {item.text}
+  renderNotice() {
+    let { scheduleInfo, isShowNoticeDetail } = this.state;
+    return scheduleInfo.notices && scheduleInfo.notices.length ? (
+      <NoticeBar
+        content={
+          scheduleInfo.notices &&
+          scheduleInfo.notices.map((item) => item.text).join(" ")
+        }
+        color="alert"
+        extra={
+          <Space>
+            <span
+              onClick={() => {
+                this.setState({
+                  isShowNoticeDetail: !this.state.isShowNoticeDetail,
+                });
+              }}
+            >
+              {scheduleInfo.notices.length}个通知 <DownOutline />
+              {isShowNoticeDetail ? (
+                <div className="notice-bar-content-detail">
+                  <h3 className="notice-title">温馨提示：</h3>
+                  {scheduleInfo.notices.map((item, index) => {
+                    return (
+                      <div className="detail-content" key={index}>
+                        <div className="content">{item.text}</div>
                       </div>
-                    </div>
-                  })
-                }
-              </div>
-            ) : null}
-          </span>
-        </Space>
-      }
-      style={{
-        "--text-color": "#e68e1a",
-        position: "relative",
-      }}
-    />:null
+                    );
+                  })}
+                </div>
+              ) : null}
+            </span>
+          </Space>
+        }
+        style={{
+          "--text-color": "#e68e1a",
+          position: "relative",
+        }}
+      />
+    ) : null;
   }
-  handleSelectedSeat(item){
+  handleSelectedSeat(item) {
     let { selectedSeat } = this.state;
-    let flag = false
-    for(let i=0;i<selectedSeat.length;i++){
-      if(selectedSeat[i].id===item.id){
+    let flag = false;
+    for (let i = 0; i < selectedSeat.length; i++) {
+      if (selectedSeat[i].id === item.id) {
         flag = true;
       }
     }
     return flag;
   }
-  calcTotalPrice(){
-    let { selectedSeat,selectedSchedule } = this.state;
+  calcTotalPrice() {
+    let { selectedSeat, selectedSchedule } = this.state;
     let totalPrice = 0;
-    for(let i=0;i<selectedSeat.length;i++){
-      if(selectedSchedule.is_section==1){
-        for(let j=0;j<selectedSchedule.sectionPrice.length;j++){
-          let it = selectedSchedule.sectionPrice[j]
-          if(selectedSeat[i].section_id === it.section_id){
-            totalPrice += Number(it.price)
+    for (let i = 0; i < selectedSeat.length; i++) {
+      if (selectedSchedule.is_section == 1) {
+        for (let j = 0; j < selectedSchedule.sectionPrice.length; j++) {
+          let it = selectedSchedule.sectionPrice[j];
+          if (selectedSeat[i].section_id === it.section_id) {
+            totalPrice += Number(it.price);
           }
         }
-      }else{
-        totalPrice += Number(selectedSchedule.price)
+      } else {
+        totalPrice += Number(selectedSchedule.price);
       }
     }
     return totalPrice.toFixed(2);
   }
   render() {
-    let { history,location } = this.props;
+    let { history, location } = this.props;
     let {
       isShowNoticeDetail,
       isShowScheduleList,
@@ -270,9 +281,9 @@ class SelectSeatBuyTicket extends Component {
       scheduleList,
       selectedSchedule,
       seatList,
-      selectedSeat
+      selectedSeat,
     } = this.state;
-    let { film } = scheduleInfo
+    let { film } = scheduleInfo;
     return (
       <div className="select-seat-buy-ticket-box">
         <NavBar
@@ -294,53 +305,57 @@ class SelectSeatBuyTicket extends Component {
               }px) scale(${scaleX},${scaleY})`,
             }}
           >
-            {
-              Object.keys(seatList).map(key=>{
-                return <li className="row" key={key}>
-                  {
-                    seatList[key].map((item,index)=>{
-                      return <div className="cell" key={key+index.toString()} onClick={()=>{
-                        //disabled 0可选 1不可选 2无座
-                        if(item.disabled!==0) return 
-                        let { selectedSeat } = this.state;
-                        let flag = true;
-                        for(let i=0;i<selectedSeat.length;i++){
-                          if(selectedSeat[i].id===item.id){
-                            selectedSeat.splice(i,1);
-                            this.setState({
-                              selectedSeat:selectedSeat
-                            })
-                            flag = false;
+            {Object.keys(seatList).map((key) => {
+              return (
+                <li className="row" key={key}>
+                  {seatList[key].map((item, index) => {
+                    return (
+                      <div
+                        className="cell"
+                        key={key + index.toString()}
+                        onClick={() => {
+                          //disabled 0可选 1不可选 2无座
+                          if (item.disabled !== 0) return;
+                          let { selectedSeat } = this.state;
+                          let flag = true;
+                          for (let i = 0; i < selectedSeat.length; i++) {
+                            if (selectedSeat[i].id === item.id) {
+                              selectedSeat.splice(i, 1);
+                              this.setState({
+                                selectedSeat: selectedSeat,
+                              });
+                              flag = false;
+                            }
                           }
-                        }
-                        if(flag){
-                          selectedSeat.push(item);
-                          this.setState({
-                            selectedSeat:selectedSeat
-                          })
-                        }
-                        // item.disabled = item.disabled===0?3:0;
-                        
-                      }}>
-                        {
-                          item.disabled===0?(this.handleSelectedSeat(item)?<i 
-                          className="iconfont icon-bukexuanzuowei- seat selected-seat"></i>:<i 
-                          className="iconfont icon-kexuanzuobiankuang seat can-select"></i>):item.disabled===1?<i 
-                          className="iconfont icon-bukexuanzuowei- seat no-select-seat"></i>:null
-                        }
-                       
+                          if (flag) {
+                            selectedSeat.push(item);
+                            this.setState({
+                              selectedSeat: selectedSeat,
+                            });
+                          }
+                          // item.disabled = item.disabled===0?3:0;
+                        }}
+                      >
+                        {item.disabled === 0 ? (
+                          this.handleSelectedSeat(item) ? (
+                            <i className="iconfont icon-bukexuanzuowei- seat selected-seat"></i>
+                          ) : (
+                            <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+                          )
+                        ) : item.disabled === 1 ? (
+                          <i className="iconfont icon-bukexuanzuowei- seat no-select-seat"></i>
+                        ) : null}
                       </div>
-                    })
-                  }
+                    );
+                  })}
                 </li>
-              })
-                
-            }
+              );
+            })}
           </ul>
         </div>
         <div className="bottom-wrapper">
-          {
-            !isShowScheduleList || !selectedSeat.length?<div className="seat-template-status">
+          {!isShowScheduleList || !selectedSeat.length ? (
+            <div className="seat-template-status">
               <div className="status-item">
                 <i className="iconfont icon-bukexuanzuowei- seat no-select-seat"></i>
                 <span className="txt">不可选</span>
@@ -357,8 +372,8 @@ class SelectSeatBuyTicket extends Component {
                 <i className="iconfont icon-bukexuanzuowei- seat selected-seat"></i>
                 <span className="txt">选中</span>
               </div>
-            </div>:null
-          }
+            </div>
+          ) : null}
           <div className="top-box">
             <div className="film-detail">
               <div className="top">
@@ -375,42 +390,83 @@ class SelectSeatBuyTicket extends Component {
                   {isShowScheduleList ? <UpOutline /> : <DownOutline />}
                 </div>
               </div>
-              <div className="bot">{film?this.handerDate(film.schedule_date):''} {dayjs(selectedSchedule.start_runtime).format("HH:mm")} {selectedSchedule.language}{selectedSchedule.play_type_name}</div>
+              <div className="bot">
+                {film ? this.handerDate(film.schedule_date) : ""}{" "}
+                {dayjs(selectedSchedule.start_runtime).format("HH:mm")}{" "}
+                {selectedSchedule.language}
+                {selectedSchedule.play_type_name}
+              </div>
             </div>
             <div className="shedule-wrapper">
-              {isShowScheduleList ?scheduleList.length?scheduleList.map((item,index)=>{
-                return <div 
-                key={index} 
-                className={[`she-item ${selectedSchedule.id==item.id?'active-schedule-item':''}`]}
-                onClick={()=>{
-                  console.log('123')
-                  if(selectedSchedule.id==item.id) return;
-                  this.setState({
-                    selectedSchedule:item
-                  },()=>{
-                    this.getSeatList()
-                  })
-                }}>
-                  <p className="time">{dayjs(item.start_runtime).format('HH:mm')}</p>
-                  <p className="language">{item.language}{item.play_type_name}</p>
-                  <p className="price">¥ {item.is_section===0?item.price:this.handlerSectionPrice(item.sectionPrice)}</p>
-                </div>
-              }):null: null}
+              {isShowScheduleList
+                ? scheduleList.length
+                  ? scheduleList.map((item, index) => {
+                      return (
+                        <div
+                          key={index}
+                          className={[
+                            `she-item ${
+                              selectedSchedule.id == item.id
+                                ? "active-schedule-item"
+                                : ""
+                            }`,
+                          ]}
+                          onClick={() => {
+                            if (selectedSchedule.id == item.id) return;
+                            this.setState(
+                              {
+                                selectedSchedule: item,
+                              },
+                              () => {
+                                this.getSeatList();
+                              }
+                            );
+                          }}
+                        >
+                          <p className="time">
+                            {dayjs(item.start_runtime).format("HH:mm")}
+                          </p>
+                          <p className="language">
+                            {item.language}
+                            {item.play_type_name}
+                          </p>
+                          <p className="price">
+                            ¥{" "}
+                            {item.is_section === 0
+                              ? item.price
+                              : this.handlerSectionPrice(item.sectionPrice)}
+                          </p>
+                        </div>
+                      );
+                    })
+                  : null
+                : null}
             </div>
-            
+
             <div className="line"></div>
             <div className="selected-seat-list">
-              {
-                selectedSeat.map((item,index)=>{
-                  return <div className="seat" key={index} onClick={()=>{
-                    selectedSeat.splice(index,1);
-                    this.setState({
-                      selectedSeat
-                    })
-                  }}>
+              {selectedSeat.map((item, index) => {
+                return (
+                  <div
+                    className="seat"
+                    key={index}
+                    onClick={() => {
+                      selectedSeat.splice(index, 1);
+                      this.setState({
+                        selectedSeat,
+                      });
+                    }}
+                  >
                     <div className="left">
-                      <p className="seat-txt">{item.row_id}排{item.column_id}座</p>
-                      <p className="price">¥ {selectedSchedule.is_section===0?selectedSchedule.price:this.handlerSelectedSectionPrice(item)}</p>
+                      <p className="seat-txt">
+                        {item.row_id}排{item.column_id}座
+                      </p>
+                      <p className="price">
+                        ¥{" "}
+                        {selectedSchedule.is_section === 0
+                          ? selectedSchedule.price
+                          : this.handlerSelectedSectionPrice(item)}
+                      </p>
                     </div>
                     <div className="right">
                       <CloseOutline
@@ -420,29 +476,27 @@ class SelectSeatBuyTicket extends Component {
                       />
                     </div>
                   </div>
-                })
-              }
-              
+                );
+              })}
             </div>
           </div>
-          
         </div>
         <div className="select-seat-buy-btn-box">
           <Button
             style={{
-              "--border-radius": 0
+              "--border-radius": 0,
             }}
             className="select-seat-buy-btn"
             block
             color="primary"
             fill="solid"
             size="middle"
-            disabled={selectedSeat.length?false:true}
+            disabled={selectedSeat.length ? false : true}
             onClick={() => {
               Toast.show({
                 icon: "none",
                 duration: 2000,
-                content: '去购买',
+                content: "去购买",
               });
               // history.push({
               //   pathname: "/film/cinema",
@@ -455,20 +509,19 @@ class SelectSeatBuyTicket extends Component {
             {this.calcTotalPrice()}元 确认选座
           </Button>
         </div>
-        
       </div>
     );
   }
-  handlerSelectedSectionPrice(it){
+  handlerSelectedSectionPrice(it) {
     let { selectedSchedule } = this.state;
     let price = 0;
-    selectedSchedule.sectionPrice.map((item,index)=>{
+    selectedSchedule.sectionPrice.map((item, index) => {
       item.price = Number(item.price);
-      if(item.section_id === it.section_id){
+      if (item.section_id === it.section_id) {
         price = item.price;
       }
-    })
-    return price
+    });
+    return price;
   }
   handleShowColor(id) {
     switch (id) {

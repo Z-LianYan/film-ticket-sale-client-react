@@ -69,7 +69,7 @@ class FileDetail extends Component {
     let { location } = history;
     let result = await get_cinema_detail({
       cinema_id: location.state.cinema_id,
-      isHasFilmList:true
+      isHasFilmList: true,
     });
     // console.log("result---", result);
     this.setState(
@@ -108,7 +108,7 @@ class FileDetail extends Component {
     });
   }
   newSwiper() {
-    let { cinemaDetail,filmList } = this.state;
+    let { cinemaDetail, filmList } = this.state;
     let { location } = this.props;
     let _this = this;
     let _swiper = new Swiper(".swiper-container", {
@@ -136,18 +136,15 @@ class FileDetail extends Component {
         },
       },
     });
-    if(location.state && location.state.film_id){
+    if (location.state && location.state.film_id) {
       setTimeout(() => {
-        filmList.map((item,index)=>{
-          if(item.film_id == location.state.film_id){
-            _swiper.slideTo(index)
+        filmList.map((item, index) => {
+          if (item.film_id == location.state.film_id) {
+            _swiper.slideTo(index);
           }
-        })
+        });
       }, 100);
     }
-    
-    
-
   }
   renderSwiper() {
     let { activeBgImg, cinemaDetail, filmList } = this.state;
@@ -206,6 +203,23 @@ class FileDetail extends Component {
       default:
         return "";
     }
+  }
+  handlerSectionPrice(sectionPrice) {
+    let price = 0;
+    let num = 0;
+    sectionPrice.map((item, index) => {
+      // console.log("price----++", item.price);
+      item.price = Number(item.price);
+      if (price === Number(item.price) && index !== 0) {
+        num += 1;
+      }
+      if (price === 0) {
+        price = item.price;
+      } else if (item.price < price) {
+        price = item.price;
+      }
+    });
+    return price + (num + 1 == sectionPrice.length ? "" : " 起");
   }
   render() {
     let {
@@ -358,7 +372,9 @@ class FileDetail extends Component {
               showType={item.language + item.play_type_name}
               hall={item.hall_name}
               price={
-                item.is_section == 1 ? item.sectionPrice[0].price : item.price
+                item.is_section == 1
+                  ? this.handlerSectionPrice(item.sectionPrice)
+                  : item.price
               }
               onClick={() => {
                 // console.log("goupiao");
@@ -368,8 +384,8 @@ class FileDetail extends Component {
                     cinema_id: cinemaDetail.id,
                     hall_id: item.hall_id,
                     film_id: item.film_id,
-                    schedule_id:item.id,
-                    date:filmDetail.show_date[this.state.activeKey]
+                    schedule_id: item.id,
+                    date: filmDetail.show_date[this.state.activeKey],
                   },
                 });
               }}
