@@ -104,13 +104,14 @@ class FileDetail extends Component {
     });
     // console.log("排片列表", result);
     this.setState({
-      scheduleList: result.rows,
+      scheduleList: result,
     });
   }
   newSwiper() {
-    let { cinemaDetail } = this.state;
+    let { cinemaDetail,filmList } = this.state;
+    let { location } = this.props;
     let _this = this;
-    new Swiper(".swiper-container", {
+    let _swiper = new Swiper(".swiper-container", {
       direction: "horizontal", // 垂直切换选项
       loop: false, // 循环模式选项
       slidesPerView: 3.5,
@@ -126,7 +127,6 @@ class FileDetail extends Component {
               activeKey: 0,
             },
             () => {
-              // console.log("activeKey", _this.state.activeKey);
               _this.getDateScheduleList(_this.state.filmDetail.show_date[0]);
             }
           );
@@ -136,6 +136,18 @@ class FileDetail extends Component {
         },
       },
     });
+    if(location.state && location.state.film_id){
+      setTimeout(() => {
+        filmList.map((item,index)=>{
+          if(item.film_id == location.state.film_id){
+            _swiper.slideTo(index)
+          }
+        })
+      }, 100);
+    }
+    
+    
+
   }
   renderSwiper() {
     let { activeBgImg, cinemaDetail, filmList } = this.state;
@@ -354,8 +366,7 @@ class FileDetail extends Component {
                   pathname: "/buy/ticket",
                   state: {
                     cinema_id: cinemaDetail.id,
-                    cinema_name: cinemaDetail.name,
-                    hall_id: item.id,
+                    hall_id: item.hall_id,
                     film_id: item.film_id,
                     schedule_id:item.id,
                     date:filmDetail.show_date[this.state.activeKey]

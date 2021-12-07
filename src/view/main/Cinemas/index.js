@@ -317,10 +317,9 @@ class Cinema extends Component {
                     >
                       <div
                         className={[
-                          `area-wrapper ${
-                            this.state.fetchOptions.district_id == item.id
-                              ? "active"
-                              : ""
+                          `area-wrapper ${this.state.fetchOptions.district_id == item.id
+                            ? "active"
+                            : ""
                           }`,
                         ]}
                       >
@@ -369,7 +368,10 @@ class Cinema extends Component {
                   console.log("12345");
                   this.props.history.push({
                     pathname: "/cinema/detail",
-                    state: { cinema_id: item.id },
+                    state: {
+                      cinema_id: item.id,
+                      film_id: location.state && location.state.film_id
+                    },
                   });
                 }}
               />
@@ -401,9 +403,8 @@ class Cinema extends Component {
             hasMore={isHasMore}
           >
             <InfiniteScrollContent
-              text={`该区域没有排${
-                location.state && location.state.film_id ? "此" : ""
-              }片的影院哦`}
+              text={`该区域没有排${location.state && location.state.film_id ? "此" : ""
+                }片的影院哦`}
               noContent={!isHasMore && !this.state.list.length}
               hasMore={isHasMore}
             />

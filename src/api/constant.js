@@ -13,3 +13,5 @@ export const GET_DATE_SCHEDULE = "/date/schedule"; //某日排期
 export const GET_CITY_DISTRICT_LIST = "/city/getCityDistrictList";
 export const GET_FILM_DETAIL = "/film/filmDetail";
 export const GET_FILM_IN_SCHEDULE_DATES = "/getFilmInScheduleDates";
+export const GET_SCHEDULE_INFO = "/getScheduleInfo";
+export const GET_SEAT = "/getSeat";//获取座位

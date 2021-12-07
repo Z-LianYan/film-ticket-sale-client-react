@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import "./index.scss";
-import { NavBar, NoticeBar, Space, Button } from "antd-mobile";
+import { NavBar, NoticeBar, Space, Button,Toast } from "antd-mobile";
 import { DownOutline, UpOutline, CloseOutline } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
-import { get_cinema_detail, get_date_schedule } from "@/api/cinema";
+import { get_schedule_info, get_seat } from "@/api/selectSeatBuyTicket";
+import dayjs from "dayjs";
 class SelectSeatBuyTicket extends Component {
   constructor(props) {
     super(props);
@@ -17,9 +18,12 @@ class SelectSeatBuyTicket extends Component {
       scaleX: 1,
       scaleY: 1,
 
-      cinemaDetail:{},
+      scheduleInfo:{},
       isSkeleton:true,
       scheduleList:[],
+      selectedSchedule:{},
+      seatList:{},
+      selectedSeat:[]
     };
   }
   componentDidMount() {
@@ -89,39 +93,167 @@ class SelectSeatBuyTicket extends Component {
       });
     });
   }
+  handerDate(date) {
+    let today = dayjs().format("YYYY-MM-DD");
+    let tomorrow = dayjs().add(1, "day").format("YYYY-MM-DD");
+    let houtian = dayjs().add(2, "day").format("YYYY-MM-DD");
+    let cur_y = dayjs(date).format("YYYY");
+    let y = dayjs().format("YYYY");
+    switch (dayjs(date).format("YYYY-MM-DD")) {
+      case today:
+        return "今天" + dayjs(date).format("MM月DD日");
+      case tomorrow:
+        return "明天" + dayjs(date).format("MM月DD日");
+      case houtian:
+        return "后天" + dayjs(date).format("MM月DD日");
+      default:
+        return (
+          this.handleWeek(dayjs(date).day()) +
+          dayjs(date).format(cur_y == y ? "MM月DD日" : "YY年MM月DD日")
+        );
+    }
+  }
+  handleWeek(day) {
+    switch (day) {
+      case 0:
+        return "周日";
+      case 1:
+        return "周一";
+      case 2:
+        return "周二";
+      case 3:
+        return "周三";
+      case 4:
+        return "周四";
+      case 5:
+        return "周五";
+      case 6:
+        return "周六";
+      default:
+        return "";
+    }
+  }
   async getCinemaDetail() {
     let { history,location } = this.props;
-    let result = await get_cinema_detail({
+    let result = await get_schedule_info({
       cinema_id: location.state.cinema_id,
-      isHasFilmList:false
+      film_id:location.state.film_id,
+      date:location.state.date,
     });
-    // console.log("result---", result);
-    this.setState(
-      {
-        cinemaDetail: result,
-        isSkeleton: false,
-      },
-      () => {
-        this.getDateScheduleList(location.state.schedule_id);
-      }
-    );
-    // this.newSwiper();
+    this.setState({
+      scheduleInfo: result,
+      scheduleList: result.film.schedule,
+    });
+    if(location.state.hall_id){
+      result.film.schedule.map((item,index)=>{
+        if(item.id == location.state.schedule_id){
+          this.setState({
+            selectedSchedule:item
+          },()=>{
+            this.getSeatList()
+          })
+        }
+      })
+    }
   }
-  async getDateScheduleList() {
-    // let { cinemaDetail, filmDetail } = this.state;
-    let { history,location } = this.props;
+  async getSeatList(){
+    let { selectedSchedule } = this.state;
+    // console.log('座位列表',selectedSchedule)
+    let result = await get_seat({
+      hall_id:selectedSchedule.hall_id
+    });
+
+    let seat = result.seat;
+    let obj = {};
+    for (let item of seat) {
+      if (!obj[item.row]) {
+        obj[item.row] = [item];
+      } else {
+        obj[item.row].push(item);
+      }
+    }
     this.setState({
-      scheduleList: [],
-    });
-    let result = await get_date_schedule({
-      cinema_id: location.state.cinema_id,
-      film_id: location.state.film_id,
-      date: location.state.date,
-    });
-    // console.log("排片列表", result);
-    this.setState({
-      scheduleList: result.rows,
-    });
+      seatList:obj
+    })
+    console.log('result',this.state.seatList);
+  }
+
+  handlerSectionPrice(sectionPrice){
+    let price = 0;
+    sectionPrice.map((item,index)=>{
+      item.price = Number(item.price);
+      if(price===0){
+        price = item.price
+      }else if(item.price<price){
+        price = item.price;
+      }
+    })
+    return price+' 起'
+  }
+  renderNotice(){
+    let { scheduleInfo,isShowNoticeDetail } = this.state;
+    return scheduleInfo.notices && scheduleInfo.notices.length?<NoticeBar
+      content={scheduleInfo.notices && scheduleInfo.notices.map(item=>item.text).join(' ')}
+      color="alert"
+      extra={
+        <Space>
+          <span
+            onClick={() => {
+              this.setState({
+                isShowNoticeDetail: !this.state.isShowNoticeDetail,
+              });
+            }}
+          >
+            {scheduleInfo.notices.length}个通知 <DownOutline />
+            {isShowNoticeDetail ? (
+              <div className="notice-bar-content-detail">
+                <h3 className="notice-title">温馨提示：</h3>
+                {
+                  scheduleInfo.notices.map((item,index)=>{
+                    return <div className="detail-content" key={index}>
+                      <div className="content">
+                        {item.text}
+                      </div>
+                    </div>
+                  })
+                }
+              </div>
+            ) : null}
+          </span>
+        </Space>
+      }
+      style={{
+        "--text-color": "#e68e1a",
+        position: "relative",
+      }}
+    />:null
+  }
+  handleSelectedSeat(item){
+    let { selectedSeat } = this.state;
+    let flag = false
+    for(let i=0;i<selectedSeat.length;i++){
+      if(selectedSeat[i].id===item.id){
+        flag = true;
+      }
+    }
+    return flag;
+  }
+  calcTotalPrice(){
+    let { selectedSeat,selectedSchedule } = this.state;
+    let totalPrice = 0;
+    for(let i=0;i<selectedSeat.length;i++){
+      if(selectedSchedule.is_section==1){
+        for(let j=0;j<selectedSchedule.sectionPrice.length;j++){
+          let it = selectedSchedule.sectionPrice[j]
+          if(selectedSeat[i].section_id === it.section_id){
+            totalPrice += Number(it.price)
+          }
+        }
+      }else{
+        totalPrice += Number(selectedSchedule.price)
+      }
+    }
+    return totalPrice.toFixed(2);
   }
   render() {
     let { history,location } = this.props;
@@ -134,7 +266,13 @@ class SelectSeatBuyTicket extends Component {
       deltaY,
       scaleX,
       scaleY,
+      scheduleInfo,
+      scheduleList,
+      selectedSchedule,
+      seatList,
+      selectedSeat
     } = this.state;
+    let { film } = scheduleInfo
     return (
       <div className="select-seat-buy-ticket-box">
         <NavBar
@@ -144,39 +282,9 @@ class SelectSeatBuyTicket extends Component {
             history.goBack();
           }}
         >
-          {location.state && location.state.cinema_name}
+          {scheduleInfo.cinema_name}
         </NavBar>
-        <NoticeBar
-          content={"来得及弗拉索夫加拉加斯房间里是否就是开了房间的"}
-          color="alert"
-          extra={
-            <Space>
-              <span
-                onClick={() => {
-                  this.setState({
-                    isShowNoticeDetail: !this.state.isShowNoticeDetail,
-                  });
-                }}
-              >
-                1个通知 <DownOutline />
-                {isShowNoticeDetail ? (
-                  <div className="notice-bar-content-detail">
-                    <h3 className="notice-title">温馨提示：</h3>
-                    <div className="detail-content">
-                      <div className="content">
-                        看来发动机动力开始减肥路看来发动机动力开始减肥路
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
-              </span>
-            </Space>
-          }
-          style={{
-            "--text-color": "#e68e1a",
-            position: "relative",
-          }}
-        />
+        {this.renderNotice()}
         <div className="seats-box">
           <ul
             className="seat-list"
@@ -186,47 +294,75 @@ class SelectSeatBuyTicket extends Component {
               }px) scale(${scaleX},${scaleY})`,
             }}
           >
-            {/* <div>{"scaleX: " + scaleX + " scaleY: " + scaleY}</div> */}
-            <li className="row">
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-              <div className="cell">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              </div>
-            </li>
-            
-            
-            
+            {
+              Object.keys(seatList).map(key=>{
+                return <li className="row" key={key}>
+                  {
+                    seatList[key].map((item,index)=>{
+                      return <div className="cell" key={key+index.toString()} onClick={()=>{
+                        //disabled 0可选 1不可选 2无座
+                        if(item.disabled!==0) return 
+                        let { selectedSeat } = this.state;
+                        let flag = true;
+                        for(let i=0;i<selectedSeat.length;i++){
+                          if(selectedSeat[i].id===item.id){
+                            selectedSeat.splice(i,1);
+                            this.setState({
+                              selectedSeat:selectedSeat
+                            })
+                            flag = false;
+                          }
+                        }
+                        if(flag){
+                          selectedSeat.push(item);
+                          this.setState({
+                            selectedSeat:selectedSeat
+                          })
+                        }
+                        // item.disabled = item.disabled===0?3:0;
+                        
+                      }}>
+                        {
+                          item.disabled===0?(this.handleSelectedSeat(item)?<i 
+                          className="iconfont icon-bukexuanzuowei- seat selected-seat"></i>:<i 
+                          className="iconfont icon-kexuanzuobiankuang seat can-select"></i>):item.disabled===1?<i 
+                          className="iconfont icon-bukexuanzuowei- seat no-select-seat"></i>:null
+                        }
+                       
+                      </div>
+                    })
+                  }
+                </li>
+              })
+                
+            }
           </ul>
         </div>
-
         <div className="bottom-wrapper">
-          <div className="seat-template-status">
-            <div className="status-item">
-              <i className="iconfont icon-bukexuanzuowei- seat no-select-seat"></i>
-              <span className="txt">不可选</span>
-            </div>
-            <div className="status-item">
-              <i className="iconfont icon-bukexuanzuowei- seat sale-out-seat"></i>
-              <span className="txt">已售</span>
-            </div>
-            <div className="status-item">
-              <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
-              <span className="txt">可选</span>
-            </div>
-            <div className="status-item">
-              <i className="iconfont icon-yixuanzuowei seat selected-seat"></i>
-              <span className="txt">选中</span>
-            </div>
-          </div>
+          {
+            !isShowScheduleList || !selectedSeat.length?<div className="seat-template-status">
+              <div className="status-item">
+                <i className="iconfont icon-bukexuanzuowei- seat no-select-seat"></i>
+                <span className="txt">不可选</span>
+              </div>
+              <div className="status-item">
+                <i className="iconfont icon-bukexuanzuowei- seat sale-out-seat"></i>
+                <span className="txt">已售</span>
+              </div>
+              <div className="status-item">
+                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+                <span className="txt">可选</span>
+              </div>
+              <div className="status-item">
+                <i className="iconfont icon-bukexuanzuowei- seat selected-seat"></i>
+                <span className="txt">选中</span>
+              </div>
+            </div>:null
+          }
           <div className="top-box">
             <div className="film-detail">
               <div className="top">
-                <h5 className="film-name">电影名称</h5>
+                <h5 className="film-name">{film && film.film_name}</h5>
                 <div
                   className="right"
                   onClick={() => {
@@ -239,58 +375,100 @@ class SelectSeatBuyTicket extends Component {
                   {isShowScheduleList ? <UpOutline /> : <DownOutline />}
                 </div>
               </div>
-              <div className="bot">周六11月20日 11:00 国语2D</div>
+              <div className="bot">{film?this.handerDate(film.schedule_date):''} {dayjs(selectedSchedule.start_runtime).format("HH:mm")} {selectedSchedule.language}{selectedSchedule.play_type_name}</div>
             </div>
-            {isShowScheduleList ? (
-              <div className="shedule-wrapper">
-                <div className="she-item">
-                  <p className="time">11:00</p>
-                  <p className="language">国语2D</p>
-                  <p className="price">¥45.9</p>
+            <div className="shedule-wrapper">
+              {isShowScheduleList ?scheduleList.length?scheduleList.map((item,index)=>{
+                return <div 
+                key={index} 
+                className={[`she-item ${selectedSchedule.id==item.id?'active-schedule-item':''}`]}
+                onClick={()=>{
+                  console.log('123')
+                  if(selectedSchedule.id==item.id) return;
+                  this.setState({
+                    selectedSchedule:item
+                  },()=>{
+                    this.getSeatList()
+                  })
+                }}>
+                  <p className="time">{dayjs(item.start_runtime).format('HH:mm')}</p>
+                  <p className="language">{item.language}{item.play_type_name}</p>
+                  <p className="price">¥ {item.is_section===0?item.price:this.handlerSectionPrice(item.sectionPrice)}</p>
                 </div>
-              </div>
-            ) : null}
+              }):null: null}
+            </div>
+            
             <div className="line"></div>
             <div className="selected-seat-list">
-              <div className="seat">
-                <div className="left">
-                  <p className="seat-txt">12排10座</p>
-                  <p className="price">¥36.9</p>
-                </div>
-                <div className="right">
-                  <CloseOutline
-                    onClick={() => {
-                      console.log("关闭");
-                    }}
-                  />
-                </div>
-              </div>
+              {
+                selectedSeat.map((item,index)=>{
+                  return <div className="seat" key={index} onClick={()=>{
+                    selectedSeat.splice(index,1);
+                    this.setState({
+                      selectedSeat
+                    })
+                  }}>
+                    <div className="left">
+                      <p className="seat-txt">{item.row_id}排{item.column_id}座</p>
+                      <p className="price">¥ {selectedSchedule.is_section===0?selectedSchedule.price:this.handlerSelectedSectionPrice(item)}</p>
+                    </div>
+                    <div className="right">
+                      <CloseOutline
+                        onClick={() => {
+                          console.log("关闭");
+                        }}
+                      />
+                    </div>
+                  </div>
+                })
+              }
+              
             </div>
           </div>
+          
+        </div>
+        <div className="select-seat-buy-btn-box">
           <Button
             style={{
-              "--border-radius": 0,
+              "--border-radius": 0
             }}
             className="select-seat-buy-btn"
             block
             color="primary"
             fill="solid"
-            size="large"
-            disabled={true}
+            size="middle"
+            disabled={selectedSeat.length?false:true}
             onClick={() => {
-              history.push({
-                pathname: "/film/cinema",
-                state: {
-                  film_id: 234,
-                },
+              Toast.show({
+                icon: "none",
+                duration: 2000,
+                content: '去购买',
               });
+              // history.push({
+              //   pathname: "/film/cinema",
+              //   state: {
+              //     film_id: 234,
+              //   },
+              // });
             }}
           >
-            46元 确认选座
+            {this.calcTotalPrice()}元 确认选座
           </Button>
         </div>
+        
       </div>
     );
+  }
+  handlerSelectedSectionPrice(it){
+    let { selectedSchedule } = this.state;
+    let price = 0;
+    selectedSchedule.sectionPrice.map((item,index)=>{
+      item.price = Number(item.price);
+      if(item.section_id === it.section_id){
+        price = item.price;
+      }
+    })
+    return price
   }
   handleShowColor(id) {
     switch (id) {

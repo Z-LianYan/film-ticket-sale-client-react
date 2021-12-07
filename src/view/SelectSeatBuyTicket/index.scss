@@ -1,7 +1,22 @@
 @import "@/stylesheets/_mixin.scss";
+@import "@/stylesheets/_base.scss";
 .select-seat-buy-ticket-box{
     height: 100vh;
     background-color: #eee;
+    display: flex;
+    flex-flow: column;
+    .no-select-seat{
+        color: #ccc;
+    }
+    .sale-out-seat{
+        color: #ff5f16;
+    }
+    .can-select{
+        // color: #fff;
+    }
+    .selected-seat{
+        color: rgb(49, 188, 73);
+    }
     .notice-bar-content-detail{
         position: absolute;
         top: 0.28rem;
@@ -10,6 +25,7 @@
         background:#fff9ed;
         font-size: 0.13rem;
         padding: 0 0.25rem 0.1rem 0.25rem;
+        z-index: 10000;
         .notice-title{
             font-size: 0.13rem;
             position: absolute;
@@ -33,52 +49,36 @@
         }
     }
     .seats-box{
-        min-height: 60vh;
-        // background-color: red;
-        border: 1px solid red;
+        flex: 1;
+        // min-height: 60vh;
+        // border: 1px solid red;
         overflow: hidden;
-        // white-space: normal;
         position: relative;
         user-select: none;
-        // background-color: #eee;
-        // display: flex;
-        // justify-content: center;
         .seat-list{
             position: absolute;
-            // min-width: 100%;
-            // min-height: 100%;
-            // left: 50%;
-            // top: 50%;
-            // background-color: #ff5f16;
-            // overflow-x: hidden;
-            // transform: scale(2,2);
-            // padding: 50px;
-            // background-color: #fff;
+            
             .row{
                 display: flex;
                 .cell{
-
+                    margin: 0.05rem 0.05rem 0 0;
                 }
             }
         }
     }
     .bottom-wrapper{
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        // background-color: #eee;
+        padding-bottom: 0.37rem;
         .seat-template-status{
             display: flex;
             justify-content: center;
+            padding-top: 0.1rem;
             .status-item{
-                margin-right: 0.2rem;
+                margin-right: 0.1rem;
                 display: flex;
                 align-items: center;
                 .seat{
-                    font-size: 0.2rem;
+                    font-size: 0.15rem;
                     margin-right: 0.08rem;
-                    
                     &::before{
                     //   background-color: #ff5f16;  
                     //   border-radius: 0.05rem;
@@ -88,18 +88,10 @@
                     font-size: 0.13rem;
                     color: #797d82;
                 }
-                .no-select-seat{
-                    color: #ccc;
-                }
-                .sale-out-seat{
-                    color: #ff5f16;
-                }
-                .can-select{
-                    // color: #fff;
-                }
-                .selected-seat{
-                    color: rgb(49, 188, 73);
-                }
+                
+            }
+            .status-item:nth-last-child(1){
+                margin-right: 0;
             }
         }
         .top-box{
@@ -142,7 +134,6 @@
                 .she-item{
                     width: 0.7rem;
                     height: 0.6rem;
-                    // background-color: #fffbfb;
                     background-color: hsla(0,0%,95.7%,.6);
                     display: flex;
                     flex-flow: column nowrap;
@@ -150,6 +141,10 @@
                     justify-content: center;
                     border-radius: 0.05rem;
                     margin-right: 0.1rem;
+                    &.active-schedule-item{
+                        border: 1px solid $base-color;
+                        background-color: #fffbfb;
+                    }
                     .time{
                         font-size: 0.14rem;
                         color: #191a1b;
@@ -210,12 +205,17 @@
                 }
             }
         }
+    }
+    .select-seat-buy-btn-box{
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #fff;
         .select-seat-buy-btn{
-            // position: fixed;
-            // left: 0;
-            // right: 0;
-            // bottom: 0;
+            
         }
     }
+    
     
 }
