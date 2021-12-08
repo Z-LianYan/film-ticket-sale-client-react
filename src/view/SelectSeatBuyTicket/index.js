@@ -26,7 +26,7 @@ class SelectSeatBuyTicket extends Component {
       // seatList: {},
       seatList: [],
       selectedSeat: [],
-      hallDetail:{}
+      hallDetail: {},
     };
   }
   componentDidMount() {
@@ -66,18 +66,17 @@ class SelectSeatBuyTicket extends Component {
         return;
       }
       // setTimeout(() => {
-        _this.setState({
-          scaleX:
-            ev.additionalEvent == "pinchout"
-              ? _this.state.scaleX + 0.05
-              : _this.state.scaleX - 0.08,
-          scaleY:
-            ev.additionalEvent == "pinchout"
-              ? _this.state.scaleY + 0.05
-              : _this.state.scaleY - 0.08,
-        });
+      _this.setState({
+        scaleX:
+          ev.additionalEvent == "pinchout"
+            ? _this.state.scaleX + 0.05
+            : _this.state.scaleX - 0.08,
+        scaleY:
+          ev.additionalEvent == "pinchout"
+            ? _this.state.scaleY + 0.05
+            : _this.state.scaleY - 0.08,
+      });
       // });
-      
     });
     hammertime.on("pan", function (ev) {
       let offsetW = ev.deltaX + _this.state.left;
@@ -182,7 +181,7 @@ class SelectSeatBuyTicket extends Component {
     // }
     this.setState({
       // seatList: obj,
-      hallDetail:result,
+      hallDetail: result,
       seatList: seat,
       selectedSeat: [],
     });
@@ -274,7 +273,7 @@ class SelectSeatBuyTicket extends Component {
     return totalPrice.toFixed(2);
   }
   render() {
-    let { history, location,seatSectionShowColor } = this.props;
+    let { history, location, seatSectionShowColor } = this.props;
     let {
       isShowNoticeDetail,
       isShowScheduleList,
@@ -289,9 +288,10 @@ class SelectSeatBuyTicket extends Component {
       selectedSchedule,
       seatList,
       selectedSeat,
-      hallDetail
+      hallDetail,
     } = this.state;
     let { film } = scheduleInfo;
+    let cellWidth = 100 / hallDetail.seat_row_num;
     return (
       <div className="select-seat-buy-ticket-box">
         <NavBar
@@ -304,80 +304,101 @@ class SelectSeatBuyTicket extends Component {
           {scheduleInfo.cinema_name}
         </NavBar>
         {this.renderNotice()}
-        {
-          selectedSchedule.is_section==1?<ul className="section-price-wrapper">
-            {
-              selectedSchedule.sectionPrice.map((item,index)=>{
-                return<li className="price-item" key={index}>
-                  <i className="iconfont icon-kexuanzuowei seat-icon" style={{color:seatSectionShowColor[item.section_id]}}></i> <span className='section-price'>¥{item.price}</span>
+        {selectedSchedule.is_section == 1 ? (
+          <ul className="section-price-wrapper">
+            {selectedSchedule.sectionPrice.map((item, index) => {
+              return (
+                <li className="price-item" key={index}>
+                  <i
+                    className="iconfont icon-kexuanzuowei seat-icon"
+                    style={{ color: seatSectionShowColor[item.section_id] }}
+                  ></i>{" "}
+                  <span className="section-price">¥{item.price}</span>
                 </li>
-              })
-            }
-          </ul>:null
-        }
+              );
+            })}
+          </ul>
+        ) : null}
 
         <div className="seats-box">
+          {/* <svg data-v-6ef675ea="" 
+          aria-hidden="true" class="icon">
+            <use data-v-6ef675ea="" xlink:href="#icon-1-2"></use>
+          </svg> */}
           <ul
             className="seat-list"
             style={{
               transform: `translate(${left + deltaX}px, ${
                 top + deltaY
               }px) scale(${scaleX},${scaleY})`,
-              height:(100/hallDetail.seat_row_num)*hallDetail.seat_column_num+"vw"
+              height: cellWidth * hallDetail.seat_column_num + "vw",
             }}
           >
-            {seatList.map((item,index) => {
+            {seatList.map((item, index) => {
               // if(item.disabled==2) return;
               return (
-                <li 
-                className="cell" 
-                key={index} 
-                style={{
-                  top:((100/hallDetail.seat_row_num)*(item.row-1))+"vw",
-                  left:((100/hallDetail.seat_row_num)*(item.column-1))+"vw"
-                }}
-                onClick={() => {
-                  //disabled 0可选 1不可选 2无座
-                  if (item.disabled !== 0) return;
-                  let { selectedSeat } = this.state;
-                  let flag = true;
-                  this.setState({
-                    // scaleX: 3,
-                    // scaleY: 3,
-                    isShowScheduleList:false,
-                  })
-                  for (let i = 0; i < selectedSeat.length; i++) {
-                    if (selectedSeat[i].id === item.id) {
-                      selectedSeat.splice(i, 1);
+                <li
+                  className="cell"
+                  key={index}
+                  style={{
+                    width: cellWidth + "vw",
+                    height: cellWidth + "vw",
+                    top: cellWidth * item.row - cellWidth + "vw",
+                    left: cellWidth * item.column - cellWidth + "vw",
+                  }}
+                  onClick={() => {
+                    //disabled 0可选 1不可选 2无座
+                    if (item.disabled !== 0) return;
+                    let { selectedSeat } = this.state;
+                    let flag = true;
+                    this.setState({
+                      // scaleX: 3,
+                      // scaleY: 3,
+                      isShowScheduleList: false,
+                    });
+                    for (let i = 0; i < selectedSeat.length; i++) {
+                      if (selectedSeat[i].id === item.id) {
+                        selectedSeat.splice(i, 1);
+                        this.setState({
+                          selectedSeat: selectedSeat,
+                        });
+                        flag = false;
+                      }
+                    }
+                    if (flag) {
+                      selectedSeat.push(item);
                       this.setState({
                         selectedSeat: selectedSeat,
                       });
-                      flag = false;
                     }
-                  }
-                  if (flag) {
-                    selectedSeat.push(item);
-                    this.setState({
-                      selectedSeat: selectedSeat,
-                    });
-                  }
-                }}>
-                    {item.disabled === 0 ? (
-                      this.handleSelectedSeat(item) ? (
-                        <i className="iconfont icon-kexuanzuowei seat selected-seat"></i>
-                      ) : (
-                        <i 
-                        className="iconfont icon-kexuanzuowei seat can-select" style={{color:seatSectionShowColor[item.section_id]}}></i>
-                      )
-                    ) : item.disabled === 1 ? (
-                      <i className="iconfont icon-kexuanzuowei seat no-select-seat"></i>
-                    ) : null}
+                  }}
+                >
+                  {item.disabled === 0 ? (
+                    this.handleSelectedSeat(item) ? (
+                      <i
+                        className="iconfont icon-kexuanzuowei seat selected-seat"
+                        style={{ fontSize: cellWidth * 0.9 + "vw" }}
+                      ></i>
+                    ) : (
+                      <i
+                        className="iconfont icon-kexuanzuowei seat can-select"
+                        style={{
+                          color: seatSectionShowColor[item.section_id],
+                          fontSize: cellWidth * 0.9 + "vw",
+                        }}
+                      ></i>
+                    )
+                  ) : item.disabled === 1 ? (
+                    <i
+                      className="iconfont icon-kexuanzuowei seat no-select-seat"
+                      style={{ fontSize: cellWidth * 0.9 + "vw" }}
+                    ></i>
+                  ) : null}
                 </li>
               );
             })}
           </ul>
         </div>
-
 
         {/* <div className="seats-box">
           <ul

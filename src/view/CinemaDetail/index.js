@@ -208,7 +208,6 @@ class FileDetail extends Component {
     let price = 0;
     let num = 0;
     sectionPrice.map((item, index) => {
-      // console.log("price----++", item.price);
       item.price = Number(item.price);
       if (price === Number(item.price) && index !== 0) {
         num += 1;
