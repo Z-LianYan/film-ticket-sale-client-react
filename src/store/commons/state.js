@@ -8,6 +8,13 @@ const state = {
     realLocation: null, //浏览器真实定位信息
     isShowSwitchLocationModal: false, //首页（film页）banner ，定位成功显示切换模态框
   },
+
+  seatSectionShowColor:{
+    a: '#C213BF',
+    b: '#1890FF',
+    c: '#f2b507',
+    d: '#1fffea',
+  }
 };
 
 export default state;

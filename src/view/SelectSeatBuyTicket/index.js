@@ -5,6 +5,7 @@ import { DownOutline, UpOutline, CloseOutline } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
 import { get_schedule_info, get_seat } from "@/api/selectSeatBuyTicket";
 import dayjs from "dayjs";
+import { GroupCommons } from "@/modules/group";
 class SelectSeatBuyTicket extends Component {
   constructor(props) {
     super(props);
@@ -22,8 +23,10 @@ class SelectSeatBuyTicket extends Component {
       isSkeleton: true,
       scheduleList: [],
       selectedSchedule: {},
-      seatList: {},
+      // seatList: {},
+      seatList: [],
       selectedSeat: [],
+      hallDetail:{}
     };
   }
   componentDidMount() {
@@ -62,17 +65,19 @@ class SelectSeatBuyTicket extends Component {
         });
         return;
       }
-
-      _this.setState({
-        scaleX:
-          ev.additionalEvent == "pinchout"
-            ? _this.state.scaleX + 0.1
-            : _this.state.scaleX - 0.1,
-        scaleY:
-          ev.additionalEvent == "pinchout"
-            ? _this.state.scaleY + 0.1
-            : _this.state.scaleY - 0.1,
-      });
+      // setTimeout(() => {
+        _this.setState({
+          scaleX:
+            ev.additionalEvent == "pinchout"
+              ? _this.state.scaleX + 0.05
+              : _this.state.scaleX - 0.08,
+          scaleY:
+            ev.additionalEvent == "pinchout"
+              ? _this.state.scaleY + 0.05
+              : _this.state.scaleY - 0.08,
+        });
+      // });
+      
     });
     hammertime.on("pan", function (ev) {
       let offsetW = ev.deltaX + _this.state.left;
@@ -167,19 +172,21 @@ class SelectSeatBuyTicket extends Component {
     });
 
     let seat = result.seat;
-    let obj = {};
-    for (let item of seat) {
-      if (!obj[item.row]) {
-        obj[item.row] = [item];
-      } else {
-        obj[item.row].push(item);
-      }
-    }
+    // let obj = {};
+    // for (let item of seat) {
+    //   if (!obj[item.row]) {
+    //     obj[item.row] = [item];
+    //   } else {
+    //     obj[item.row].push(item);
+    //   }
+    // }
     this.setState({
-      seatList: obj,
+      // seatList: obj,
+      hallDetail:result,
+      seatList: seat,
       selectedSeat: [],
     });
-    console.log("result", this.state.seatList);
+    // console.log("result", this.state.seatList);
   }
 
   handlerSectionPrice(sectionPrice) {
@@ -267,7 +274,7 @@ class SelectSeatBuyTicket extends Component {
     return totalPrice.toFixed(2);
   }
   render() {
-    let { history, location } = this.props;
+    let { history, location,seatSectionShowColor } = this.props;
     let {
       isShowNoticeDetail,
       isShowScheduleList,
@@ -282,6 +289,7 @@ class SelectSeatBuyTicket extends Component {
       selectedSchedule,
       seatList,
       selectedSeat,
+      hallDetail
     } = this.state;
     let { film } = scheduleInfo;
     return (
@@ -296,7 +304,82 @@ class SelectSeatBuyTicket extends Component {
           {scheduleInfo.cinema_name}
         </NavBar>
         {this.renderNotice()}
+        {
+          selectedSchedule.is_section==1?<ul className="section-price-wrapper">
+            {
+              selectedSchedule.sectionPrice.map((item,index)=>{
+                return<li className="price-item" key={index}>
+                  <i className="iconfont icon-kexuanzuowei seat-icon" style={{color:seatSectionShowColor[item.section_id]}}></i> <span className='section-price'>¥{item.price}</span>
+                </li>
+              })
+            }
+          </ul>:null
+        }
+
         <div className="seats-box">
+          <ul
+            className="seat-list"
+            style={{
+              transform: `translate(${left + deltaX}px, ${
+                top + deltaY
+              }px) scale(${scaleX},${scaleY})`,
+              height:(100/hallDetail.seat_row_num)*hallDetail.seat_column_num+"vw"
+            }}
+          >
+            {seatList.map((item,index) => {
+              // if(item.disabled==2) return;
+              return (
+                <li 
+                className="cell" 
+                key={index} 
+                style={{
+                  top:((100/hallDetail.seat_row_num)*(item.row-1))+"vw",
+                  left:((100/hallDetail.seat_row_num)*(item.column-1))+"vw"
+                }}
+                onClick={() => {
+                  //disabled 0可选 1不可选 2无座
+                  if (item.disabled !== 0) return;
+                  let { selectedSeat } = this.state;
+                  let flag = true;
+                  this.setState({
+                    // scaleX: 3,
+                    // scaleY: 3,
+                    isShowScheduleList:false,
+                  })
+                  for (let i = 0; i < selectedSeat.length; i++) {
+                    if (selectedSeat[i].id === item.id) {
+                      selectedSeat.splice(i, 1);
+                      this.setState({
+                        selectedSeat: selectedSeat,
+                      });
+                      flag = false;
+                    }
+                  }
+                  if (flag) {
+                    selectedSeat.push(item);
+                    this.setState({
+                      selectedSeat: selectedSeat,
+                    });
+                  }
+                }}>
+                    {item.disabled === 0 ? (
+                      this.handleSelectedSeat(item) ? (
+                        <i className="iconfont icon-kexuanzuowei seat selected-seat"></i>
+                      ) : (
+                        <i 
+                        className="iconfont icon-kexuanzuowei seat can-select" style={{color:seatSectionShowColor[item.section_id]}}></i>
+                      )
+                    ) : item.disabled === 1 ? (
+                      <i className="iconfont icon-kexuanzuowei seat no-select-seat"></i>
+                    ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+
+        {/* <div className="seats-box">
           <ul
             className="seat-list"
             style={{
@@ -316,8 +399,14 @@ class SelectSeatBuyTicket extends Component {
                         onClick={() => {
                           //disabled 0可选 1不可选 2无座
                           if (item.disabled !== 0) return;
+
                           let { selectedSeat } = this.state;
                           let flag = true;
+                          this.setState({
+                            scaleX: 3,
+                            scaleY: 3,
+                            isShowScheduleList:false,
+                          })
                           for (let i = 0; i < selectedSeat.length; i++) {
                             if (selectedSeat[i].id === item.id) {
                               selectedSeat.splice(i, 1);
@@ -333,17 +422,17 @@ class SelectSeatBuyTicket extends Component {
                               selectedSeat: selectedSeat,
                             });
                           }
-                          // item.disabled = item.disabled===0?3:0;
                         }}
                       >
                         {item.disabled === 0 ? (
                           this.handleSelectedSeat(item) ? (
-                            <i className="iconfont icon-bukexuanzuowei- seat selected-seat"></i>
+                            <i className="iconfont icon-kexuanzuowei seat selected-seat"></i>
                           ) : (
-                            <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+                            <i 
+                            className="iconfont icon-kexuanzuowei seat can-select" style={{color:seatSectionShowColor[item.section_id]}}></i>
                           )
                         ) : item.disabled === 1 ? (
-                          <i className="iconfont icon-bukexuanzuowei- seat no-select-seat"></i>
+                          <i className="iconfont icon-kexuanzuowei seat no-select-seat"></i>
                         ) : null}
                       </div>
                     );
@@ -352,24 +441,24 @@ class SelectSeatBuyTicket extends Component {
               );
             })}
           </ul>
-        </div>
+        </div> */}
         <div className="bottom-wrapper">
-          {!isShowScheduleList || !selectedSeat.length ? (
+          {!isShowScheduleList ? (
             <div className="seat-template-status">
               <div className="status-item">
-                <i className="iconfont icon-bukexuanzuowei- seat no-select-seat"></i>
+                <i className="iconfont icon-kexuanzuowei seat no-select-seat"></i>
                 <span className="txt">不可选</span>
               </div>
               <div className="status-item">
-                <i className="iconfont icon-bukexuanzuowei- seat sale-out-seat"></i>
+                <i className="iconfont icon-kexuanzuowei seat sale-out-seat"></i>
                 <span className="txt">已售</span>
               </div>
               <div className="status-item">
-                <i className="iconfont icon-kexuanzuobiankuang seat can-select"></i>
+                <i className="iconfont icon-kexuanzuowei seat can-select"></i>
                 <span className="txt">可选</span>
               </div>
               <div className="status-item">
-                <i className="iconfont icon-bukexuanzuowei- seat selected-seat"></i>
+                <i className="iconfont icon-kexuanzuowei seat selected-seat"></i>
                 <span className="txt">选中</span>
               </div>
             </div>
@@ -451,10 +540,10 @@ class SelectSeatBuyTicket extends Component {
                     className="seat"
                     key={index}
                     onClick={() => {
-                      selectedSeat.splice(index, 1);
-                      this.setState({
-                        selectedSeat,
-                      });
+                      // selectedSeat.splice(index, 1);
+                      // this.setState({
+                      //   selectedSeat,
+                      // });
                     }}
                   >
                     <div className="left">
@@ -472,6 +561,10 @@ class SelectSeatBuyTicket extends Component {
                       <CloseOutline
                         onClick={() => {
                           console.log("关闭");
+                          selectedSeat.splice(index, 1);
+                          this.setState({
+                            selectedSeat,
+                          });
                         }}
                       />
                     </div>
@@ -523,20 +616,6 @@ class SelectSeatBuyTicket extends Component {
     });
     return price;
   }
-  handleShowColor(id) {
-    switch (id) {
-      case "a":
-        return "#16B328";
-      case "b":
-        return "#C213BF";
-      case "c":
-        return "#F5222D";
-      case "d":
-        return "#1890FF";
-      default:
-        return "#ccc";
-    }
-  }
 }
 
-export default SelectSeatBuyTicket;
+export default GroupCommons(SelectSeatBuyTicket);
