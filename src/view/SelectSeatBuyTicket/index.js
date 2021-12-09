@@ -5,6 +5,15 @@ import { DownOutline, UpOutline, CloseOutline } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
 import { get_schedule_info, get_seat } from "@/api/selectSeatBuyTicket";
 import dayjs from "dayjs";
+import noSelectedIcon from "@/static/img/no-selected.png";
+import disableIcon from "@/static/img/disable.png";
+import alreadySaleIcon from "@/static/img/already-sale.png";
+import selectedIcon from "@/static/img/selected.png";
+import sectionA from "@/static/img/sectionA.png";
+import sectionB from "@/static/img/sectionB.png";
+import sectionC from "@/static/img/sectionC.png";
+import sectionD from "@/static/img/sectionD.png";
+
 import { GroupCommons } from "@/modules/group";
 class SelectSeatBuyTicket extends Component {
   constructor(props) {
@@ -36,12 +45,12 @@ class SelectSeatBuyTicket extends Component {
   }
   onGestureHander() {
     let seatsList = document.querySelector(".seat-list");
-    let dis = (seatsList.offsetWidth - document.body.clientWidth) / 2;
-    this.setState({
-      left: -dis,
-      sideDistance: dis,
-    });
-    console.log("window", document.body.clientWidth, seatsList.offsetWidth);
+    // let dis = (seatsList.offsetWidth - document.body.clientWidth) / 2;
+    // this.setState({
+    //   left: -dis,
+    //   sideDistance: dis,
+    // });
+    // console.log("window", document.body.clientWidth, seatsList.offsetWidth);
     //创建一个新的hammer对象并且在初始化时指定要处理的dom元素
     var hammertime = new hammerjs(document.querySelector(".seats-box"));
     hammertime.get("pan").set({ direction: hammerjs.DIRECTION_ALL });
@@ -291,7 +300,7 @@ class SelectSeatBuyTicket extends Component {
       hallDetail,
     } = this.state;
     let { film } = scheduleInfo;
-    let cellWidth = 100 / hallDetail.seat_row_num;
+    let cellWidth = 100 / hallDetail.seat_column_num;
     return (
       <div className="select-seat-buy-ticket-box">
         <NavBar
@@ -309,11 +318,28 @@ class SelectSeatBuyTicket extends Component {
             {selectedSchedule.sectionPrice.map((item, index) => {
               return (
                 <li className="price-item" key={index}>
-                  <i
+                  <div
+                    className="icons"
+                    style={{
+                      backgroundImage: `url(${
+                        item.section_id == "a"
+                          ? sectionA
+                          : item.section_id == "b"
+                          ? sectionB
+                          : item.section_id == "c"
+                          ? sectionC
+                          : item.section_id == "d"
+                          ? sectionD
+                          : null
+                      }`,
+                    }}
+                  ></div>
+                  <span>¥{item.price}</span>
+                  {/* <i
                     className="iconfont icon-kexuanzuowei seat-icon"
                     style={{ color: seatSectionShowColor[item.section_id] }}
                   ></i>{" "}
-                  <span className="section-price">¥{item.price}</span>
+                  <span className="section-price">¥{item.price}</span> */}
                 </li>
               );
             })}
@@ -321,21 +347,42 @@ class SelectSeatBuyTicket extends Component {
         ) : null}
 
         <div className="seats-box">
-          {/* <svg data-v-6ef675ea="" 
-          aria-hidden="true" class="icon">
-            <use data-v-6ef675ea="" xlink:href="#icon-1-2"></use>
-          </svg> */}
+          {selectedSchedule.hall_name ? (
+            <div
+              className="screen-icon"
+              style={{
+                transform: `translateX(${left + deltaX}px)`,
+              }}
+            >
+              {selectedSchedule.hall_name +
+                "/" +
+                selectedSchedule.hall_type_name}
+            </div>
+          ) : null}
+
+          <div
+            className="row-num-list"
+            style={{
+              transform: `translateY(${top + deltaY}px)`,
+              height: cellWidth * hallDetail.seat_row_num + "vw",
+            }}
+          >
+            <span className="row">1</span>
+            <span className="row">2</span>
+            <span className="row">3</span>
+            <span className="row">4</span>
+          </div>
+
           <ul
             className="seat-list"
             style={{
               transform: `translate(${left + deltaX}px, ${
                 top + deltaY
               }px) scale(${scaleX},${scaleY})`,
-              height: cellWidth * hallDetail.seat_column_num + "vw",
+              height: cellWidth * hallDetail.seat_row_num + "vw",
             }}
           >
             {seatList.map((item, index) => {
-              // if(item.disabled==2) return;
               return (
                 <li
                   className="cell"
@@ -373,113 +420,65 @@ class SelectSeatBuyTicket extends Component {
                     }
                   }}
                 >
-                  {item.disabled === 0 ? (
-                    this.handleSelectedSeat(item) ? (
-                      <i
-                        className="iconfont icon-kexuanzuowei seat selected-seat"
-                        style={{ fontSize: cellWidth * 0.9 + "vw" }}
-                      ></i>
-                    ) : (
-                      <i
-                        className="iconfont icon-kexuanzuowei seat can-select"
-                        style={{
-                          color: seatSectionShowColor[item.section_id],
-                          fontSize: cellWidth * 0.9 + "vw",
-                        }}
-                      ></i>
-                    )
-                  ) : item.disabled === 1 ? (
-                    <i
-                      className="iconfont icon-kexuanzuowei seat no-select-seat"
-                      style={{ fontSize: cellWidth * 0.9 + "vw" }}
-                    ></i>
-                  ) : null}
+                  <div
+                    className="icons"
+                    style={{
+                      width: "70%",
+                      height: "70%",
+                      backgroundImage: `url(${
+                        item.disabled == 0
+                          ? this.handleSelectedSeat(item)
+                            ? selectedIcon
+                            : item.section_id == "a"
+                            ? sectionA
+                            : item.section_id == "b"
+                            ? sectionB
+                            : item.section_id == "c"
+                            ? sectionC
+                            : item.section_id == "d"
+                            ? sectionD
+                            : noSelectedIcon
+                          : item.disabled == 1
+                          ? disableIcon
+                          : null
+                      })`,
+                    }}
+                  ></div>
                 </li>
               );
             })}
           </ul>
         </div>
 
-        {/* <div className="seats-box">
-          <ul
-            className="seat-list"
-            style={{
-              transform: `translate(${left + deltaX}px, ${
-                top + deltaY
-              }px) scale(${scaleX},${scaleY})`,
-            }}
-          >
-            {Object.keys(seatList).map((key) => {
-              return (
-                <li className="row" key={key}>
-                  {seatList[key].map((item, index) => {
-                    return (
-                      <div
-                        className="cell"
-                        key={key + index.toString()}
-                        onClick={() => {
-                          //disabled 0可选 1不可选 2无座
-                          if (item.disabled !== 0) return;
-
-                          let { selectedSeat } = this.state;
-                          let flag = true;
-                          this.setState({
-                            scaleX: 3,
-                            scaleY: 3,
-                            isShowScheduleList:false,
-                          })
-                          for (let i = 0; i < selectedSeat.length; i++) {
-                            if (selectedSeat[i].id === item.id) {
-                              selectedSeat.splice(i, 1);
-                              this.setState({
-                                selectedSeat: selectedSeat,
-                              });
-                              flag = false;
-                            }
-                          }
-                          if (flag) {
-                            selectedSeat.push(item);
-                            this.setState({
-                              selectedSeat: selectedSeat,
-                            });
-                          }
-                        }}
-                      >
-                        {item.disabled === 0 ? (
-                          this.handleSelectedSeat(item) ? (
-                            <i className="iconfont icon-kexuanzuowei seat selected-seat"></i>
-                          ) : (
-                            <i 
-                            className="iconfont icon-kexuanzuowei seat can-select" style={{color:seatSectionShowColor[item.section_id]}}></i>
-                          )
-                        ) : item.disabled === 1 ? (
-                          <i className="iconfont icon-kexuanzuowei seat no-select-seat"></i>
-                        ) : null}
-                      </div>
-                    );
-                  })}
-                </li>
-              );
-            })}
-          </ul>
-        </div> */}
         <div className="bottom-wrapper">
           {!isShowScheduleList ? (
             <div className="seat-template-status">
               <div className="status-item">
-                <i className="iconfont icon-kexuanzuowei seat no-select-seat"></i>
+                <div
+                  className="icons"
+                  style={{ backgroundImage: `url(${disableIcon})` }}
+                ></div>
                 <span className="txt">不可选</span>
               </div>
               <div className="status-item">
-                <i className="iconfont icon-kexuanzuowei seat sale-out-seat"></i>
+                <div
+                  className="icons"
+                  style={{ backgroundImage: `url(${alreadySaleIcon})` }}
+                ></div>
                 <span className="txt">已售</span>
               </div>
               <div className="status-item">
-                <i className="iconfont icon-kexuanzuowei seat can-select"></i>
+                <div
+                  className="icons"
+                  style={{ backgroundImage: `url(${noSelectedIcon})` }}
+                ></div>
                 <span className="txt">可选</span>
               </div>
               <div className="status-item">
-                <i className="iconfont icon-kexuanzuowei seat selected-seat"></i>
+                <div
+                  className="icons"
+                  style={{ backgroundImage: `url(${selectedIcon})` }}
+                ></div>
                 <span className="txt">选中</span>
               </div>
             </div>

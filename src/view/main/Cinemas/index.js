@@ -9,6 +9,7 @@ import {
   Dropdown,
   Grid,
   Tabs,
+  CheckList,
 } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import { get_cinema_list, get_film_in_schedule_dates } from "@/api/cinema";
@@ -30,6 +31,7 @@ class Cinema extends Component {
         film_id: "",
         lat: "",
         lng: "",
+        type: "",
       },
       list: [],
       isHasMore: false,
@@ -37,6 +39,12 @@ class Cinema extends Component {
       dateList: [],
       dateActiveKey: 0,
       isSkeleton: true,
+      checkListDefaultValue: [""],
+      checkListDefaultLabel: "全部",
+      checkList: [
+        { label: "全部", value: "" },
+        { label: "最近去过", value: "zjqg" },
+      ],
     };
   }
   async componentDidMount() {
@@ -147,7 +155,7 @@ class Cinema extends Component {
       id: "",
       is_hot: null,
       module_id: "",
-      name: "全部",
+      name: "全城",
       pinyin: "quanbu",
     });
     this.setState({
@@ -214,6 +222,9 @@ class Cinema extends Component {
       dateList,
       dateActiveKey,
       isSkeleton,
+      checkListDefaultValue,
+      checkListDefaultLabel,
+      checkList,
     } = this.state;
     return (
       <div className="app-cinema-page">
@@ -317,9 +328,10 @@ class Cinema extends Component {
                     >
                       <div
                         className={[
-                          `area-wrapper ${this.state.fetchOptions.district_id == item.id
-                            ? "active"
-                            : ""
+                          `area-wrapper ${
+                            this.state.fetchOptions.district_id == item.id
+                              ? "active"
+                              : ""
                           }`,
                         ]}
                       >
@@ -332,16 +344,44 @@ class Cinema extends Component {
             </Dropdown.Item>
             <Dropdown.Item
               key="recently"
-              title="最近去过"
+              title={checkListDefaultLabel}
               closeOnContentClick={true}
               closeOnMaskClick={true}
             >
-              <CinemaListItem
+              {/* <CinemaListItem
                 title="广州中影火山湖电影城东山口店"
                 value="40"
                 label="广州市越秀区农林下路4-6号锦轩现代城四楼飞机失联飞机老师"
                 distance="距离未知"
-              />
+              /> */}
+              <CheckList
+                defaultValue={checkListDefaultValue}
+                onChange={(res) => {
+                  let { fetchOptions } = this.state;
+                  this.checkListDefaultValue = res;
+                  checkList.map((item) => {
+                    if (item.value == res[0]) {
+                      fetchOptions.type = res[0];
+                      this.setState({
+                        fetchOptions,
+                        checkListDefaultLabel: item.label,
+                      });
+                      this.onRefresh();
+                      return;
+                    }
+                  });
+                }}
+              >
+                {checkList.map((item, index) => {
+                  return (
+                    <CheckList.Item key={index} value={item.value}>
+                      {item.label}
+                    </CheckList.Item>
+                  );
+                })}
+                {/* <CheckList.Item value="zjqg">最近去过</CheckList.Item>
+                <CheckList.Item value="lwzj">离我最近</CheckList.Item> */}
+              </CheckList>
             </Dropdown.Item>
           </Dropdown>
         </div>
@@ -370,7 +410,7 @@ class Cinema extends Component {
                     pathname: "/cinema/detail",
                     state: {
                       cinema_id: item.id,
-                      film_id: location.state && location.state.film_id
+                      film_id: location.state && location.state.film_id,
                     },
                   });
                 }}
@@ -403,8 +443,9 @@ class Cinema extends Component {
             hasMore={isHasMore}
           >
             <InfiniteScrollContent
-              text={`该区域没有排${location.state && location.state.film_id ? "此" : ""
-                }片的影院哦`}
+              text={`该区域没有排${
+                location.state && location.state.film_id ? "此" : ""
+              }片的影院哦`}
               noContent={!isHasMore && !this.state.list.length}
               hasMore={isHasMore}
             />

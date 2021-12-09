@@ -9,12 +9,12 @@ const state = {
     isShowSwitchLocationModal: false, //首页（film页）banner ，定位成功显示切换模态框
   },
 
-  seatSectionShowColor:{
-    a: '#C213BF',
-    b: '#1890FF',
-    c: '#f2b507',
-    d: '#1fffea',
-  }
+  seatSectionShowColor: {
+    a: "sectionA",
+    b: "sectionB",
+    c: "sectionC",
+    d: "sectionD",
+  },
 };
 
 export default state;

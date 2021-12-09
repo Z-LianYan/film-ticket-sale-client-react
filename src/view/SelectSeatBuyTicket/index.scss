@@ -58,12 +58,11 @@
             display: flex;
             align-items: center;
             margin-right: 0.1rem;
-            .seat-icon{
-                font-size: 0.3rem;
-            }
-            .section-price{
-                font-size: 0.13rem;
-                margin-left: 0.05rem;
+            .icons{
+                width: 0.20rem;
+                height: 0.20rem;
+                background-size: 100% 100%;
+                margin-right: 0.05rem;
             }
         }
     }
@@ -72,40 +71,58 @@
         overflow: hidden;
         position: relative;
         user-select: none;
+        .screen-icon{
+            padding-top: 0.1rem;
+            width: 2rem;
+            height: 0.3rem;
+            position: absolute;
+            // left: 50%;
+            top: 0;
+            // transform: translateX(-50%);
+            background: url('../../static/img/screen.png') no-repeat;
+            background-size: contain;
+            text-align: center;
+            font-size: 0.13rem;
+            z-index: 10000000;
+            // background-color: #eee;
+        }
+        .row-num-list{
+            width: 0.2rem;
+            background-color: #ccc;
+            opacity: 0.8;
+            text-align: center;
+            border-radius: 0.05rem;
+            display: flex;
+            flex-flow: column;
+            position: absolute;
+            left: 0.1rem;
+
+
+            .row{
+
+            }
+        }
         .seat-list{
             width: 100%;
             position: absolute;
+            // top: 0.3rem;
             .cell{
                 position: absolute;
                 // width: 0.25rem;
                 // height: 0.25rem;
+                // background-image: url('../../static/img/no-selected.png');
+                // background-size: 100% 100%;
+                .icons{
+                    // background-image: url('../../static/img/no-selected.png');
+                    background-size: 100% 100%;
+                }
                 .seat{
                     // font-size: 0.25rem;
                 }
             }
         }
     }
-    // .seats-box{
-    //     flex: 1;
-    //     overflow: hidden;
-    //     position: relative;
-    //     user-select: none;
-    //     .seat-list{
-    //         width: 100%;
-    //         position: absolute;
-    //         .row{
-    //             width: 100%;
-    //             display: flex;
-    //             .cell{
-    //                 width: 0.25rem;
-    //                 height: 0.25rem;
-    //                 .seat{
-    //                     font-size: 0.25rem;
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+    
     .bottom-wrapper{
         padding-bottom: 0.37rem;
         .seat-template-status{
@@ -116,13 +133,16 @@
                 margin-right: 0.1rem;
                 display: flex;
                 align-items: center;
-                .seat{
-                    font-size: 0.30rem;
+                .icons{
+                    width: 0.2rem;
+                    height: 0.2rem;
+                    // font-size: 0.30rem;
                     margin-right: 0.08rem;
-                    &::before{
+                    background-size: 100% 100%;
+                    // &::before{
                     //   background-color: #ff5f16;  
                     //   border-radius: 0.05rem;
-                    }
+                    // }
                 }
                 .txt{
                     font-size: 0.13rem;
