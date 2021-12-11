@@ -32,10 +32,10 @@ class SelectSeatBuyTicket extends Component {
       isSkeleton: true,
       scheduleList: [],
       selectedSchedule: {},
-      // seatList: {},
       seatList: [],
       selectedSeat: [],
       hallDetail: {},
+      seat_real_rows: [],
     };
   }
   componentDidMount() {
@@ -60,6 +60,11 @@ class SelectSeatBuyTicket extends Component {
     //为该dom元素指定触屏移动事件
     let _this = this;
     hammertime.on("pinch", function (ev) {
+      console.log(ev);
+      // Toast.show({
+      //   content: "X" + ev.deltaX + "Y" + ev.deltaY,
+      // });
+
       if (ev.additionalEvent == "pinchin" && _this.state.scaleX <= 1) {
         _this.setState({
           scaleX: 1,
@@ -67,27 +72,26 @@ class SelectSeatBuyTicket extends Component {
         });
         return;
       }
-      if (ev.additionalEvent == "pinchout" && _this.state.scaleX >= 3) {
+      if (ev.additionalEvent == "pinchout" && _this.state.scaleX >= 2) {
         _this.setState({
-          scaleX: 3,
-          scaleY: 3,
+          scaleX: 2,
+          scaleY: 2,
         });
         return;
       }
-      // setTimeout(() => {
       _this.setState({
         scaleX:
           ev.additionalEvent == "pinchout"
-            ? _this.state.scaleX + 0.05
-            : _this.state.scaleX - 0.08,
+            ? _this.state.scaleX + 0.03
+            : _this.state.scaleX - 0.03,
         scaleY:
           ev.additionalEvent == "pinchout"
-            ? _this.state.scaleY + 0.05
-            : _this.state.scaleY - 0.08,
+            ? _this.state.scaleY + 0.03
+            : _this.state.scaleY - 0.03,
       });
-      // });
     });
     hammertime.on("pan", function (ev) {
+      console.log("pan", ev);
       let offsetW = ev.deltaX + _this.state.left;
       let offsetH = ev.deltaY + _this.state.top;
       if (ev.isFinal) {
@@ -96,7 +100,20 @@ class SelectSeatBuyTicket extends Component {
           deltaY: 0,
           left: offsetW,
           top: offsetH,
+          // left: offsetW >= 0 ? 0 : offsetW,
+          // top: offsetH >= 0 ? 0 : offsetH,
         });
+
+        // Toast.show({
+        //   content:
+        //     seatsList.offsetWidth * _this.state.scaleX +
+        //     "-" +
+        //     document.body.clientWidth +
+        //     "x" +
+        //     _this.state.left +
+        //     "y" +
+        //     _this.state.top,
+        // });
 
         return;
       }
@@ -180,21 +197,28 @@ class SelectSeatBuyTicket extends Component {
     });
 
     let seat = result.seat;
-    // let obj = {};
-    // for (let item of seat) {
-    //   if (!obj[item.row]) {
-    //     obj[item.row] = [item];
-    //   } else {
-    //     obj[item.row].push(item);
-    //   }
-    // }
+
     this.setState({
-      // seatList: obj,
       hallDetail: result,
       seatList: seat,
       selectedSeat: [],
     });
-    // console.log("result", this.state.seatList);
+
+    let seat_real_rows = [];
+    let obj = {};
+    for (let item of seat) {
+      if (!obj[item.row_id]) {
+        obj[item.row_id] = true;
+        seat_real_rows.push({
+          row: item.row, //生成座位时的排数
+          row_id: item.row_id, //真实座位排数
+        });
+      }
+    }
+    this.setState({
+      seat_real_rows,
+    });
+    console.log("seat_real_rows", this.state.seat_real_rows);
   }
 
   handlerSectionPrice(sectionPrice) {
@@ -298,6 +322,7 @@ class SelectSeatBuyTicket extends Component {
       seatList,
       selectedSeat,
       hallDetail,
+      seat_real_rows,
     } = this.state;
     let { film } = scheduleInfo;
     let cellWidth = 100 / hallDetail.seat_column_num;
@@ -317,7 +342,7 @@ class SelectSeatBuyTicket extends Component {
           <ul className="section-price-wrapper">
             {selectedSchedule.sectionPrice.map((item, index) => {
               return (
-                <li className="price-item" key={index}>
+                <li className="section-item" key={index}>
                   <div
                     className="icons"
                     style={{
@@ -334,7 +359,11 @@ class SelectSeatBuyTicket extends Component {
                       }`,
                     }}
                   ></div>
-                  <span>¥{item.price}</span>
+                  <div className="name-price">
+                    <p>{item.section_name}</p>
+                    {/* <p>¥{item.price}</p> */}
+                  </div>
+
                   {/* <i
                     className="iconfont icon-kexuanzuowei seat-icon"
                     style={{ color: seatSectionShowColor[item.section_id] }}
@@ -349,39 +378,60 @@ class SelectSeatBuyTicket extends Component {
         <div className="seats-box">
           {selectedSchedule.hall_name ? (
             <div
-              className="screen-icon"
+              className="screen-wrapper"
               style={{
                 transform: `translateX(${left + deltaX}px)`,
               }}
             >
-              {selectedSchedule.hall_name +
-                "/" +
-                selectedSchedule.hall_type_name}
+              <div className="screen-icon">
+                {selectedSchedule.hall_name +
+                  "/" +
+                  selectedSchedule.hall_type_name}
+              </div>
             </div>
           ) : null}
 
-          <div
-            className="row-num-list"
-            style={{
-              transform: `translateY(${top + deltaY}px)`,
-              height: cellWidth * hallDetail.seat_row_num + "vw",
-            }}
-          >
-            <span className="row">1</span>
-            <span className="row">2</span>
-            <span className="row">3</span>
-            <span className="row">4</span>
-          </div>
+          {seat_real_rows.length ? (
+            <div
+              className="row-num-list"
+              style={{
+                transform: `translateY(${top + deltaY + 50}px) scale(${
+                  scaleX >= 1.5 ? 1.5 : scaleX
+                },${scaleY})`,
+                height: cellWidth * hallDetail.seat_row_num + "vw",
+              }}
+            >
+              {seat_real_rows.map((item, index) => {
+                return (
+                  <div
+                    className="row"
+                    key={index}
+                    style={{
+                      height: cellWidth + "vw",
+                      top: cellWidth * (item.row - 1) + "vw",
+                      fontSize: cellWidth * 0.2 + "vw",
+                    }}
+                  >
+                    <div className="cell">{item.row_id}</div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
 
           <ul
             className="seat-list"
             style={{
               transform: `translate(${left + deltaX}px, ${
-                top + deltaY
+                top + deltaY + 50
               }px) scale(${scaleX},${scaleY})`,
               height: cellWidth * hallDetail.seat_row_num + "vw",
             }}
           >
+            <div
+              className="middle-line"
+              style={{ height: cellWidth * hallDetail.seat_row_num + "vw" }}
+            ></div>
             {seatList.map((item, index) => {
               return (
                 <li
@@ -395,12 +445,26 @@ class SelectSeatBuyTicket extends Component {
                   }}
                   onClick={() => {
                     //disabled 0可选 1不可选 2无座
+                    this.setState({
+                      scaleX: scaleX >= 1.3 ? scaleX : 1.3,
+                      scaleY: scaleX >= 1.3 ? scaleX : 1.3,
+                    });
                     if (item.disabled !== 0) return;
-                    let { selectedSeat } = this.state;
+
+                    // let { selectedSeat } = this.state;
+                    let seats = selectedSeat.map((im) => im.id);
+                    if (
+                      selectedSeat.length >= selectedSchedule.buy_max &&
+                      selectedSchedule.buy_max !== 0 &&
+                      !seats.includes(item.id)
+                    ) {
+                      //selectedSchedule.buy_max
+                      return Toast.show({
+                        content: `1次最多购买${selectedSchedule.buy_max}张`,
+                      });
+                    }
                     let flag = true;
                     this.setState({
-                      // scaleX: 3,
-                      // scaleY: 3,
                       isShowScheduleList: false,
                     });
                     for (let i = 0; i < selectedSeat.length; i++) {
@@ -429,14 +493,16 @@ class SelectSeatBuyTicket extends Component {
                         item.disabled == 0
                           ? this.handleSelectedSeat(item)
                             ? selectedIcon
-                            : item.section_id == "a"
-                            ? sectionA
-                            : item.section_id == "b"
-                            ? sectionB
-                            : item.section_id == "c"
-                            ? sectionC
-                            : item.section_id == "d"
-                            ? sectionD
+                            : selectedSchedule.is_section == 1
+                            ? item.section_id == "a"
+                              ? sectionA
+                              : item.section_id == "b"
+                              ? sectionB
+                              : item.section_id == "c"
+                              ? sectionC
+                              : item.section_id == "d"
+                              ? sectionD
+                              : noSelectedIcon
                             : noSelectedIcon
                           : item.disabled == 1
                           ? disableIcon
@@ -522,8 +588,15 @@ class SelectSeatBuyTicket extends Component {
                           ]}
                           onClick={() => {
                             if (selectedSchedule.id == item.id) return;
+
                             this.setState(
                               {
+                                left: 0,
+                                top: 0,
+                                deltaX: 0,
+                                deltaY: 0,
+                                scaleX: 1,
+                                scaleY: 1,
                                 selectedSchedule: item,
                               },
                               () => {

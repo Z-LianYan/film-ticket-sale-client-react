@@ -26,7 +26,7 @@
         background:#fff9ed;
         font-size: 0.13rem;
         padding: 0 0.25rem 0.1rem 0.25rem;
-        z-index: 10000;
+        z-index: 100000000000;
         .notice-title{
             font-size: 0.13rem;
             position: absolute;
@@ -54,7 +54,7 @@
         background-color: #fff;
         display: flex;
         align-items: center;
-        .price-item{
+        .section-item{
             display: flex;
             align-items: center;
             margin-right: 0.1rem;
@@ -64,6 +64,9 @@
                 background-size: 100% 100%;
                 margin-right: 0.05rem;
             }
+            .name-price{
+                font-size: 0.10rem;
+            }
         }
     }
     .seats-box{
@@ -71,21 +74,30 @@
         overflow: hidden;
         position: relative;
         user-select: none;
-        .screen-icon{
-            padding-top: 0.1rem;
-            width: 2rem;
+        .screen-wrapper{
+            width: 100vw;
             height: 0.3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             position: absolute;
-            // left: 50%;
             top: 0;
-            // transform: translateX(-50%);
-            background: url('../../static/img/screen.png') no-repeat;
-            background-size: contain;
-            text-align: center;
-            font-size: 0.13rem;
             z-index: 10000000;
-            // background-color: #eee;
+
+            .screen-icon{
+                padding-top: 0.1rem;
+                width: 2rem;
+                height: 0.3rem;
+                // transform: translateX(-50%);
+                background: url('../../static/img/screen.png') no-repeat;
+                background-size: contain;
+                text-align: center;
+                font-size: 0.13rem;
+                
+                // background-color: #eee;
+            }
         }
+        
         .row-num-list{
             width: 0.2rem;
             background-color: #ccc;
@@ -96,18 +108,53 @@
             flex-flow: column;
             position: absolute;
             left: 0.1rem;
-
-
+            z-index: 100;
             .row{
-
+                width: 100%;
+                position: absolute;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                .cell{
+                    height: 70%;
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #fff;
+                    font-size: 0.12rem;
+                }
             }
         }
         .seat-list{
             width: 100%;
             position: absolute;
-            // top: 0.3rem;
+            // animation-name: seatList;
+            // animation-duration: 3s;
+            // @keyframes seatList {
+            //     from { 
+            //         background: red;
+            //         transform: scale(1,1);
+            //     }
+            //     to { 
+            //         background: #ccc;
+            //         transform: scale(1.2,1.2);
+            //     }
+            // }
+            .middle-line{
+                // width: 0.2rem;
+                // height: 0.5rem;
+                border-right: 1px dashed #ccc;
+                position: absolute;
+                left: 50%;
+                z-index: 1000;
+                transform: translateX(-50%);
+            }
             .cell{
                 position: absolute;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 // width: 0.25rem;
                 // height: 0.25rem;
                 // background-image: url('../../static/img/no-selected.png');
@@ -120,6 +167,7 @@
                     // font-size: 0.25rem;
                 }
             }
+            
         }
     }
     
