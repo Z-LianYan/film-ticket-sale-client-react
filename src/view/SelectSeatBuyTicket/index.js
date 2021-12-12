@@ -45,7 +45,7 @@ class SelectSeatBuyTicket extends Component {
   }
   onGestureHander() {
     //创建一个新的hammer对象并且在初始化时指定要处理的dom元素
-    var hammertime = new hammerjs(document.querySelector(".seat-list"));
+    var hammertime = new hammerjs(document.querySelector(".seats-box"));
     hammertime.get("pan").set({ direction: hammerjs.DIRECTION_ALL });
     hammertime.get("pinch").set({ enable: true });
 
@@ -82,22 +82,14 @@ class SelectSeatBuyTicket extends Component {
       });
     });
     hammertime.on("pan", function (ev) {
-      console.log("pan", ev);
-
-      // let seatsBox = document.querySelector(".seats-box");
-      // console.log("seatsBox---offsetHeight", seatList.offsetHeight);
       let seatsList = document.querySelector(".seat-list");
       let seatsBox = document.querySelector(".seats-box");
 
       let offsetWidth = seatsList.offsetWidth;
       let offsetHeight = seatsList.offsetHeight;
 
-      console.log("offsetHeight", offsetHeight);
-
       let clientWidth = document.body.clientWidth;
       let clientHeight = seatsBox.offsetHeight;
-
-      console.log("clientHeight", clientHeight);
 
       let total_offsetWidth = offsetWidth * _this.state.scaleX;
       let total_offsetHeight = offsetHeight * _this.state.scaleY;
@@ -107,17 +99,17 @@ class SelectSeatBuyTicket extends Component {
       let offsetW = ev.deltaX + _this.state.left;
       let offsetH = ev.deltaY + _this.state.top;
 
-      // Toast.show({
-      //   content:
-      //     "total_offsetHeight" +
-      //     total_offsetHeight +
-      //     "seatsBox-height" +
-      //     clientHeight +
-      //     "cz_Height" +
-      //     cz_Height +
-      //     "offsetH" +
-      //     offsetH,
-      // });
+      Toast.show({
+        content:
+          "total_offsetHeight" +
+          total_offsetHeight +
+          "seatsBox-height" +
+          clientHeight +
+          "cz_Height" +
+          cz_Height +
+          "offsetH" +
+          offsetH,
+      });
       if (ev.isFinal) {
         _this.setState({
           deltaX: 0,
