@@ -405,12 +405,13 @@ class Cinema extends Component {
                 label={item.address}
                 distance={item.distance}
                 onClick={() => {
-                  console.log("12345");
+                  // console.log("12345");
                   this.props.history.push({
                     pathname: "/cinema/detail",
                     state: {
                       cinema_id: item.id,
                       film_id: location.state && location.state.film_id,
+                      date: fetchOptions.date,
                     },
                   });
                 }}

@@ -44,15 +44,8 @@ class SelectSeatBuyTicket extends Component {
     this.getCinemaDetail();
   }
   onGestureHander() {
-    let seatsList = document.querySelector(".seat-list");
-    // let dis = (seatsList.offsetWidth - document.body.clientWidth) / 2;
-    // this.setState({
-    //   left: -dis,
-    //   sideDistance: dis,
-    // });
-    // console.log("window", document.body.clientWidth, seatsList.offsetWidth);
     //创建一个新的hammer对象并且在初始化时指定要处理的dom元素
-    var hammertime = new hammerjs(document.querySelector(".seats-box"));
+    var hammertime = new hammerjs(document.querySelector(".seat-list"));
     hammertime.get("pan").set({ direction: hammerjs.DIRECTION_ALL });
     hammertime.get("pinch").set({ enable: true });
 
@@ -60,10 +53,8 @@ class SelectSeatBuyTicket extends Component {
     //为该dom元素指定触屏移动事件
     let _this = this;
     hammertime.on("pinch", function (ev) {
-      console.log(ev);
-      // Toast.show({
-      //   content: "X" + ev.deltaX + "Y" + ev.deltaY,
-      // });
+      if (ev.deltaY < 5 && ev.deltaY > -5 && ev.deltaX < 5 && ev.deltaX > -5)
+        return;
 
       if (ev.additionalEvent == "pinchin" && _this.state.scaleX <= 1) {
         _this.setState({
@@ -92,28 +83,70 @@ class SelectSeatBuyTicket extends Component {
     });
     hammertime.on("pan", function (ev) {
       console.log("pan", ev);
+
+      // let seatsBox = document.querySelector(".seats-box");
+      // console.log("seatsBox---offsetHeight", seatList.offsetHeight);
+      let seatsList = document.querySelector(".seat-list");
+      let seatsBox = document.querySelector(".seats-box");
+
+      let offsetWidth = seatsList.offsetWidth;
+      let offsetHeight = seatsList.offsetHeight;
+
+      console.log("offsetHeight", offsetHeight);
+
+      let clientWidth = document.body.clientWidth;
+      let clientHeight = seatsBox.offsetHeight;
+
+      console.log("clientHeight", clientHeight);
+
+      let total_offsetWidth = offsetWidth * _this.state.scaleX;
+      let total_offsetHeight = offsetHeight * _this.state.scaleY;
+      let cz_width = total_offsetWidth - clientWidth;
+      let cz_Height = total_offsetHeight - clientHeight;
+
       let offsetW = ev.deltaX + _this.state.left;
       let offsetH = ev.deltaY + _this.state.top;
+
+      // Toast.show({
+      //   content:
+      //     "total_offsetHeight" +
+      //     total_offsetHeight +
+      //     "seatsBox-height" +
+      //     clientHeight +
+      //     "cz_Height" +
+      //     cz_Height +
+      //     "offsetH" +
+      //     offsetH,
+      // });
       if (ev.isFinal) {
         _this.setState({
           deltaX: 0,
           deltaY: 0,
-          left: offsetW,
-          top: offsetH,
-          // left: offsetW >= 0 ? 0 : offsetW,
-          // top: offsetH >= 0 ? 0 : offsetH,
+          left:
+            offsetW >= cz_width
+              ? cz_width
+              : offsetW <= -cz_width
+              ? -cz_width
+              : offsetW,
+          // top:
+          // offsetH >= cz_Height
+          //   ? cz_Height
+          //   : offsetH <= -cz_Height
+          //   ? -cz_Height
+          //   : offsetH,
+          top:
+            cz_Height <= 0
+              ? offsetH >= 10
+                ? 10
+                : offsetH <= -10
+                ? -10
+                : offsetH
+              : offsetH >= cz_Height
+              ? cz_Height
+              : offsetH <= -cz_Height
+              ? -cz_Height
+              : offsetH,
         });
-
-        // Toast.show({
-        //   content:
-        //     seatsList.offsetWidth * _this.state.scaleX +
-        //     "-" +
-        //     document.body.clientWidth +
-        //     "x" +
-        //     _this.state.left +
-        //     "y" +
-        //     _this.state.top,
-        // });
 
         return;
       }
@@ -409,7 +442,7 @@ class SelectSeatBuyTicket extends Component {
                     style={{
                       height: cellWidth + "vw",
                       top: cellWidth * (item.row - 1) + "vw",
-                      fontSize: cellWidth * 0.2 + "vw",
+                      // fontSize: cellWidth * 0.2 + "vw",
                     }}
                   >
                     <div className="cell">{item.row_id}</div>
@@ -455,7 +488,7 @@ class SelectSeatBuyTicket extends Component {
                     let seats = selectedSeat.map((im) => im.id);
                     if (
                       selectedSeat.length >= selectedSchedule.buy_max &&
-                      selectedSchedule.buy_max !== 0 &&
+                      selectedSchedule.buy_max &&
                       !seats.includes(item.id)
                     ) {
                       //selectedSchedule.buy_max
