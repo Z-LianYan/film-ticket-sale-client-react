@@ -95,7 +95,7 @@
         .img-wraper{
           transition: 500ms;
           height: 1.3rem  !important;
-          width: 0.6rem !important;
+          width: 1rem !important;
           padding-top: 0.26rem;
           img{
             display: block;
@@ -108,7 +108,12 @@
       .swiper-slide-active{
         .img-wraper{
           padding-top: 0;
-          width: 0.9rem !important;
+          width: 1.5rem !important;
+          img{
+            display: block;
+            height: 100% !important;
+            width: 100% !important;
+          }
         }
       }
     }

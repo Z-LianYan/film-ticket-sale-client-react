@@ -44,7 +44,7 @@ class FileDetail extends Component {
       },
       filmList: [],
       scheduleList: [],
-      activeKey: 0,
+      activeDateKey: 0,
       isSkeleton: true,
     };
   }
@@ -71,7 +71,18 @@ class FileDetail extends Component {
       cinema_id: location.state.cinema_id,
       isHasFilmList: true,
     });
-    // console.log("result---", result);
+    console.log("result---date", location.state.date);
+
+    if (location.state.film_id && location.state.date) {
+      if (result.filmList[0].film_id == location.state.film_id) {
+        let index = result.filmList[0].show_date.indexOf(location.state.date);
+        if (index != -1) {
+          this.setState({
+            activeDateKey: index,
+          });
+        }
+      }
+    }
     this.setState(
       {
         cinemaDetail: result,
@@ -86,7 +97,9 @@ class FileDetail extends Component {
           this.state.filmDetail.show_date &&
           this.state.filmDetail.show_date.length
         ) {
-          this.getDateScheduleList(this.state.filmDetail.show_date[0]);
+          this.getDateScheduleList(
+            this.state.filmDetail.show_date[this.state.activeDateKey]
+          );
         }
       }
     );
@@ -120,14 +133,20 @@ class FileDetail extends Component {
       centeredSlides: true,
       on: {
         slideChangeTransitionStart: function (e) {
+          let index = _this.state.filmList[this.activeIndex].show_date.indexOf(
+            location.state.date
+          );
+          console.log("index----", index, location.state.date);
           _this.setState(
             {
               activeBgImg: _this.state.filmList[this.activeIndex].poster_img,
               filmDetail: _this.state.filmList[this.activeIndex],
-              activeKey: 0,
+              activeDateKey: index != -1 ? index : 0,
             },
             () => {
-              _this.getDateScheduleList(_this.state.filmDetail.show_date[0]);
+              _this.getDateScheduleList(
+                _this.state.filmDetail.show_date[_this.state.activeDateKey]
+              );
             }
           );
         },
@@ -140,7 +159,7 @@ class FileDetail extends Component {
       setTimeout(() => {
         filmList.map((item, index) => {
           if (item.film_id == location.state.film_id) {
-            _swiper.slideTo(index);
+            _swiper.slideTo(index); //如果filmList列表的第一个索引就是传过来的电影那么_swiper.slideTo(index)是不会执行slideChangeTransitionStart方法的
           }
         });
       }, 100);
@@ -176,7 +195,7 @@ class FileDetail extends Component {
     );
   }
   handerDate(date) {
-    console.log("date");
+    // console.log("date");
     let cur_y = dayjs(date).format("YYYY");
     let y = dayjs().format("YYYY");
     return (
@@ -226,7 +245,7 @@ class FileDetail extends Component {
       cinemaDetail,
       filmDetail,
       scheduleList,
-      activeKey,
+      activeDateKey,
       isSkeleton,
     } = this.state;
     let { history } = this.props;
@@ -342,11 +361,11 @@ class FileDetail extends Component {
           <RightOutline fontSize={15} />
         </div>
         <Tabs
-          activeKey={this.state.activeKey.toString()}
+          activeKey={this.state.activeDateKey.toString()}
           onChange={(val) => {
             // console.log("val", val);
             this.setState({
-              activeKey: val,
+              activeDateKey: val,
             });
             let { filmDetail } = this.state;
             this.getDateScheduleList(filmDetail.show_date[val]);
@@ -384,7 +403,7 @@ class FileDetail extends Component {
                     hall_id: item.hall_id,
                     film_id: item.film_id,
                     schedule_id: item.id,
-                    date: filmDetail.show_date[this.state.activeKey],
+                    date: filmDetail.show_date[this.state.activeDateKey],
                   },
                 });
               }}

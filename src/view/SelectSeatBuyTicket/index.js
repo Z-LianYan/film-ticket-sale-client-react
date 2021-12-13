@@ -36,7 +36,7 @@ class SelectSeatBuyTicket extends Component {
       selectedSeat: [],
       hallDetail: {},
       seat_real_rows: [],
-      seatListTopHeight:50
+      seatListTopHeight: 50,
     };
   }
   componentDidMount() {
@@ -117,10 +117,10 @@ class SelectSeatBuyTicket extends Component {
           deltaX: 0,
           deltaY: 0,
           left:
-            offsetW >= cz_width
-              ? cz_width
-              : offsetW <= -cz_width
-              ? -cz_width
+            offsetW >= cz_width + 40
+              ? cz_width + 40
+              : offsetW <= -cz_width - 40
+              ? -cz_width - 40
               : offsetW,
           // top:
           //   offsetH >= cz_Height
@@ -130,15 +130,15 @@ class SelectSeatBuyTicket extends Component {
           //   : offsetH,
           top:
             cz_Height <= 0
-              ? offsetH >= 10
-                ? 10
-                : offsetH <= -10
-                ? -10-seatListTopHeight 
+              ? offsetH >= clientHeight / 2
+                ? clientHeight / 2
+                : offsetH <= -10 - seatListTopHeight
+                ? -10 - seatListTopHeight
                 : offsetH
-              : offsetH >= cz_Height
-              ? cz_Height
-              : offsetH <= -cz_Height-seatListTopHeight
-              ? -cz_Height-seatListTopHeight
+              : offsetH >= cz_Height + seatListTopHeight + 30
+              ? cz_Height + seatListTopHeight + 30
+              : offsetH <= -cz_Height - seatListTopHeight
+              ? -cz_Height - seatListTopHeight
               : offsetH,
         });
 
@@ -350,7 +350,7 @@ class SelectSeatBuyTicket extends Component {
       selectedSeat,
       hallDetail,
       seat_real_rows,
-      seatListTopHeight
+      seatListTopHeight,
     } = this.state;
     let { film } = scheduleInfo;
     let cellWidth = 100 / hallDetail.seat_column_num;
@@ -423,9 +423,9 @@ class SelectSeatBuyTicket extends Component {
             <div
               className="row-num-list"
               style={{
-                transform: `translateY(${top + deltaY + seatListTopHeight}px) scale(${
-                  scaleX >= 1.5 ? 1.5 : scaleX
-                },${scaleY})`,
+                transform: `translateY(${
+                  top + deltaY + seatListTopHeight
+                }px) scale(${scaleX >= 1.5 ? 1.5 : scaleX},${scaleY})`,
                 height: cellWidth * hallDetail.seat_row_num + "vw",
               }}
             >
