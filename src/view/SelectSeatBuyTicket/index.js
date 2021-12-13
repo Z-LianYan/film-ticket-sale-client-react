@@ -36,6 +36,7 @@ class SelectSeatBuyTicket extends Component {
       selectedSeat: [],
       hallDetail: {},
       seat_real_rows: [],
+      seatListTopHeight:50
     };
   }
   componentDidMount() {
@@ -44,6 +45,7 @@ class SelectSeatBuyTicket extends Component {
     this.getCinemaDetail();
   }
   onGestureHander() {
+    let { seatListTopHeight } = this.state;
     //创建一个新的hammer对象并且在初始化时指定要处理的dom元素
     var hammertime = new hammerjs(document.querySelector(".seats-box"));
     hammertime.get("pan").set({ direction: hammerjs.DIRECTION_ALL });
@@ -99,17 +101,17 @@ class SelectSeatBuyTicket extends Component {
       let offsetW = ev.deltaX + _this.state.left;
       let offsetH = ev.deltaY + _this.state.top;
 
-      Toast.show({
-        content:
-          "total_offsetHeight" +
-          total_offsetHeight +
-          "seatsBox-height" +
-          clientHeight +
-          "cz_Height" +
-          cz_Height +
-          "offsetH" +
-          offsetH,
-      });
+      // Toast.show({
+      //   content:
+      //     "total_offsetHeight" +
+      //     total_offsetHeight +
+      //     "seatsBox-height" +
+      //     clientHeight +
+      //     "cz_Height" +
+      //     cz_Height +
+      //     "offsetH" +
+      //     offsetH,
+      // });
       if (ev.isFinal) {
         _this.setState({
           deltaX: 0,
@@ -121,22 +123,22 @@ class SelectSeatBuyTicket extends Component {
               ? -cz_width
               : offsetW,
           // top:
-          // offsetH >= cz_Height
+          //   offsetH >= cz_Height
           //   ? cz_Height
-          //   : offsetH <= -cz_Height
-          //   ? -cz_Height
+          //   : offsetH <= -cz_Height-seatListTopHeight
+          //   ? -cz_Height-seatListTopHeight
           //   : offsetH,
           top:
             cz_Height <= 0
               ? offsetH >= 10
                 ? 10
                 : offsetH <= -10
-                ? -10
+                ? -10-seatListTopHeight 
                 : offsetH
               : offsetH >= cz_Height
               ? cz_Height
-              : offsetH <= -cz_Height
-              ? -cz_Height
+              : offsetH <= -cz_Height-seatListTopHeight
+              ? -cz_Height-seatListTopHeight
               : offsetH,
         });
 
@@ -348,6 +350,7 @@ class SelectSeatBuyTicket extends Component {
       selectedSeat,
       hallDetail,
       seat_real_rows,
+      seatListTopHeight
     } = this.state;
     let { film } = scheduleInfo;
     let cellWidth = 100 / hallDetail.seat_column_num;
@@ -420,7 +423,7 @@ class SelectSeatBuyTicket extends Component {
             <div
               className="row-num-list"
               style={{
-                transform: `translateY(${top + deltaY + 50}px) scale(${
+                transform: `translateY(${top + deltaY + seatListTopHeight}px) scale(${
                   scaleX >= 1.5 ? 1.5 : scaleX
                 },${scaleY})`,
                 height: cellWidth * hallDetail.seat_row_num + "vw",
@@ -448,7 +451,7 @@ class SelectSeatBuyTicket extends Component {
             className="seat-list"
             style={{
               transform: `translate(${left + deltaX}px, ${
-                top + deltaY + 50
+                top + deltaY + seatListTopHeight
               }px) scale(${scaleX},${scaleY})`,
               height: cellWidth * hallDetail.seat_row_num + "vw",
             }}
@@ -470,10 +473,10 @@ class SelectSeatBuyTicket extends Component {
                   }}
                   onClick={() => {
                     //disabled 0可选 1不可选 2无座
-                    this.setState({
-                      scaleX: scaleX >= 1.3 ? scaleX : 1.3,
-                      scaleY: scaleX >= 1.3 ? scaleX : 1.3,
-                    });
+                    // this.setState({
+                    //   scaleX: scaleX >= 1.3 ? scaleX : 1.3,
+                    //   scaleY: scaleX >= 1.3 ? scaleX : 1.3,
+                    // });
                     if (item.disabled !== 0) return;
 
                     // let { selectedSeat } = this.state;
