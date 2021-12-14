@@ -107,9 +107,13 @@ class App extends Component {
                 isShowSwitchLocationModal: false, //关闭首页（film）banner 里的，切换城市的模态框
               });
             }, 10000);
-            console.log('获取城市ip（adcode）',this.props.location.pathname)
-            if (this.props.location.pathname == "/cinemas" || this.props.location.pathname=='/film/cinema') {
-              this.props.locationInfo.locationReady && this.props.locationInfo.locationReady()
+            console.log("获取城市ip（adcode）", this.props.location.pathname);
+            if (
+              this.props.location.pathname == "/cinemas" ||
+              this.props.location.pathname == "/film/cinema"
+            ) {
+              this.props.locationInfo.locationReady &&
+                this.props.locationInfo.locationReady();
             }
 
             // if (this.props.locationInfo.city_id != res.adcode) {
@@ -210,9 +214,12 @@ App.defaultProps = {
     // { path: "/buycar", component: BuyCar },
     { path: "/mine", component: Mine },
     { path: "/citys", component: Citys },
-    { path: "/film/detail", component: FilmDetail },
-    { path: "/cinema/detail", component: CinemaDetail },
-    { path: "/film/cinema", component: SelectCinema },
+    { path: "/film/detail/:film_id", component: FilmDetail },
+    {
+      path: "/cinema/detail",
+      component: CinemaDetail,
+    },
+    { path: "/film/cinema/:film_id", component: SelectCinema },
     { path: "/cinema/search", component: CinemaSearch },
     { path: "/buy/ticket", component: SelectSeatBuyTicket },
   ],

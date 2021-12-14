@@ -13,6 +13,7 @@ import {
 } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import { get_cinema_list, get_film_in_schedule_dates } from "@/api/cinema";
+import { get_film_detail } from "@/api/film";
 import { get_city_district_list } from "@/api/citys";
 import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
 import Cookies from "js-cookie";
@@ -45,6 +46,7 @@ class Cinema extends Component {
         { label: "全部", value: "" },
         { label: "最近去过", value: "zjqg" },
       ],
+      film_name: "",
     };
   }
   async componentDidMount() {
@@ -66,15 +68,17 @@ class Cinema extends Component {
     }
   }
   getData() {
-    let { location, locationInfo } = this.props;
-    if (location.state && location.state.film_id) {
+    let { location, locationInfo, match } = this.props;
+    let { params } = match;
+    if (params && params.film_id) {
       this.getFilmInScheduleDates();
     } else {
       this.onRefresh();
     }
   }
   async getFilmInScheduleDates() {
-    let { location, locationInfo } = this.props;
+    let { location, locationInfo, match } = this.props;
+    let { params } = match;
     let { fetchOptions } = this.state;
     let _cookies = Cookies.get("locationInfo");
     let _cookiesInfo = null;
@@ -86,14 +90,19 @@ class Cinema extends Component {
         _cookiesInfo && _cookiesInfo.city_id
           ? _cookiesInfo.city_id
           : locationInfo.city_id,
-      film_id: location.state.film_id,
+      film_id: params && params.film_id,
     });
     console.log("date---", result, result[0]);
     if (!result) return;
     fetchOptions.date = result.rows[0];
-    fetchOptions.film_id = location.state && location.state.film_id;
+    fetchOptions.film_id = params && params.film_id;
+    let film_detail_result = await get_film_detail({
+      film_id: params && params.film_id,
+    });
+    console.log("film_detail_result", film_detail_result);
     this.setState({
       fetchOptions,
+      film_name: film_detail_result.film_name,
       dateList: result.rows,
     });
     this.onRefresh();
@@ -106,6 +115,7 @@ class Cinema extends Component {
   }
   async onRefreshList() {
     let { fetchOptions, hotList } = this.state;
+    let { match, locationInfo } = this.props;
     fetchOptions.page = 1;
     this.setState(
       {
@@ -114,9 +124,9 @@ class Cinema extends Component {
       async () => {
         let result = await get_cinema_list({
           ...fetchOptions,
-          city_id: this.props.locationInfo.city_id,
-          lat: this.props.locationInfo.lat,
-          lng: this.props.locationInfo.lng,
+          city_id: locationInfo.city_id,
+          lat: locationInfo.lat,
+          lng: locationInfo.lng,
         });
         this.setState(
           {
@@ -212,8 +222,8 @@ class Cinema extends Component {
     }
   }
   render() {
-    let { location, history, locationInfo } = this.props;
-
+    let { location, history, locationInfo, match } = this.props;
+    let { params } = match;
     let {
       list,
       fetchOptions,
@@ -225,10 +235,12 @@ class Cinema extends Component {
       checkListDefaultValue,
       checkListDefaultLabel,
       checkList,
+      film_name,
     } = this.state;
+
     return (
       <div className="app-cinema-page">
-        {isSkeleton && location.pathname == "/film/cinema" ? (
+        {location.pathname == "/cinemas" ? null : isSkeleton ? (
           <div className="skeleton-box"></div>
         ) : null}
         <div className="header-wrapper">
@@ -245,7 +257,7 @@ class Cinema extends Component {
               />
             }
             left={
-              location.state && location.state.film_id ? (
+              params && params.film_name ? (
                 <LeftOutline
                   onClick={() => {
                     history.goBack();
@@ -271,15 +283,13 @@ class Cinema extends Component {
               )
             }
           >
-            {location.state && location.state.film_name
-              ? location.state.film_name
-              : "影院"}
+            {film_name ? film_name : "影院"}
           </NavBar>
-          {location.state && location.state.film_id ? (
+          {params && params.film_id ? (
             <Tabs
               activeKey={dateActiveKey.toString()}
               onChange={(val) => {
-                console.log("onChange", val);
+                // console.log("onChange", val);
                 fetchOptions.date = dateList[val];
                 this.setState({
                   fetchOptions,
@@ -387,8 +397,7 @@ class Cinema extends Component {
         </div>
         <div
           style={{
-            height:
-              location.state && location.state.film_id ? "1.26rem" : "0.87rem",
+            height: params && params.film_id ? "1.26rem" : "0.87rem",
           }}
         ></div>
         <PullToRefresh
@@ -407,10 +416,10 @@ class Cinema extends Component {
                 onClick={() => {
                   // console.log("12345");
                   this.props.history.push({
-                    pathname: "/cinema/detail",
+                    pathname: `/cinema/detail`,
                     state: {
                       cinema_id: item.id,
-                      film_id: location.state && location.state.film_id,
+                      film_id: params && params.film_id,
                       date: fetchOptions.date,
                     },
                   });
@@ -445,7 +454,7 @@ class Cinema extends Component {
           >
             <InfiniteScrollContent
               text={`该区域没有排${
-                location.state && location.state.film_id ? "此" : ""
+                params && params.film_id ? "此" : ""
               }片的影院哦`}
               noContent={!isHasMore && !this.state.list.length}
               hasMore={isHasMore}

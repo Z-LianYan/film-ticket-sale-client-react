@@ -185,18 +185,13 @@ class Film extends Component {
               separator={hotList.length === index + 1 ? false : true}
               onClick={() => {
                 this.props.history.push({
-                  pathname: "/film/detail",
-                  state: { film_id: item.film_id },
+                  pathname: "/film/detail/" + item.film_id,
                 });
               }}
               onRightClick={() => {
                 console.log("onRightClick");
                 this.props.history.push({
-                  pathname: "/film/cinema",
-                  state: { 
-                    film_id: item.film_id ,
-                    film_name: item.film_name 
-                  },
+                  pathname: `/film/cinema/${item.film_id}`,
                 });
               }}
             />
@@ -273,17 +268,16 @@ class Film extends Component {
               btnTxt={item.isPresale ? "预购" : ""}
               onClick={() => {
                 this.props.history.push({
-                  pathname: "/film/detail",
-                  state: { film_id: item.id },
+                  pathname: "/film/detail/" + item.id,
                 });
               }}
               onRightClick={() => {
                 console.log("onRightClick");
                 this.props.history.push({
                   pathname: "/film/cinema",
-                  state: { 
+                  state: {
                     film_id: item.id,
-                    film_name: item.film_name 
+                    film_name: item.film_name,
                   },
                 });
               }}
@@ -336,7 +330,7 @@ class Film extends Component {
   }
   onSwitchCity() {
     let { locationInfo } = this.props;
-    let { realLocation,locationReady } = locationInfo;
+    let { realLocation, locationReady } = locationInfo;
     Cookies.set(
       "locationInfo",
       JSON.stringify({
@@ -347,15 +341,18 @@ class Film extends Component {
         expires: 1,
       }
     );
-    this.props.setLocationInfo({
-      city_id: realLocation && realLocation.city_id,
-      city_name: realLocation && realLocation.city_name,
-      lat: realLocation && realLocation.lat,
-      lng: realLocation && realLocation.lng,
-      isShowSwitchLocationModal: false,
-    },()=>{
-      locationReady && locationReady()
-    });
+    this.props.setLocationInfo(
+      {
+        city_id: realLocation && realLocation.city_id,
+        city_name: realLocation && realLocation.city_name,
+        lat: realLocation && realLocation.lat,
+        lng: realLocation && realLocation.lng,
+        isShowSwitchLocationModal: false,
+      },
+      () => {
+        locationReady && locationReady();
+      }
+    );
   }
   render() {
     let { history, locationInfo } = this.props;
@@ -376,7 +373,9 @@ class Film extends Component {
             {locationInfo.city_name}
             <DownOutline className="icon-down" />
 
-            {realLocation && realLocation.city_id!=locationInfo.city_id &&  locationInfo.isShowSwitchLocationModal ? (
+            {realLocation &&
+            realLocation.city_id != locationInfo.city_id &&
+            locationInfo.isShowSwitchLocationModal ? (
               <div className="location-show-box">
                 <div className="location-mask"></div>
                 <div className="top-arrow"></div>
@@ -400,8 +399,7 @@ class Film extends Component {
             useSwiperType=""
             onClick={(item) => {
               history.push({
-                pathname: "/film/detail",
-                state: { film_id: item.film_id },
+                pathname: "/film/detail/" + item.film_id,
               });
             }}
           />

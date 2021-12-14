@@ -29,11 +29,11 @@ class FileDetail extends Component {
     this.getFilmDetail();
   }
   async getFilmDetail() {
-    let { history,locationInfo } = this.props;
-    let { film_id } = history.location.state;
-    console.log("film_id", film_id);
+    let { history, locationInfo, match } = this.props;
+    let { params } = match;
+    console.log("film_id---", this.props);
     let result = await get_film_detail({
-      film_id: film_id,
+      film_id: params && params.film_id,
       city_id: locationInfo && locationInfo.city_id,
     });
     this.setState({
@@ -123,7 +123,10 @@ class FileDetail extends Component {
           </div>
 
           <div className="record-film">{detail.category_names}</div>
-          <div className="show-date"> {dayjs(detail.show_time).format('YYYY年MM月DD日')}上映 </div>
+          <div className="show-date">
+            {" "}
+            {dayjs(detail.show_time).format("YYYY年MM月DD日")}上映{" "}
+          </div>
           <div className="area-and-play-time">
             {detail.area} | {detail.runtime}分钟
           </div>
@@ -212,7 +215,7 @@ class FileDetail extends Component {
                 pathname: "/film/cinema",
                 state: {
                   film_id: detail.id,
-                  film_name: detail.film_name 
+                  film_name: detail.film_name,
                 },
               });
             }}

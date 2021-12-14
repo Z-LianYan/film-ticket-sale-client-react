@@ -15,11 +15,11 @@ class Mine extends Component {
     let { userInfo, history } = props || this.props;
 
     let { replace } = history;
-    // if (userInfo) {
+    if (userInfo) {
       replace("/mine/user");
-    // } else {
-    //   replace("/mine/login");
-    // }
+    } else {
+      replace("/mine/login");
+    }
   }
 
   componentDidMount() {
@@ -37,7 +37,7 @@ class Mine extends Component {
     console.log(this);
     return (
       <div className="app-mine">
-        {/* <Route path="/mine/login" component={Login} /> */}
+        <Route path="/mine/login" component={Login} />
         <Route path="/mine/user" component={User} />
       </div>
     );
