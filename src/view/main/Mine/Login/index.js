@@ -57,18 +57,7 @@ class Login extends Component {
         ></div>
         <List.Item
           prefix=""
-          extra={
-            <div
-              style={{
-                background: "#eee",
-                borderRadius: "0.8rem",
-                padding: "0.08rem",
-                color: "#999",
-              }}
-            >
-              发送验证码
-            </div>
-          }
+          extra={<div className="verify-btn">发送验证码</div>}
         >
           <Input placeholder="请输入手机号" clearable />
         </List.Item>
@@ -76,6 +65,10 @@ class Login extends Component {
         <List.Item prefix="">
           <Input placeholder="请输入短信验证码" clearable />
         </List.Item>
+
+        <Button className="login-btn" color="primary" size="middle" block>
+          登录
+        </Button>
 
         <button onClick={this.login}>login</button>
       </div>

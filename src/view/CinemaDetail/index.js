@@ -337,8 +337,8 @@ class FileDetail extends Component {
           onClick={() => {
             if (filmDetail && filmDetail.film_id) {
               history.push({
-                pathname: "/film/detail",
-                state: { film_id: filmDetail.film_id },
+                pathname: "/film/detail/" + filmDetail.film_id,
+                // state: { film_id: filmDetail.film_id },
               });
             }
           }}
