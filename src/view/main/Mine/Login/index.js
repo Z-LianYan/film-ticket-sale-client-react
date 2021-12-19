@@ -10,6 +10,8 @@ import {
   Button,
   Input,
 } from "antd-mobile";
+import { phone_register, send_verify_code } from "@/api/user";
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -17,7 +19,7 @@ class Login extends Component {
     this.login = this.login.bind(this);
   }
 
-  login() {
+  async login() {
     console.log("login");
     let username = "123";
     let password = "456";
@@ -32,6 +34,16 @@ class Login extends Component {
       fail() {
         //失败回调
       },
+    });
+
+    await phone_register({
+      phone_number: 13536681616,
+      verify_code: 1234,
+    });
+  }
+  async sendVerifyCode() {
+    await send_verify_code({
+      phone_number: "",
     });
   }
 
@@ -57,7 +69,16 @@ class Login extends Component {
         ></div>
         <List.Item
           prefix=""
-          extra={<div className="verify-btn">发送验证码</div>}
+          extra={
+            <div
+              className="verify-btn"
+              onClick={() => {
+                this.sendVerifyCode();
+              }}
+            >
+              发送验证码
+            </div>
+          }
         >
           <Input placeholder="请输入手机号" clearable />
         </List.Item>
@@ -66,11 +87,15 @@ class Login extends Component {
           <Input placeholder="请输入短信验证码" clearable />
         </List.Item>
 
-        <Button className="login-btn" color="primary" size="middle" block>
+        <Button
+          className="login-btn"
+          color="primary"
+          size="middle"
+          block
+          onClick={this.login}
+        >
           登录
         </Button>
-
-        <button onClick={this.login}>login</button>
       </div>
     );
   }

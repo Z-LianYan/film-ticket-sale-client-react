@@ -14,4 +14,7 @@ export const GET_CITY_DISTRICT_LIST = "/city/getCityDistrictList";
 export const GET_FILM_DETAIL = "/film/filmDetail";
 export const GET_FILM_IN_SCHEDULE_DATES = "/getFilmInScheduleDates";
 export const GET_SCHEDULE_INFO = "/getScheduleInfo";
-export const GET_SEAT = "/getSeat";//获取座位
+export const GET_SEAT = "/getSeat"; //获取座位
+
+export const PHONE_REGISTER = "/phoneRegister"; //手机号码注册
+export const SEND_VERIFY_CODE = "/sendVerifyCode"; //发送短信验证码
