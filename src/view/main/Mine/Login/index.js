@@ -15,11 +15,17 @@ import { phone_register, send_verify_code } from "@/api/user";
 class Login extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      formData: {
+        phone_number: "13536681616",
+        verify_code: "1234",
+      },
+    };
     this.login = this.login.bind(this);
   }
 
   async login() {
+    let { formData } = this.state;
     console.log("login");
     let username = "123";
     let password = "456";
@@ -36,14 +42,12 @@ class Login extends Component {
       },
     });
 
-    await phone_register({
-      phone_number: 13536681616,
-      verify_code: 1234,
-    });
+    await phone_register(formData);
   }
   async sendVerifyCode() {
+    let { formData } = this.state;
     await send_verify_code({
-      phone_number: "",
+      phone_number: formData.phone_number,
     });
   }
 
@@ -80,11 +84,36 @@ class Login extends Component {
             </div>
           }
         >
-          <Input placeholder="请输入手机号" clearable />
+          <Input
+            placeholder="请输入手机号"
+            clearable
+            type="tel"
+            maxLength={11}
+            onChange={(val) => {
+              console.log(val);
+              let { formData } = this.state;
+              formData.phone_number = val;
+              this.setState({
+                formData,
+              });
+            }}
+          />
         </List.Item>
 
         <List.Item prefix="">
-          <Input placeholder="请输入短信验证码" clearable />
+          <Input
+            placeholder="请输入短信验证码"
+            clearable
+            type="tel"
+            maxLength={4}
+            onChange={(val) => {
+              let { formData } = this.state;
+              formData.verify_code = val;
+              this.setState({
+                formData,
+              });
+            }}
+          />
         </List.Item>
 
         <Button
