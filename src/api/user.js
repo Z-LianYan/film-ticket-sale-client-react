@@ -15,12 +15,12 @@ export function phone_register(params) {
           });
           break;
         default:
+          reject(res);
           Toast.show({
             icon: "fail",
             duration: 2000,
             content: res.message,
           });
-          reject(res.data);
           break;
       }
     });

@@ -9,6 +9,7 @@ import {
   ImageViewer,
   Button,
   Input,
+  Toast,
 } from "antd-mobile";
 import { phone_register, send_verify_code } from "@/api/user";
 
@@ -17,22 +18,53 @@ class Login extends Component {
     super(props);
     this.state = {
       formData: {
-        phone_number: "13536681616",
-        verify_code: "1234",
+        phone_number: "",
+        verify_code: "",
       },
+      code_time: 60,
+      isCodeDisabled: false,
+      timer: null,
+      reg_tel:
+        /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/,
     };
-    this.login = this.login.bind(this);
+    this.doLogin = this.doLogin.bind(this);
   }
 
-  async login() {
-    let { formData } = this.state;
-    console.log("login");
-    let username = "123";
-    let password = "456";
+  async doLogin() {
+    let { formData, reg_tel } = this.state;
     let { history } = this.props;
+    if (!formData.phone_number) {
+      return Toast.show({
+        duration: 1000,
+        content: "请输入手机号",
+      });
+    }
+    if (!reg_tel.test(formData.phone_number)) {
+      return Toast.show({
+        duration: 1000,
+        content: "请输入正确的手机号",
+      });
+    }
+    if (!formData.verify_code) {
+      return Toast.show({
+        duration: 1000,
+        content: "请输入4位数的短信验证码",
+      });
+    }
+    if (formData.verify_code.length < 4) {
+      return Toast.show({
+        duration: 1000,
+        content: "请输入4位数的短信验证码",
+      });
+    }
+    let resutl = await phone_register(formData);
+    console.log("12300--99", resutl);
+    this.clearIntervalDis();
+
+    return;
     this.props.login({
-      username,
-      password,
+      username: 123,
+      password: 1234,
       success() {
         //成功回调
         history.replace("/mine/user");
@@ -41,18 +73,53 @@ class Login extends Component {
         //失败回调
       },
     });
-
-    await phone_register(formData);
+  }
+  clearIntervalDis() {
+    let { timer } = this.state;
+    clearInterval(timer);
+    this.setState({
+      code_time: 60,
+      isCodeDisabled: false,
+    });
   }
   async sendVerifyCode() {
-    let { formData } = this.state;
+    let { formData, reg_tel } = this.state;
+
+    if (!formData.phone_number) {
+      return Toast.show({
+        duration: 1000,
+        content: "请输入手机号",
+      });
+    }
+    if (!reg_tel.test(formData.phone_number)) {
+      return Toast.show({
+        duration: 1000,
+        content: "请输入正确的手机号",
+      });
+    }
     await send_verify_code({
       phone_number: formData.phone_number,
+    });
+    let timer = setInterval(() => {
+      let { code_time } = this.state;
+      code_time -= 1;
+      if (code_time <= 0) {
+        clearInterval(timer);
+      }
+      this.setState({
+        code_time: code_time <= 0 ? 60 : code_time,
+        isCodeDisabled: code_time <= 0 ? false : true,
+      });
+    }, 1000);
+
+    this.setState({
+      timer,
     });
   }
 
   render() {
     let { history } = this.props;
+    let { code_time, isCodeDisabled, formData } = this.state;
     return (
       <div className="login-container">
         <NavBar
@@ -74,14 +141,17 @@ class Login extends Component {
         <List.Item
           prefix=""
           extra={
-            <div
-              className="verify-btn"
+            <Button
+              color="primary"
+              fill="outline"
+              shape="rounded"
+              disabled={isCodeDisabled}
               onClick={() => {
                 this.sendVerifyCode();
               }}
             >
-              发送验证码
-            </div>
+              {isCodeDisabled ? code_time + "s后再发送" : "发送验证码"}
+            </Button>
           }
         >
           <Input
@@ -121,13 +191,19 @@ class Login extends Component {
           color="primary"
           size="middle"
           block
-          onClick={this.login}
+          onClick={this.doLogin}
         >
           登录
         </Button>
       </div>
     );
   }
+  componentWillUnmount = () => {
+    this.clearIntervalDis();
+    this.setState = (state, callback) => {
+      return;
+    };
+  };
 }
 
 export default GroupCommons(Login);
