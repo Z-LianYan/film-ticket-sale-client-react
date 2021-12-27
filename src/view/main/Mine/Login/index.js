@@ -58,7 +58,7 @@ class Login extends Component {
       });
     }
     let resutl = await phone_register(formData);
-    console.log("12300--99", resutl);
+    console.log("12300--resutl", resutl);
     this.clearIntervalDis();
 
     return;
@@ -160,7 +160,7 @@ class Login extends Component {
             type="tel"
             maxLength={11}
             onChange={(val) => {
-              console.log(val);
+              // console.log(val);
               let { formData } = this.state;
               formData.phone_number = val;
               this.setState({
