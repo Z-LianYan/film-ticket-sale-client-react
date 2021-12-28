@@ -54,3 +54,23 @@ export function send_verify_code(params) {
     );
   });
 }
+
+export function get_user_info(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.post(Api.GET_USER_INFO, params, "").then((res) => {
+      switch (res.error) {
+        case 0:
+          resolve(res.data);
+          break;
+        default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
+          reject(res.data);
+          break;
+      }
+    });
+  });
+}

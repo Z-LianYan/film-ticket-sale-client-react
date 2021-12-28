@@ -33,6 +33,7 @@ class Login extends Component {
   async doLogin() {
     let { formData, reg_tel } = this.state;
     let { history } = this.props;
+    let { replace } = history;
     if (!formData.phone_number) {
       return Toast.show({
         duration: 1000,
@@ -60,6 +61,8 @@ class Login extends Component {
     let resutl = await phone_register(formData);
     console.log("12300--resutl", resutl);
     this.clearIntervalDis();
+
+    replace("/mine/user");
 
     return;
     this.props.login({

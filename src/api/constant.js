@@ -18,3 +18,5 @@ export const GET_SEAT = "/getSeat"; //获取座位
 
 export const PHONE_REGISTER = "/phoneRegister"; //手机号码注册
 export const SEND_VERIFY_CODE = "/sendVerifyCode"; //发送短信验证码
+
+export const GET_USER_INFO = "/getUserInfo"; //获取用户信息
