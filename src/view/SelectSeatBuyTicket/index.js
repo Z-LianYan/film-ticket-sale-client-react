@@ -40,7 +40,6 @@ class SelectSeatBuyTicket extends Component {
     };
   }
   componentDidMount() {
-    console.log("this.props", this.props);
     this.onGestureHander();
     this.getCinemaDetail();
   }
@@ -218,7 +217,6 @@ class SelectSeatBuyTicket extends Component {
   }
   async getSeatList() {
     let { selectedSchedule } = this.state;
-    // console.log('座位列表',selectedSchedule)
     let result = await get_seat({
       hall_id: selectedSchedule.hall_id,
     });
@@ -245,7 +243,6 @@ class SelectSeatBuyTicket extends Component {
     this.setState({
       seat_real_rows,
     });
-    console.log("seat_real_rows", this.state.seat_real_rows);
   }
 
   handlerSectionPrice(sectionPrice) {
@@ -681,7 +678,6 @@ class SelectSeatBuyTicket extends Component {
                     <div className="right">
                       <CloseOutline
                         onClick={() => {
-                          console.log("关闭");
                           selectedSeat.splice(index, 1);
                           this.setState({
                             selectedSeat,

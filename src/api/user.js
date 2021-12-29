@@ -16,7 +16,6 @@ export function phone_register(params) {
           break;
         default:
           reject(res);
-          console.log("1234", res);
           Toast.show({
             icon: "fail",
             duration: 2000,
@@ -63,11 +62,11 @@ export function get_user_info(params) {
           resolve(res.data);
           break;
         default:
-          Toast.show({
-            icon: "fail",
-            duration: 2000,
-            content: res.message,
-          });
+          // Toast.show({
+          //   icon: "fail",
+          //   duration: 2000,
+          //   content: res.message,
+          // });
           reject(res.data);
           break;
       }

@@ -51,7 +51,6 @@ class FileDetail extends Component {
   componentDidMount() {
     let { history } = this.props;
     let { location } = history;
-    // console.log("props---cinema", location.state);
     window.addEventListener("scroll", (e) => {
       var scrollTop = window.scrollY;
       this.setState({
@@ -71,7 +70,6 @@ class FileDetail extends Component {
       cinema_id: location.state.cinema_id,
       isHasFilmList: true,
     });
-    console.log("result---date", location.state.date);
 
     if (location.state.film_id && location.state.date) {
       if (result.filmList[0].film_id == location.state.film_id) {
@@ -115,7 +113,6 @@ class FileDetail extends Component {
       film_id: filmDetail.film_id,
       date: date,
     });
-    // console.log("排片列表", result);
     this.setState({
       scheduleList: result,
     });
@@ -136,7 +133,6 @@ class FileDetail extends Component {
           let index = _this.state.filmList[this.activeIndex].show_date.indexOf(
             location.state.date
           );
-          console.log("index----", index, location.state.date);
           _this.setState(
             {
               activeBgImg: _this.state.filmList[this.activeIndex].poster_img,
@@ -195,7 +191,6 @@ class FileDetail extends Component {
     );
   }
   handerDate(date) {
-    // console.log("date");
     let cur_y = dayjs(date).format("YYYY");
     let y = dayjs().format("YYYY");
     return (
@@ -363,7 +358,6 @@ class FileDetail extends Component {
         <Tabs
           activeKey={this.state.activeDateKey.toString()}
           onChange={(val) => {
-            // console.log("val", val);
             this.setState({
               activeDateKey: val,
             });
@@ -395,7 +389,6 @@ class FileDetail extends Component {
                   : item.price
               }
               onClick={() => {
-                // console.log("goupiao");
                 history.push({
                   pathname: "/buy/ticket",
                   state: {

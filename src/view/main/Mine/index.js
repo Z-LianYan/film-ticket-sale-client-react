@@ -34,7 +34,6 @@ class Mine extends Component {
   }
 
   render() {
-    console.log(this);
     return (
       <div className="app-mine">
         <Route path="/mine/login" component={Login} />

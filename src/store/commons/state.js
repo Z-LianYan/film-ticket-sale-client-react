@@ -1,4 +1,5 @@
 const state = {
+  userInfo: null,
   locationInfo: {
     city_id: 440100, //默认城市编码
     lng: "",

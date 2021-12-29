@@ -92,7 +92,7 @@ class Citys extends Component {
   }
 
   setLocationInfo(item, type) {
-    let { history,locationInfo } = this.props;
+    let { history, locationInfo } = this.props;
     let { realLocation } = locationInfo;
     if (!item.name) return;
     Cookies.set(
@@ -129,7 +129,6 @@ class Citys extends Component {
           back=""
           backArrow={<CloseOutline />}
           onBack={() => {
-            console.log("返回");
             history.goBack();
           }}
         >
@@ -170,7 +169,6 @@ class Citys extends Component {
                       key={index}
                       arrow={false}
                       onClick={() => {
-                        console.log("onclick");
                         this.setLocationInfo(it);
                       }}
                     >
@@ -207,8 +205,7 @@ class Citys extends Component {
                             );
                           }}
                         >
-                          {realLocation &&
-                          realLocation.city_name
+                          {realLocation && realLocation.city_name
                             ? realLocation.city_name
                             : "定位失败"}
                         </span>
@@ -225,7 +222,6 @@ class Citys extends Component {
                           className="item-tag"
                           key={index}
                           onClick={async () => {
-                            console.log("热门城市", item.name);
                             this.setLocationInfo(item);
                           }}
                         >

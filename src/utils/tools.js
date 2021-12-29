@@ -6,7 +6,6 @@ obj.geolocation = function ({ onComplete, onError }) {
   //   // viewMode: "3D", // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 viewMode: '3D',
   //   zoom: 11, //[23.01185,113.38798]
   // });
-  // console.log("map", map);
   AMap.plugin("AMap.Geolocation", function () {
     var geolocation = new AMap.Geolocation({
       enableHighAccuracy: true, //是否使用高精度定位，默认:true

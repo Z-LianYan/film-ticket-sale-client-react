@@ -14,6 +14,7 @@ import Cookies from "js-cookie";
 import tools from "@/utils/tools";
 import { Toast, Dialog } from "antd-mobile";
 import { get_by_city } from "@/api/citys";
+import { get_user_info } from "@/api/user";
 
 class App extends Component {
   constructor(props) {
@@ -66,7 +67,17 @@ class App extends Component {
     );
   }
 
+  async getUserInfo() {
+    let _cookies = Cookies.get("film_front_token");
+    console.log("film_front_token", _cookies);
+    let result = await get_user_info();
+    if (result) {
+      this.props.login(result, () => {});
+    }
+  }
+
   componentDidMount() {
+    this.getUserInfo();
     this.handlerLocation();
   }
   handlerLocation() {
@@ -75,7 +86,7 @@ class App extends Component {
     let _cookiesInfo = null;
     if (_cookies) {
       _cookiesInfo = JSON.parse(_cookies);
-      console.log("cookies有值", _cookiesInfo);
+      // console.log("cookies有值", _cookiesInfo);
       this.props.setLocationInfo({
         ..._cookiesInfo,
       });
@@ -107,7 +118,7 @@ class App extends Component {
                 isShowSwitchLocationModal: false, //关闭首页（film）banner 里的，切换城市的模态框
               });
             }, 10000);
-            console.log("获取城市ip（adcode）", this.props.location.pathname);
+            // console.log("获取城市ip（adcode）", this.props.location.pathname);
             if (
               this.props.location.pathname == "/cinemas" ||
               this.props.location.pathname == "/film/cinema"
@@ -202,7 +213,6 @@ class App extends Component {
   }
 
   shouldComponentUpdate(props) {
-    // console.log("shouldComponentUpdate");
     return true;
   }
 }

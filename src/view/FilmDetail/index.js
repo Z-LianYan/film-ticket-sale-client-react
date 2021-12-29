@@ -16,12 +16,8 @@ class FileDetail extends Component {
     };
   }
   componentDidMount() {
-    // let { history } = this.props;
-    // let { location } = history;
-    // console.log("props---", location.state);
     window.addEventListener("scroll", (e) => {
       var scrollTop = window.scrollY;
-      // console.log("scrollTop", scrollTop);
       this.setState({
         isShowNavBar: scrollTop >= 20 ? true : false,
       });
@@ -31,7 +27,6 @@ class FileDetail extends Component {
   async getFilmDetail() {
     let { history, locationInfo, match } = this.props;
     let { params } = match;
-    console.log("film_id---", this.props);
     let result = await get_film_detail({
       film_id: params && params.film_id,
       city_id: locationInfo && locationInfo.city_id,
@@ -40,8 +35,6 @@ class FileDetail extends Component {
       detail: result,
       isSkeleton: false,
     });
-    // this.detail = result;
-    console.log("电影详情", result);
   }
 
   renderStill() {
@@ -170,7 +163,6 @@ class FileDetail extends Component {
           extra={`全部(${detail.stage_photo ? detail.stage_photo.length : 0})`}
           onClick={() => {
             this.setState({ isVisibleMask: true });
-            console.log("剧照");
           }}
         >
           剧照

@@ -37,7 +37,6 @@ class CinemaSearch extends Component {
     // };
   }
   searchChange(val) {
-    console.log("val", val);
     this.onRefreshList(val);
   }
 
@@ -65,9 +64,6 @@ class CinemaSearch extends Component {
               )
             : [],
         });
-        // console.log(this.state.distanceRecentlyList);
-        // return;
-        // }
         this.setState(
           {
             list: result.rows,
@@ -105,7 +101,6 @@ class CinemaSearch extends Component {
               label={item.address}
               distance={item.distance}
               onClick={() => {
-                console.log("12345");
                 this.props.history.push({
                   pathname: "/cinema/detail",
                   state: { cinema_id: item.id },

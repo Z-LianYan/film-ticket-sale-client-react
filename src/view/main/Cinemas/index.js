@@ -92,14 +92,12 @@ class Cinema extends Component {
           : locationInfo.city_id,
       film_id: params && params.film_id,
     });
-    console.log("date---", result, result[0]);
     if (!result) return;
     fetchOptions.date = result.rows[0];
     fetchOptions.film_id = params && params.film_id;
     let film_detail_result = await get_film_detail({
       film_id: params && params.film_id,
     });
-    console.log("film_detail_result", film_detail_result);
     this.setState({
       fetchOptions,
       film_name: film_detail_result.film_name,
@@ -159,7 +157,6 @@ class Cinema extends Component {
       city_id:
         _cookiesInfo && _cookiesInfo.city_id ? _cookiesInfo.city_id : city_id,
     });
-    console.log("result---", result);
     result.rows.unshift({
       first_letter: null,
       id: "",
@@ -257,7 +254,7 @@ class Cinema extends Component {
               />
             }
             left={
-              params && params.film_name ? (
+              film_name ? (
                 <LeftOutline
                   onClick={() => {
                     history.goBack();
@@ -273,12 +270,7 @@ class Cinema extends Component {
                   }}
                 >
                   <span className="city-name">{locationInfo.city_name}</span>
-                  <DownOutline
-                    fontSize={12}
-                    onClick={() => {
-                      console.log("13124--DownOutline");
-                    }}
-                  />
+                  <DownOutline fontSize={12} onClick={() => {}} />
                 </div>
               )
             }
@@ -289,7 +281,6 @@ class Cinema extends Component {
             <Tabs
               activeKey={dateActiveKey.toString()}
               onChange={(val) => {
-                // console.log("onChange", val);
                 fetchOptions.date = dateList[val];
                 this.setState({
                   fetchOptions,
@@ -326,7 +317,6 @@ class Cinema extends Component {
                     <Grid.Item
                       key={index}
                       onClick={() => {
-                        console.log("1234");
                         let { fetchOptions } = this.state;
                         fetchOptions.district_id = item.id;
                         this.setState({
@@ -414,7 +404,6 @@ class Cinema extends Component {
                 label={item.address}
                 distance={item.distance}
                 onClick={() => {
-                  // console.log("12345");
                   this.props.history.push({
                     pathname: `/cinema/detail`,
                     state: {

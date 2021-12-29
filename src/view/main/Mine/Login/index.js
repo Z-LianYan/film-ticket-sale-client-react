@@ -29,6 +29,7 @@ class Login extends Component {
     };
     this.doLogin = this.doLogin.bind(this);
   }
+  componentDidMount() {}
 
   async doLogin() {
     let { formData, reg_tel } = this.state;
@@ -58,23 +59,10 @@ class Login extends Component {
         content: "请输入4位数的短信验证码",
       });
     }
-    let resutl = await phone_register(formData);
-    console.log("12300--resutl", resutl);
+    let result = await phone_register(formData);
     this.clearIntervalDis();
-
-    replace("/mine/user");
-
-    return;
-    this.props.login({
-      username: 123,
-      password: 1234,
-      success() {
-        //成功回调
-        history.replace("/mine/user");
-      },
-      fail() {
-        //失败回调
-      },
+    this.props.login(result, () => {
+      replace("/mine/user");
     });
   }
   clearIntervalDis() {
@@ -163,7 +151,6 @@ class Login extends Component {
             type="tel"
             maxLength={11}
             onChange={(val) => {
-              // console.log(val);
               let { formData } = this.state;
               formData.phone_number = val;
               this.setState({

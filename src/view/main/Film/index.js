@@ -58,7 +58,6 @@ class Film extends Component {
   async componentDidMount() {
     window.addEventListener("scroll", (e) => {
       var scrollTop = window.scrollY;
-      // console.log("scrollTop", scrollTop);
       this.setState({
         floatTabs: scrollTop >= 200 ? true : false,
       });
@@ -74,7 +73,6 @@ class Film extends Component {
     });
     this.onRefreshHotList();
     this.onRefreshSoonShowList();
-    // console.log("locationReady---film😂😂😂😂哈哈", this.props.locationInfo);
   }
   async onRefreshHotList() {
     let { fetchOptionsHot, hotList } = this.state;
@@ -168,7 +166,6 @@ class Film extends Component {
         //   console.log('ref')
         // }}
         onRefresh={async () => {
-          console.log("有哦嘛", this.props.locationInfo.city_id);
           await this.onRefreshHotList();
         }}
       >
@@ -189,7 +186,6 @@ class Film extends Component {
                 });
               }}
               onRightClick={() => {
-                console.log("onRightClick");
                 this.props.history.push({
                   pathname: `/film/cinema/${item.film_id}`,
                 });
@@ -201,7 +197,6 @@ class Film extends Component {
         <InfiniteScroll
           threshold="500"
           loadMore={async () => {
-            console.log("热更新");
             fetchOptionsHot.page += 1;
             this.setState({ fetchOptionsHot });
             let result = await get_film_hot({
@@ -272,7 +267,6 @@ class Film extends Component {
                 });
               }}
               onRightClick={() => {
-                console.log("onRightClick");
                 this.props.history.push({
                   pathname: "/film/cinema",
                   state: {

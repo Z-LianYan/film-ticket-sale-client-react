@@ -8,10 +8,9 @@ const reducer = (previousState = state, action) => {
       new_state.userInfo = action.userInfo;
       break;
     case SET_LOCATION_INFO:
-      console.log("action.locationInfo", action.locationInfo);
       new_state.locationInfo = {
         ...new_state.locationInfo,
-        ...action.locationInfo
+        ...action.locationInfo,
       };
       break;
 

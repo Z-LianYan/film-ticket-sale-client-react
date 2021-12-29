@@ -12,9 +12,7 @@ class User extends Component {
     this.state = {};
   }
 
-  componentDidMount() {
-    this.getUserInfo();
-  }
+  componentDidMount() {}
 
   componentWillReceiveProps(props) {
     let { userInfo, history } = props;
@@ -22,21 +20,14 @@ class User extends Component {
     //   history.replace("/mine/login");
     // }
   }
-  async getUserInfo() {
-    let result = await get_user_info();
-    console.log("result--用户信息", result);
-  }
 
   render() {
     let { userInfo } = this.props;
     return (
       <div className="app-mine-user-page">
         <div className="header-wrapper">
-          <img
-            className="img"
-            src="https://mall.s.maizuo.com/64ee4289878c7370c31544e32f9a09aa.jpg"
-          />
-          <span>13536681616</span>
+          <img className="img" src={userInfo && userInfo.avatar} />
+          <span>{userInfo && userInfo.phone_number}</span>
         </div>
 
         <List>

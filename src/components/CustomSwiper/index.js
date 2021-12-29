@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import "./index.scss";
-import {
-  get_banner,
-} from "@/api/film";
+import { get_banner } from "@/api/film";
 import _Swiper from "swiper";
 import { Swiper } from "antd-mobile";
 import "swiper/css/swiper.min.css";
@@ -10,68 +8,71 @@ class CustomSwiper extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      bannerList:[]
+      bannerList: [],
     };
   }
   static defaultProps = {
-    useSwiperType:'antdMobile'
-  }
+    useSwiperType: "antdMobile",
+  };
   async componentDidMount() {
-    let { useSwiperType,onClick } = this.props;
+    let { useSwiperType, onClick } = this.props;
     await this.getBanneer();
-    if(useSwiperType=='antdMobile') return;
+    if (useSwiperType == "antdMobile") return;
     let _this = this;
-    new _Swiper ('.custom-swiper-container', {
-      direction: 'horizontal', // 垂直切换选项
+    new _Swiper(".custom-swiper-container", {
+      direction: "horizontal", // 垂直切换选项
       loop: true, // 循环模式选项
-      autoplay : {
+      autoplay: {
         delay: 1500,
         disableOnInteraction: false,
-        
       },
-      autoplayDisableOnInteraction : true,
-      
+      autoplayDisableOnInteraction: true,
+
       // 如果需要分页器
       pagination: {
-        el: '.swiper-pagination',
-        clickable :true,
+        el: ".swiper-pagination",
+        clickable: true,
       },
       on: {
         click: function (e) {
-          onClick && onClick(_this.state.bannerList[this.activeIndex-1]);
+          onClick && onClick(_this.state.bannerList[this.activeIndex - 1]);
         },
       },
-      
-    })        
+    });
   }
   async getBanneer() {
     let result = await get_banner();
     this.setState({
       bannerList: result.rows,
     });
-    console.log("result--banner", result);
   }
   render() {
     let { bannerList } = this.state;
     let { useSwiperType } = this.props;
-    return <div>
-      {useSwiperType=='antdMobile'?this.renderAntdMobileSwiper():<div className="swiper-container custom-swiper-container">
-        <div className="swiper-wrapper">
-          {bannerList.map((item,index)=>{
-            return <div className="swiper-slide" key={index}>
-              <img
-                className="left"
-                style={{ width: "100%", height: "100%" }}
-                src={item.poster_img}
-              />
+    return (
+      <div>
+        {useSwiperType == "antdMobile" ? (
+          this.renderAntdMobileSwiper()
+        ) : (
+          <div className="swiper-container custom-swiper-container">
+            <div className="swiper-wrapper">
+              {bannerList.map((item, index) => {
+                return (
+                  <div className="swiper-slide" key={index}>
+                    <img
+                      className="left"
+                      style={{ width: "100%", height: "100%" }}
+                      src={item.poster_img}
+                    />
+                  </div>
+                );
+              })}
             </div>
-          })}
-        </div>
-        <div className="swiper-pagination"></div>
-      </div>}
-    </div>
-    
-    
+            <div className="swiper-pagination"></div>
+          </div>
+        )}
+      </div>
+    );
   }
 
   renderAntdMobileSwiper() {
@@ -100,7 +101,7 @@ class CustomSwiper extends Component {
             <Swiper.Item
               key={index}
               onClick={() => {
-                console.log("123");
+                // console.log("123");
               }}
             >
               <img
