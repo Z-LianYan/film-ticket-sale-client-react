@@ -1,0 +1,74 @@
+import React, { Component } from "react";
+import "./index.scss";
+import { get_cinema_list } from "@/api/cinema";
+import { NavBar, List, Button } from "antd-mobile";
+import { GroupCommons } from "@/modules/group";
+import { SetOutline, PayCircleOutline, CouponOutline } from "antd-mobile-icons";
+import { login_out } from "@/api/user";
+
+class CinemaSearch extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+  componentDidMount() {
+    let { locationInfo } = this.props;
+  }
+  async onLoginOut() {
+    let { history } = this.props;
+    await login_out();
+    this.props.loginOut();
+    history.replace("/");
+  }
+
+  render() {
+    let {} = this.state;
+    let { history, userInfo } = this.props;
+    return (
+      <div className="set-container">
+        <NavBar
+          onBack={() => {
+            history.goBack();
+          }}
+        >
+          设置
+        </NavBar>
+        <List>
+          <List.Item
+            arrow={false}
+            border="none"
+            extra={userInfo && userInfo.user_id}
+          >
+            账号ID
+          </List.Item>
+          <List.Item arrow={true} extra={userInfo && userInfo.phone_number}>
+            电话号码
+          </List.Item>
+          <List.Item arrow={false} border="none" extra={"v1.0.0"}>
+            软件版本
+          </List.Item>
+        </List>
+        <div className="login-out-btn-wrapper">
+          <Button
+            color="primary"
+            fill="outline"
+            block
+            className="login-out-btn"
+            onClick={() => {
+              this.onLoginOut();
+            }}
+          >
+            退出登录
+          </Button>
+        </div>
+      </div>
+    );
+  }
+  componentWillUnmount = () => {
+    this.setState = (state, callback) => {
+      return;
+    };
+  };
+}
+
+export default GroupCommons(CinemaSearch);

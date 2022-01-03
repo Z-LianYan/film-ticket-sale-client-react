@@ -9,6 +9,7 @@ import CinemaDetail from "@/view/CinemaDetail/index";
 import SelectCinema from "@/view/main/Cinemas/index";
 import CinemaSearch from "@/view/CinemaSearch/index";
 import SelectSeatBuyTicket from "@/view/SelectSeatBuyTicket/index";
+import SetPage from "@/view/set/index";
 import { GroupCommons } from "@/modules/group";
 import Cookies from "js-cookie";
 import tools from "@/utils/tools";
@@ -53,6 +54,9 @@ class App extends Component {
             path={item.path}
             component={item.component}
             exact={item.exact}
+            render={(props) => {
+              console.log("12345", props);
+            }}
           />
         ))}
       </Switch>
@@ -232,6 +236,7 @@ App.defaultProps = {
     { path: "/film/cinema/:film_id", component: SelectCinema },
     { path: "/cinema/search", component: CinemaSearch },
     { path: "/buy/ticket", component: SelectSeatBuyTicket },
+    { path: "/set", component: SetPage },
   ],
 };
 

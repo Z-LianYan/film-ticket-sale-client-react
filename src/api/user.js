@@ -67,6 +67,26 @@ export function get_user_info(params) {
           //   duration: 2000,
           //   content: res.message,
           // });
+          // reject(res.data);
+          break;
+      }
+    });
+  });
+}
+
+export function login_out(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.post(Api.LOGIN_OUT, params, "").then((res) => {
+      switch (res.error) {
+        case 0:
+          resolve(res.data);
+          break;
+        default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
           reject(res.data);
           break;
       }

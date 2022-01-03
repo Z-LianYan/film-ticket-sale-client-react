@@ -11,7 +11,7 @@ const actionCreator = {
     };
   },
 
-  exit() {
+  loginOut() {
     return { type: CHECK_USER_INFO, userInfo: null };
   },
 

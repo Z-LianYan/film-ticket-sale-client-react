@@ -204,7 +204,7 @@ class FileDetail extends Component {
             size="large"
             onClick={() => {
               history.push({
-                pathname: "/film/cinema",
+                pathname: `/film/cinema/${detail.id}`,
                 state: {
                   film_id: detail.id,
                   film_name: detail.film_name,
