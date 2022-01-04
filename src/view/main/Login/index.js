@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./index.scss";
-import { GroupCommons } from "../../../../modules/group";
+import { GroupCommons } from "../../../modules/group";
 import {
   List,
   Image,
@@ -33,8 +33,8 @@ class Login extends Component {
 
   async doLogin() {
     let { formData, reg_tel } = this.state;
-    let { history } = this.props;
-    let { replace } = history;
+    let { history,location } = this.props;
+    let { replace,goBack } = history;
     if (!formData.phone_number) {
       return Toast.show({
         duration: 1000,
@@ -62,6 +62,7 @@ class Login extends Component {
     let result = await phone_register(formData);
     this.clearIntervalDis();
     this.props.login(result, () => {
+      if(location.state) return goBack();
       replace("/user");
     });
   }

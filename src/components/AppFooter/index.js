@@ -2,15 +2,16 @@ import React, { Component } from "react";
 import "./index.scss";
 
 import { NavLink } from "react-router-dom";
+import { GroupCommons } from "@/modules/group";
 
 class AppFooter extends Component {
   renderNav() {
-    let { navs } = this.props;
+    let { navs,userInfo } = this.props;
     return navs.map((item) => (
       <NavLink
         exact={item.exact}
         activeClassName="actived"
-        to={item.path}
+        to={!userInfo && item.path=='/user'?'/login':item.path}
         key={item.id}
       >
         <i className={item.icon}></i>
@@ -35,8 +36,8 @@ AppFooter.defaultProps = {
     },
     { id: 2, path: "/cinemas", title: "影院", icon: "iconfont icon-yingyuan" },
     // { id: 3, path: "/buycar", title: "咨询", icon: "iconfont icon-zixun" },
-    { id: 4, path: "/mine", title: "我的", icon: "iconfont icon-wode" },
+    { id: 4, path: "/user", title: "我的", icon: "iconfont icon-wode" },
   ],
 };
 
-export default AppFooter;
+export default GroupCommons(AppFooter);

@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
-import { Film, Cinemas, Mine } from "./view/main/index.js";
+import { Film, Cinemas, User, Login } from "./view/main/index.js";
 
-import AppFooter from "./components/commons/AppFooter";
+import AppFooter from "./components/AppFooter";
 import Citys from "@/view/Citys/index";
 import FilmDetail from "@/view/FilmDetail/index";
 import CinemaDetail from "@/view/CinemaDetail/index";
@@ -10,6 +10,8 @@ import SelectCinema from "@/view/main/Cinemas/index";
 import CinemaSearch from "@/view/CinemaSearch/index";
 import SelectSeatBuyTicket from "@/view/SelectSeatBuyTicket/index";
 import SetPage from "@/view/set/index";
+// import UserPage from "@/view/main/User/index";
+// import LoginPage from "@/view/main/Login/index";
 import { GroupCommons } from "@/modules/group";
 import Cookies from "js-cookie";
 import tools from "@/utils/tools";
@@ -31,7 +33,7 @@ class App extends Component {
     // let no_footer_pathnames = ["/mine/login"];
     // if (no_footer_pathnames.indexOf(pathname) > -1) return "";
     // return <AppFooter />;
-    let no_footer_pathnames = ["/mine/user", "/cinemas", "/"];
+    let no_footer_pathnames = ["/user", "/cinemas", "/"];
     if (no_footer_pathnames.indexOf(pathname) > -1) return <AppFooter />;
   }
 
@@ -225,8 +227,8 @@ App.defaultProps = {
   routes: [
     { path: "/", component: Film, exact: true },
     { path: "/cinemas", component: Cinemas },
-    // { path: "/buycar", component: BuyCar },
-    { path: "/mine", component: Mine },
+    { path: "/user", component: User },
+    { path: "/login", component: Login },
     { path: "/citys", component: Citys },
     { path: "/film/detail/:film_id", component: FilmDetail },
     {
@@ -237,6 +239,7 @@ App.defaultProps = {
     { path: "/cinema/search", component: CinemaSearch },
     { path: "/buy/ticket", component: SelectSeatBuyTicket },
     { path: "/set", component: SetPage },
+    
   ],
 };
 

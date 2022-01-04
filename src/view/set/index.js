@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./index.scss";
 import { get_cinema_list } from "@/api/cinema";
-import { NavBar, List, Button } from "antd-mobile";
+import { NavBar, List, Button,Dialog } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import { SetOutline, PayCircleOutline, CouponOutline } from "antd-mobile-icons";
 import { login_out } from "@/api/user";
@@ -16,14 +16,23 @@ class CinemaSearch extends Component {
   }
   async onLoginOut() {
     let { history } = this.props;
-    await login_out();
-    this.props.loginOut();
-    history.replace("/");
+    let result = await Dialog.confirm({
+      content: '您确定退出登录吗？',
+    })
+    console.log('result',result);
+    if(result){
+      await login_out();
+      this.props.loginOut();
+      history.replace({
+        pathname:'/'
+      });
+    }
+    
   }
 
   render() {
     let {} = this.state;
-    let { history, userInfo } = this.props;
+    let { history, userInfo, versions } = this.props;
     return (
       <div className="set-container">
         <NavBar
@@ -41,10 +50,10 @@ class CinemaSearch extends Component {
           >
             账号ID
           </List.Item>
-          <List.Item arrow={true} extra={userInfo && userInfo.phone_number}>
+          <List.Item arrow={false} extra={userInfo && userInfo.phone_number}>
             电话号码
           </List.Item>
-          <List.Item arrow={false} border="none" extra={"v1.0.0"}>
+          <List.Item arrow={false} border="none" extra={versions}>
             软件版本
           </List.Item>
         </List>

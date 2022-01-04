@@ -7,6 +7,7 @@ import { get_cinema_detail, get_date_schedule } from "@/api/cinema";
 import Swiper from "swiper";
 import "swiper/css/swiper.min.css";
 import dayjs from "dayjs";
+import { GroupCommons } from "@/modules/group";
 function CellItem(obj = {}) {
   return (
     <div className="cell-item-container">
@@ -243,7 +244,7 @@ class FileDetail extends Component {
       activeDateKey,
       isSkeleton,
     } = this.state;
-    let { history } = this.props;
+    let { history,userInfo } = this.props;
     return (
       <div className="cinema-detail-container">
         {isSkeleton ? <div className="skeleton-box"></div> : null}
@@ -389,16 +390,26 @@ class FileDetail extends Component {
                   : item.price
               }
               onClick={() => {
-                history.push({
-                  pathname: "/buy/ticket",
-                  state: {
-                    cinema_id: cinemaDetail.id,
-                    hall_id: item.hall_id,
-                    film_id: item.film_id,
-                    schedule_id: item.id,
-                    date: filmDetail.show_date[this.state.activeDateKey],
-                  },
-                });
+                if(userInfo){
+                  history.push({
+                    pathname: "/buy/ticket",
+                    state: {
+                      cinema_id: cinemaDetail.id,
+                      hall_id: item.hall_id,
+                      film_id: item.film_id,
+                      schedule_id: item.id,
+                      date: filmDetail.show_date[this.state.activeDateKey],
+                    },
+                  });
+                }else{
+                  history.push({
+                    pathname: "/login",
+                    state:{
+                      back:true
+                    }
+                  });
+                }
+                
               }}
             />
           );
@@ -418,7 +429,7 @@ class FileDetail extends Component {
   };
 }
 
-export default FileDetail;
+export default GroupCommons(FileDetail);
 
 class MaskComponent extends Component {
   constructor(props) {
