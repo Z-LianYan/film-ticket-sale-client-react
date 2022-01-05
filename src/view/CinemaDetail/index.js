@@ -392,9 +392,9 @@ class FileDetail extends Component {
               onClick={() => {
                 if(userInfo){
                   history.push({
-                    pathname: "/buy/ticket",
+                    pathname: "/select/seat",
                     state: {
-                      cinema_id: cinemaDetail.id,
+                      cinema_id: item.cinema_id,
                       hall_id: item.hall_id,
                       film_id: item.film_id,
                       schedule_id: item.id,

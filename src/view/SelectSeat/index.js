@@ -3,7 +3,7 @@ import "./index.scss";
 import { NavBar, NoticeBar, Space, Button, Toast } from "antd-mobile";
 import { DownOutline, UpOutline, CloseOutline } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
-import { get_schedule_info, get_seat } from "@/api/selectSeatBuyTicket";
+import { get_schedule_info, get_seat } from "@/api/selectSeat";
 import dayjs from "dayjs";
 import noSelectedIcon from "@/static/img/no-selected.png";
 import disableIcon from "@/static/img/disable.png";
@@ -15,7 +15,7 @@ import sectionC from "@/static/img/sectionC.png";
 import sectionD from "@/static/img/sectionD.png";
 
 import { GroupCommons } from "@/modules/group";
-class SelectSeatBuyTicket extends Component {
+class SelectSeat extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -330,7 +330,7 @@ class SelectSeatBuyTicket extends Component {
     return totalPrice.toFixed(2);
   }
   render() {
-    let { history, location, seatSectionShowColor } = this.props;
+    let { history, location } = this.props;
     let {
       isShowNoticeDetail,
       isShowScheduleList,
@@ -386,14 +386,8 @@ class SelectSeatBuyTicket extends Component {
                   ></div>
                   <div className="name-price">
                     <p>{item.section_name}</p>
-                    {/* <p>¥{item.price}</p> */}
                   </div>
 
-                  {/* <i
-                    className="iconfont icon-kexuanzuowei seat-icon"
-                    style={{ color: seatSectionShowColor[item.section_id] }}
-                  ></i>{" "}
-                  <span className="section-price">¥{item.price}</span> */}
                 </li>
               );
             })}
@@ -703,17 +697,18 @@ class SelectSeatBuyTicket extends Component {
             size="middle"
             disabled={selectedSeat.length ? false : true}
             onClick={() => {
-              Toast.show({
-                icon: "none",
-                duration: 2000,
-                content: "去购买",
-              });
-              // history.push({
-              //   pathname: "/film/cinema",
-              //   state: {
-              //     film_id: 234,
-              //   },
+              // Toast.show({
+              //   icon: "none",
+              //   duration: 2000,
+              //   content: "去购买",
               // });
+              history.push({
+                pathname: "/buy/ticket",
+                state: {
+                  schedule_id: selectedSchedule.id,
+                  seat_ids: selectedSeat.map(item=>item.id)
+                },
+              });
             }}
           >
             {this.calcTotalPrice()}元 确认选座
@@ -735,4 +730,4 @@ class SelectSeatBuyTicket extends Component {
   }
 }
 
-export default GroupCommons(SelectSeatBuyTicket);
+export default GroupCommons(SelectSeat);

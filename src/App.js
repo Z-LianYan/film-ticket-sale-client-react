@@ -8,8 +8,9 @@ import FilmDetail from "@/view/FilmDetail/index";
 import CinemaDetail from "@/view/CinemaDetail/index";
 import SelectCinema from "@/view/main/Cinemas/index";
 import CinemaSearch from "@/view/CinemaSearch/index";
-import SelectSeatBuyTicket from "@/view/SelectSeatBuyTicket/index";
+import SelectSeat from "@/view/SelectSeat/index";
 import SetPage from "@/view/set/index";
+import BuyTicket from "@/view/BuyTicket/index";
 // import UserPage from "@/view/main/User/index";
 // import LoginPage from "@/view/main/Login/index";
 import { GroupCommons } from "@/modules/group";
@@ -237,8 +238,9 @@ App.defaultProps = {
     },
     { path: "/film/cinema/:film_id", component: SelectCinema },
     { path: "/cinema/search", component: CinemaSearch },
-    { path: "/buy/ticket", component: SelectSeatBuyTicket },
+    { path: "/select/seat", component: SelectSeat },
     { path: "/set", component: SetPage },
+    { path: "/buy/ticket", component: BuyTicket }
     
   ],
 };
