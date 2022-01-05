@@ -387,7 +387,6 @@ class SelectSeat extends Component {
                   <div className="name-price">
                     <p>{item.section_name}</p>
                   </div>
-
                 </li>
               );
             })}
@@ -706,7 +705,7 @@ class SelectSeat extends Component {
                 pathname: "/buy/ticket",
                 state: {
                   schedule_id: selectedSchedule.id,
-                  seat_ids: selectedSeat.map(item=>item.id)
+                  select_seat_ids: selectedSeat.map((item) => item.id),
                 },
               });
             }}

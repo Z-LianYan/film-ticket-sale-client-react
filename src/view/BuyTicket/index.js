@@ -4,7 +4,9 @@ import { NavBar, NoticeBar, Space, Button, Toast } from "antd-mobile";
 import { DownOutline, UpOutline, CloseOutline } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
 import { get_schedule_info, get_seat } from "@/api/selectSeat";
+import { get_buy_ticket_detail } from "@/api/order";
 import dayjs from "dayjs";
+import tools from "@/utils/tools";
 
 import { GroupCommons } from "@/modules/group";
 class BuyTicket extends Component {
@@ -14,14 +16,14 @@ class BuyTicket extends Component {
       scheduleInfo: {},
       isSkeleton: true,
       scheduleList: [],
-      selectedSchedule: {}
+      selectedSchedule: {},
     };
   }
   componentDidMount() {
-    console.log('1234',this.props);
-    // this.getCinemaDetail();
+    console.log("1234", this.props);
+    this.getCinemaDetail();
   }
-  
+
   handerDate(date) {
     let today = dayjs().format("YYYY-MM-DD");
     let tomorrow = dayjs().add(1, "day").format("YYYY-MM-DD");
@@ -64,17 +66,15 @@ class BuyTicket extends Component {
   }
   async getCinemaDetail() {
     let { history, location } = this.props;
-    let result = await get_schedule_info({
-      cinema_id: location.state.cinema_id,
-      film_id: location.state.film_id,
-      date: location.state.date,
+    let result = await get_buy_ticket_detail({
+      schedule_id: location.state.schedule_id,
+      select_seat_ids: location.state.select_seat_ids.join(","),
     });
-    this.setState({
-      scheduleInfo: result,
-      scheduleList: result.film.schedule,
-    });
+    // this.setState({
+    //   scheduleInfo: result,
+    //   scheduleList: result.film.schedule,
+    // });
   }
-  
 
   calcTotalPrice() {
     let { selectedSeat, selectedSchedule } = this.state;
@@ -95,9 +95,7 @@ class BuyTicket extends Component {
   }
   render() {
     let { history, location } = this.props;
-    let {
-      scheduleInfo,
-    } = this.state;
+    let { scheduleInfo } = this.state;
     let { film } = scheduleInfo;
     return (
       <div className="select-seat-buy-ticket-box">
@@ -110,10 +108,6 @@ class BuyTicket extends Component {
         >
           支付订单
         </NavBar>
-        
-
-       
-        
       </div>
     );
   }

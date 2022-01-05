@@ -41,4 +41,15 @@ obj.getLocalCity = function ({ onComplete, onError }) {
   });
 };
 
+obj.getQueryString = function () {
+  var url = window.location.search.substring(1);
+  let valKey = url.split("&");
+  let obj = {};
+  for (var item of valKey) {
+    let val_key = item.split("=");
+    obj[val_key[0]] = val_key[1];
+  }
+  return obj;
+};
+
 export default obj;
