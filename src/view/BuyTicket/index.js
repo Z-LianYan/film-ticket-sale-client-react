@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./index.scss";
-import { NavBar, NoticeBar, Space, Button, Toast } from "antd-mobile";
+import { NavBar, NoticeBar, Space, Button, Toast, Image } from "antd-mobile";
 import { DownOutline, UpOutline, CloseOutline } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
 import { get_schedule_info, get_seat } from "@/api/selectSeat";
@@ -9,14 +9,14 @@ import dayjs from "dayjs";
 import tools from "@/utils/tools";
 
 import { GroupCommons } from "@/modules/group";
+import Item from "antd-mobile/es/components/dropdown/item";
 class BuyTicket extends Component {
   constructor(props) {
     super(props);
     this.state = {
       scheduleInfo: {},
       isSkeleton: true,
-      scheduleList: [],
-      selectedSchedule: {},
+      // selectedSchedule: {},
     };
   }
   componentDidMount() {
@@ -32,15 +32,15 @@ class BuyTicket extends Component {
     let y = dayjs().format("YYYY");
     switch (dayjs(date).format("YYYY-MM-DD")) {
       case today:
-        return "今天" + dayjs(date).format("MM月DD日");
+        return "今天" + dayjs(date).format("M月D日");
       case tomorrow:
-        return "明天" + dayjs(date).format("MM月DD日");
+        return "明天" + dayjs(date).format("M月D日");
       case houtian:
-        return "后天" + dayjs(date).format("MM月DD日");
+        return "后天" + dayjs(date).format("M月D日");
       default:
         return (
           this.handleWeek(dayjs(date).day()) +
-          dayjs(date).format(cur_y == y ? "MM月DD日" : "YY年MM月DD日")
+          dayjs(date).format(cur_y == y ? "M月D日" : "YY年M月D日")
         );
     }
   }
@@ -70,35 +70,52 @@ class BuyTicket extends Component {
       schedule_id: location.state.schedule_id,
       select_seat_ids: location.state.select_seat_ids.join(","),
     });
-    // this.setState({
-    //   scheduleInfo: result,
-    //   scheduleList: result.film.schedule,
-    // });
+    this.setState({
+      scheduleInfo: result,
+    });
   }
 
-  calcTotalPrice() {
-    let { selectedSeat, selectedSchedule } = this.state;
-    let totalPrice = 0;
-    for (let i = 0; i < selectedSeat.length; i++) {
-      if (selectedSchedule.is_section == 1) {
-        for (let j = 0; j < selectedSchedule.sectionPrice.length; j++) {
-          let it = selectedSchedule.sectionPrice[j];
-          if (selectedSeat[i].section_id === it.section_id) {
-            totalPrice += Number(it.price);
-          }
-        }
-      } else {
-        totalPrice += Number(selectedSchedule.price);
-      }
-    }
-    return totalPrice.toFixed(2);
-  }
+  // calcTotalPrice() {
+  //   let { selectedSeat, selectedSchedule } = this.state;
+  //   let totalPrice = 0;
+  //   for (let i = 0; i < selectedSeat.length; i++) {
+  //     if (selectedSchedule.is_section == 1) {
+  //       for (let j = 0; j < selectedSchedule.sectionPrice.length; j++) {
+  //         let it = selectedSchedule.sectionPrice[j];
+  //         if (selectedSeat[i].section_id === it.section_id) {
+  //           totalPrice += Number(it.price);
+  //         }
+  //       }
+  //     } else {
+  //       totalPrice += Number(selectedSchedule.price);
+  //     }
+  //   }
+  //   return totalPrice.toFixed(2);
+  // }
   render() {
     let { history, location } = this.props;
     let { scheduleInfo } = this.state;
-    let { film } = scheduleInfo;
+    // let { film } = scheduleInfo;
+    let arr_label = [<span>{scheduleInfo.hall_name} </span>];
+    if (scheduleInfo.select_seats) {
+      scheduleInfo.select_seats.map((item, index) => {
+        if (scheduleInfo.is_section == 1)
+          arr_label.push(
+            <span className="section-name">
+              {index == 0 ? "" : "|"} {item.section_name}
+            </span>
+          );
+        item.seatList.map((it) => {
+          arr_label.push(
+            <span className="seat">
+              {it.row_id}排{it.column_id}座
+            </span>
+          );
+        });
+      });
+    }
     return (
-      <div className="select-seat-buy-ticket-box">
+      <div className="buy-ticket-detail-box">
         <NavBar
           style={{ backgroundColor: "#fff" }}
           backArrow={true}
@@ -108,6 +125,68 @@ class BuyTicket extends Component {
         >
           支付订单
         </NavBar>
+        <div className="header-wrapper">
+          <Image
+            src={scheduleInfo.poster_img}
+            width={72}
+            height={100}
+            fit="fill"
+          />
+          <div className="right-wrapper">
+            <div className="title-box">
+              <h3>{scheduleInfo.film_name}</h3>
+              <span className="count-price">
+                {scheduleInfo.ticket_count}张{" "}
+                <span>原价¥{scheduleInfo.origin_total_price}</span>
+              </span>
+            </div>
+            <div className="date-time-language-type">
+              <span className="date">
+                {this.handerDate(scheduleInfo.start_runtime)}
+              </span>
+              <span className="time">
+                {dayjs(scheduleInfo.start_runtime).format("HH:mm")}
+              </span>
+              <span className="language-type">
+                ({scheduleInfo.language}
+                {scheduleInfo.play_type_name})
+              </span>
+            </div>
+            <div className="cinema-box">{scheduleInfo.cinema_name}</div>
+            <div className="hall-section-seat">
+              {/* <div className="section-seat"> */}
+              {arr_label}
+              {/* {scheduleInfo.select_seats &&
+                  scheduleInfo.select_seats.map((item) => {
+                    if (scheduleInfo.is_section == 1) {
+                      return (
+                        <span className="section-item">
+                          <span className="section-name">
+                            {item.section_name}
+                          </span>
+                          {item.seatList
+                            ? item.seatList.map((it) => {
+                                return (
+                                  <span className="seat">
+                                    {it.row_id}排{it.column_id}座
+                                  </span>
+                                );
+                              })
+                            : ""}
+                        </span>
+                      );
+                    } else {
+                      return (
+                        <span className="seat">
+                          {item.row_id}排{item.column_id}座
+                        </span>
+                      );
+                    }
+                  })} */}
+              {/* </div> */}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

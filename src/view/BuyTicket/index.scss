@@ -1,330 +1,68 @@
 @import "@/stylesheets/_mixin.scss";
 @import "@/stylesheets/_base.scss";
-.select-seat-buy-ticket-box{
-    height: 100%;
-    background-color: #eee;
-    display: flex;
-    flex-flow: column;
-    .no-select-seat{
-        color: #cfcbcb;
-        // background-color: red;
-    }
-    .sale-out-seat{
-        color: #ff5f16;
-    }
-    .can-select{
-        // color: #fff;
-    }
-    .selected-seat{
-        color: rgb(49, 188, 73);
-    }
-    .notice-bar-content-detail{
-        position: absolute;
-        top: 0.28rem;
-        left: 0;
-        right: 0;
-        background:#fff9ed;
-        font-size: 0.13rem;
-        padding: 0 0.25rem 0.1rem 0.25rem;
-        z-index: 100000000000;
-        .notice-title{
-            font-size: 0.13rem;
-            position: absolute;
-            left: 0.32rem;
-            right: 0.3rem;
-            top: -0.28rem;
-            background:#fff9ed;
-        }
-        .detail-content{
-            display: flex;
-            margin-bottom: 0.05rem;
-            &::before{
-                content: "·";
-                height: 0.18rem;
-                line-height: 0.18rem;
-                margin-right: 0.03rem;
-            }
-            .content{
-                line-height: 0.20rem;
-            }
-        }
-    }
-    .section-price-wrapper{
-        padding: 0.05rem 0.15rem 0.1rem 0.15rem;
-        background-color: #fff;
-        display: flex;
-        align-items: center;
-        .section-item{
-            display: flex;
-            align-items: center;
-            margin-right: 0.1rem;
-            .icons{
-                width: 0.20rem;
-                height: 0.20rem;
-                background-size: 100% 100%;
-                margin-right: 0.05rem;
-            }
-            .name-price{
-                font-size: 0.10rem;
-            }
-        }
-    }
-    .seats-box{
-        flex: 1;
-        // height: 300px;
-        overflow: hidden;
-        position: relative;
-        user-select: none;
-        .screen-wrapper{
-            width: 100vw;
-            height: 0.3rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: absolute;
-            top: 0;
-            z-index: 10000000;
+@import "@/stylesheets/_mixin.scss";
 
-            .screen-icon{
-                padding-top: 0.1rem;
-                width: 2rem;
-                height: 0.3rem;
-                // transform: translateX(-50%);
-                background: url('../../static/img/screen.png') no-repeat;
-                background-size: contain;
-                text-align: center;
-                font-size: 0.13rem;
-                
-                // background-color: #eee;
-            }
-        }
-        
-        .row-num-list{
-            width: 0.2rem;
-            background-color: #ccc;
-            opacity: 0.8;
-            text-align: center;
-            border-radius: 0.05rem;
-            display: flex;
-            flex-flow: column;
-            position: absolute;
-            left: 0.1rem;
-            z-index: 100;
-            .row{
-                width: 100%;
-                position: absolute;
+.buy-ticket-detail-box{
+    .header-wrapper{
+        padding: 0.125rem;
+        background: $base-color;
+        display: flex;
+        // align-items: center;
+        color: #fff;
+        .right-wrapper{
+            flex: 1;
+            margin-left: 0.1rem;
+            .title-box{
                 display: flex;
+                justify-content: space-between;
                 align-items: center;
-                justify-content: center;
-                .cell{
-                    height: 70%;
-                    width: 100%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #fff;
-                    font-size: 0.12rem;
+                h3{
+                    //color: #fff;
+                    width: 1.5rem;
+                    @include ellipsis-one();
+                } 
+                .count-price{
+                    font-size: 0.14rem;
                 }
             }
-        }
-        .seat-list{
-            width: 100%;
-            position: absolute;
-            // animation-name: seatList;
-            // animation-duration: 3s;
-            // @keyframes seatList {
-            //     from { 
-            //         background: red;
-            //         transform: scale(1,1);
-            //     }
-            //     to { 
-            //         background: #ccc;
-            //         transform: scale(1.2,1.2);
-            //     }
-            // }
-            .middle-line{
-                // width: 0.2rem;
-                // height: 0.5rem;
-                border-right: 1px dashed #ccc;
-                position: absolute;
-                left: 50%;
-                z-index: 1000;
-                transform: translateX(-50%);
-            }
-            .cell{
-                position: absolute;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                // width: 0.25rem;
-                // height: 0.25rem;
-                // background-image: url('../../static/img/no-selected.png');
-                // background-size: 100% 100%;
-                .icons{
-                    // background-image: url('../../static/img/no-selected.png');
-                    background-size: 100% 100%;
-                }
-                .seat{
-                    // font-size: 0.25rem;
-                }
-            }
-            
-        }
-    }
-    
-    .bottom-wrapper{
-        padding-bottom: 0.37rem;
-        .seat-template-status{
-            display: flex;
-            justify-content: center;
-            padding-top: 0.1rem;
-            .status-item{
-                margin-right: 0.1rem;
-                display: flex;
-                align-items: center;
-                .icons{
-                    width: 0.2rem;
-                    height: 0.2rem;
-                    // font-size: 0.30rem;
-                    margin-right: 0.08rem;
-                    background-size: 100% 100%;
-                    // &::before{
-                    //   background-color: #ff5f16;  
-                    //   border-radius: 0.05rem;
-                    // }
-                }
-                .txt{
-                    font-size: 0.13rem;
-                    color: #797d82;
-                }
-                
-            }
-            .status-item:nth-last-child(1){
-                margin-right: 0;
-            }
-        }
-        .top-box{
-            margin: 0.1rem;
-            padding: 0.15rem 0.1rem 0.15rem 0.1rem;
-            background: #fff;
-            border-radius: 0.05rem;
-            .film-detail{
-                padding-bottom: 0.1rem;
-                .top{
-                    display: flex;
-                    justify-content: space-between;
-                    .film-name{
-                        color: #191a1b;
-                        font-size: 0.15rem;
-                    }
-                    .right{
-                        color: #ff5f16;
-                        font-size: 0.13rem;
-                    }
-                }
-                .bot{
-                    font-size: 0.13rem;
-                    line-height: 0.19rem;
-                    margin-top: 0.04rem;
-                    color: #797d82;
-                }
-            }
-            .shedule-wrapper{
-                margin-bottom: 0.1rem;
-                display: flex;
-                overflow-y: hidden;
-                scrollbar-width: none; /* Firefox */
-                -ms-overflow-style: none; /* IE 10+ */
-                &::-webkit-scrollbar {
-                  display: none; /* Chrome Safari */
-                }
-                // border-bottom: 0.01rem solid #f4f4f4;
-                
-                .she-item{
-                    width: 0.7rem;
-                    height: 0.6rem;
-                    background-color: hsla(0,0%,95.7%,.6);
-                    display: flex;
-                    flex-flow: column nowrap;
-                    align-items: center;
-                    justify-content: center;
-                    border-radius: 0.05rem;
+            .date-time-language-type{
+                font-size: 0.14rem;
+                margin-top: 0.1rem;
+                .date{
                     margin-right: 0.1rem;
-                    &.active-schedule-item{
-                        border: 1px solid $base-color;
-                        background-color: #fffbfb;
-                    }
-                    .time{
-                        font-size: 0.14rem;
-                        color: #191a1b;
-                        line-height: 0.17rem;
-                    }
-                    .language{
-                        font-size: 0.1rem;
-                        color: #bdc0c5;
-                        width: 0.7rem;
-                        line-height: 0.14rem;
-                        @include ellipsis-one();
-                        margin-top: 0.01rem;
-                        text-align: center;
-                    }
-                    .price{
-                        font-size: 0.13rem;
-                        color: #797d82;
-                    }
                 }
-            }
-            .line{
-                height: 0.01rem;
-                background-color: #f4f4f4;
-            }
-            .selected-seat-list{
-                padding: 0.1rem 0rem 0 0rem;
-                overflow-y: hidden;
-                scrollbar-width: none; /* Firefox */
-                -ms-overflow-style: none; /* IE 10+ */
-                &::-webkit-scrollbar {
-                  display: none; /* Chrome Safari */
-                }
-                display: flex;
-                .seat{
-                    width: 1rem;
-                    padding: 0.04rem 0.1rem;
-                    display: flex;
-                    justify-content: space-between;
-                    background-color: hsla(0,0%,95.7%,.6);
-                    border-radius: 0.05rem;
+                .time{
                     margin-right: 0.1rem;
-                    .left{
-                        margin-right: 0.1rem;
-                        .seat-txt{
-                            font-size: 0.14rem;
-                            color: #191a1b;
-                            white-space: nowrap;
-                        }
-                        .price{
-                            font-size: 0.13rem;
-                            color: rgb(250, 182, 70);
-                        }
-                    }
-                    .right{
+                }
+                .language-type{
+                    margin-right: 0.1rem;
+                }
+            }
+            .cinema-box{
+                font-size: 0.14rem;
+            }
+            .hall-section-seat{
+                font-size: 0.14rem;
+                // display: flex;
+                // flex-flow: wrap;
+                // .section-seat{
+                    display: flex;
+                    flex-flow: wrap;
+                    .section-item{
                         display: flex;
-                        align-items: flex-end;
+                        flex-flow: wrap;
                     }
-                }
+                    .section-name{
+                        color:#e9ea95;
+                        margin-right: 0.05rem;
+                    }
+                    .seat{
+                        margin-right: 0.05rem;
+                    }
+                // }
             }
-        }
-    }
-    .select-seat-buy-btn-box{
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #fff;
-        .select-seat-buy-btn{
             
         }
     }
-    
     
 }
