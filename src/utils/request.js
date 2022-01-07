@@ -1,8 +1,10 @@
 import axios from "axios";
 
 import { Toast } from "antd-mobile";
-
+// import commonState from "@/store/commons/actionCreator";
 axios.defaults.withCredentials = true;
+
+// import store from "@/store/index";
 
 const service = axios.create({
   baseURL: process.env.BASE_API, // api的base_url
@@ -28,7 +30,9 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
   (response) => {
-    if (response.data.error === 403) {
+    if (response.data.error === 401) {
+      // console.log('commonState',store);
+      // store.login(null)
       // removeToken();
       // router.currentRoute.path!='/login'?router.replace({path:"/login",query:{redirect:router.currentRoute.fullPath}}):null;//去登录;
       response.data.data = {};

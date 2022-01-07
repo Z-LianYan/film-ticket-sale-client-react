@@ -66,13 +66,17 @@ class BuyTicket extends Component {
   }
   async getCinemaDetail() {
     let { history, location } = this.props;
-    let result = await get_buy_ticket_detail({
-      schedule_id: location.state.schedule_id,
-      select_seat_ids: location.state.select_seat_ids.join(","),
-    });
-    this.setState({
-      scheduleInfo: result,
-    });
+    try{
+      let result = await get_buy_ticket_detail({
+        schedule_id: location.state.schedule_id,
+        select_seat_ids: location.state.select_seat_ids.join(","),
+      });
+      this.setState({
+        scheduleInfo: result,
+      });
+    }catch(err){
+      if(err.error==401) this.props.login(null)//如果token认证过期 清空当前缓存的登录信息
+    }
   }
 
   // calcTotalPrice() {
@@ -96,7 +100,7 @@ class BuyTicket extends Component {
     let { history, location } = this.props;
     let { scheduleInfo } = this.state;
     // let { film } = scheduleInfo;
-    let arr_label = [<span>{scheduleInfo.hall_name} </span>];
+    let arr_label = [<span className="hall-name">{scheduleInfo.hall_name}</span>];
     if (scheduleInfo.select_seats) {
       scheduleInfo.select_seats.map((item, index) => {
         if (scheduleInfo.is_section == 1)

@@ -40,6 +40,7 @@ class SelectSeat extends Component {
     };
   }
   componentDidMount() {
+    console.log('登录信息',this.props)
     this.onGestureHander();
     this.getCinemaDetail();
   }
@@ -191,29 +192,35 @@ class SelectSeat extends Component {
   }
   async getCinemaDetail() {
     let { history, location } = this.props;
-    let result = await get_schedule_info({
-      cinema_id: location.state.cinema_id,
-      film_id: location.state.film_id,
-      date: location.state.date,
-    });
-    this.setState({
-      scheduleInfo: result,
-      scheduleList: result.film.schedule,
-    });
-    if (location.state.hall_id) {
-      result.film.schedule.map((item, index) => {
-        if (item.id == location.state.schedule_id) {
-          this.setState(
-            {
-              selectedSchedule: item,
-            },
-            () => {
-              this.getSeatList();
-            }
-          );
-        }
+    try{
+      let result = await get_schedule_info({
+        cinema_id: location.state.cinema_id,
+        film_id: location.state.film_id,
+        date: location.state.date,
       });
+      console.log('登录-',result)
+      this.setState({
+        scheduleInfo: result,
+        scheduleList: result.film.schedule,
+      });
+      if (location.state.hall_id) {
+        result.film.schedule.map((item, index) => {
+          if (item.id == location.state.schedule_id) {
+            this.setState(
+              {
+                selectedSchedule: item,
+              },
+              () => {
+                this.getSeatList();
+              }
+            );
+          }
+        });
+      }
+    }catch(err){
+      if(err.error==401) this.props.login(null)//如果token认证过期 清空当前缓存的登录信息
     }
+    
   }
   async getSeatList() {
     let { selectedSchedule } = this.state;

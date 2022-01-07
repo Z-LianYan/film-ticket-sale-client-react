@@ -15,7 +15,7 @@ export function get_schedule_info(params) {
             duration: 2000,
             content: res.message,
           });
-          reject(res.data);
+          reject(res);
           break;
       }
     });

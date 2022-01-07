@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
-import { Film, Cinemas, User, Login } from "./view/main/index.js";
+import { Film, Cinemas, User, Login } from "./view/main/index";
 
 import AppFooter from "./components/AppFooter";
 import Citys from "@/view/Citys/index";
@@ -76,10 +76,13 @@ class App extends Component {
 
   async getUserInfo() {
     let _cookies = Cookies.get("film_front_token");
-    console.log("film_front_token", _cookies);
+    // console.log("film_front_token", _cookies);
     let result = await get_user_info();
+    // console.log('dddd',result)
     if (result) {
       this.props.login(result, () => {});
+    }else{
+      
     }
   }
 

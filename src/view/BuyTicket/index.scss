@@ -43,23 +43,22 @@
             }
             .hall-section-seat{
                 font-size: 0.14rem;
-                // display: flex;
-                // flex-flow: wrap;
-                // .section-seat{
+                display: flex;
+                flex-flow: wrap;
+                .hall-name{
+                    margin-right: 10px;
+                }
+                .section-item{
                     display: flex;
                     flex-flow: wrap;
-                    .section-item{
-                        display: flex;
-                        flex-flow: wrap;
-                    }
-                    .section-name{
-                        color:#e9ea95;
-                        margin-right: 0.05rem;
-                    }
-                    .seat{
-                        margin-right: 0.05rem;
-                    }
-                // }
+                }
+                .section-name{
+                    color:#e9ea95;
+                    margin-right: 0.05rem;
+                }
+                .seat{
+                    margin-right: 0.05rem;
+                }
             }
             
         }

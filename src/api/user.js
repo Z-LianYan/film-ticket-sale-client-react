@@ -1,6 +1,7 @@
 import * as HttpUtils from "@/utils/request";
 import * as Api from "@/api/constant";
 import { Toast } from "antd-mobile";
+import store from "@/store/index";
 
 export function phone_register(params) {
   return new Promise((resolve, reject) => {
