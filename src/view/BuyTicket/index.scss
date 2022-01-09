@@ -3,9 +3,13 @@
 @import "@/stylesheets/_mixin.scss";
 
 .buy-ticket-detail-box{
+    .adm-nav-bar{
+        background-color: $base-color !important;
+        color: #fff;
+    }
     .header-wrapper{
-        padding: 0.125rem;
-        background: $base-color;
+        padding: 0.125rem 0.125rem 0.5rem 0.125rem;
+        background-color: $base-color;
         display: flex;
         // align-items: center;
         color: #fff;
@@ -64,4 +68,20 @@
         }
     }
     
+    .content-box{
+        background: #fff;
+        border-top-left-radius: 0.3rem;
+        border-top-right-radius: 0.3rem;
+        margin-top: -0.3rem;
+        padding-top: 0.3rem;
+    }
+    .bottom-bar{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding-bottom: constant(safe-area-inset-bottom);
+        padding-bottom: env(safe-area-inset-bottom);
+        background-color: #fff;
+    }
 }

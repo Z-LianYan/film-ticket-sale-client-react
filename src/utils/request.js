@@ -4,6 +4,13 @@ import { Toast } from "antd-mobile";
 // import commonState from "@/store/commons/actionCreator";
 axios.defaults.withCredentials = true;
 
+// import history from "@/router/history";
+const { history } = require("@/router/history");
+
+console.log("request-history", history);
+
+// let history = createBrowserHistory();
+
 // import store from "@/store/index";
 
 const service = axios.create({
@@ -31,6 +38,9 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response) => {
     if (response.data.error === 401) {
+      console.log("路由跳转---401", response);
+      // history.back();
+      history.push("/login");
       // console.log('commonState',store);
       // store.login(null)
       // removeToken();

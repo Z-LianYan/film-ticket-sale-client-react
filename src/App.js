@@ -19,6 +19,7 @@ import tools from "@/utils/tools";
 import { Toast, Dialog } from "antd-mobile";
 import { get_by_city } from "@/api/citys";
 import { get_user_info } from "@/api/user";
+import routerData from "@/router/router";
 
 class App extends Component {
   constructor(props) {
@@ -81,8 +82,7 @@ class App extends Component {
     // console.log('dddd',result)
     if (result) {
       this.props.login(result, () => {});
-    }else{
-      
+    } else {
     }
   }
 
@@ -228,24 +228,7 @@ class App extends Component {
 }
 
 App.defaultProps = {
-  routes: [
-    { path: "/", component: Film, exact: true },
-    { path: "/cinemas", component: Cinemas },
-    { path: "/user", component: User },
-    { path: "/login", component: Login },
-    { path: "/citys", component: Citys },
-    { path: "/film/detail/:film_id", component: FilmDetail },
-    {
-      path: "/cinema/detail",
-      component: CinemaDetail,
-    },
-    { path: "/film/cinema/:film_id", component: SelectCinema },
-    { path: "/cinema/search", component: CinemaSearch },
-    { path: "/select/seat", component: SelectSeat },
-    { path: "/set", component: SetPage },
-    { path: "/buy/ticket", component: BuyTicket }
-    
-  ],
+  routes: routerData,
 };
 
 export default GroupCommons(withRouter(App));

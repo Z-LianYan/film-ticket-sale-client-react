@@ -14,9 +14,13 @@ import "./stylesheets/main.scss";
 import { Provider } from "react-redux";
 import store from "./store";
 
+// import { createBrowserHistory, createHashHistory } from "history"; //组件外部能操作路由跳转
+// let history = createBrowserHistory();
+import { history } from "@/router/history";
+
 ReactDOM.render(
   <Provider store={store}>
-    <Router>
+    <Router history={history}>
       <App />
     </Router>
   </Provider>,

@@ -1,6 +1,14 @@
 import React, { Component } from "react";
 import "./index.scss";
-import { NavBar, NoticeBar, Space, Button, Toast, Image } from "antd-mobile";
+import {
+  NavBar,
+  NoticeBar,
+  Space,
+  Button,
+  Toast,
+  Image,
+  List,
+} from "antd-mobile";
 import { DownOutline, UpOutline, CloseOutline } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
 import { get_schedule_info, get_seat } from "@/api/selectSeat";
@@ -66,7 +74,7 @@ class BuyTicket extends Component {
   }
   async getCinemaDetail() {
     let { history, location } = this.props;
-    try{
+    try {
       let result = await get_buy_ticket_detail({
         schedule_id: location.state.schedule_id,
         select_seat_ids: location.state.select_seat_ids.join(","),
@@ -74,8 +82,8 @@ class BuyTicket extends Component {
       this.setState({
         scheduleInfo: result,
       });
-    }catch(err){
-      if(err.error==401) this.props.login(null)//如果token认证过期 清空当前缓存的登录信息
+    } catch (err) {
+      if (err.error == 401) this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
     }
   }
 
@@ -100,22 +108,34 @@ class BuyTicket extends Component {
     let { history, location } = this.props;
     let { scheduleInfo } = this.state;
     // let { film } = scheduleInfo;
-    let arr_label = [<span className="hall-name">{scheduleInfo.hall_name}</span>];
+    console.log("scheduleInfo----", scheduleInfo);
+    let arr_label = [
+      <span className="hall-name" key={"abc"}>
+        {scheduleInfo.hall_name}
+      </span>,
+    ];
     if (scheduleInfo.select_seats) {
       scheduleInfo.select_seats.map((item, index) => {
-        if (scheduleInfo.is_section == 1)
+        if (scheduleInfo.is_section == 1) {
           arr_label.push(
-            <span className="section-name">
+            <span className="section-name" key={index + "s"}>
               {index == 0 ? "" : "|"} {item.section_name}
             </span>
           );
-        item.seatList.map((it) => {
+          item.seatList.map((it, idx) => {
+            arr_label.push(
+              <span className="seat" key={idx + "se" + index}>
+                {it.row_id}排{it.column_id}座
+              </span>
+            );
+          });
+        } else {
           arr_label.push(
-            <span className="seat">
-              {it.row_id}排{it.column_id}座
+            <span className="seat" key={index + "se"}>
+              {item.row_id}排{item.column_id}座
             </span>
           );
-        });
+        }
       });
     }
     return (
@@ -157,40 +177,23 @@ class BuyTicket extends Component {
               </span>
             </div>
             <div className="cinema-box">{scheduleInfo.cinema_name}</div>
-            <div className="hall-section-seat">
-              {/* <div className="section-seat"> */}
-              {arr_label}
-              {/* {scheduleInfo.select_seats &&
-                  scheduleInfo.select_seats.map((item) => {
-                    if (scheduleInfo.is_section == 1) {
-                      return (
-                        <span className="section-item">
-                          <span className="section-name">
-                            {item.section_name}
-                          </span>
-                          {item.seatList
-                            ? item.seatList.map((it) => {
-                                return (
-                                  <span className="seat">
-                                    {it.row_id}排{it.column_id}座
-                                  </span>
-                                );
-                              })
-                            : ""}
-                        </span>
-                      );
-                    } else {
-                      return (
-                        <span className="seat">
-                          {item.row_id}排{item.column_id}座
-                        </span>
-                      );
-                    }
-                  })} */}
-              {/* </div> */}
-            </div>
+            <div className="hall-section-seat">{arr_label}</div>
           </div>
         </div>
+
+        <div className="content-box">
+          <List model="default">
+            <List.Item arrow={true} border="none" extra={"无可用"}>
+              活动与抵用券
+            </List.Item>
+            <List.Item
+              arrow={false}
+              border="none"
+              extra={"票价小计 ¥" + scheduleInfo.total_price}
+            ></List.Item>
+          </List>
+        </div>
+        <div className="bottom-bar">123</div>
       </div>
     );
   }
