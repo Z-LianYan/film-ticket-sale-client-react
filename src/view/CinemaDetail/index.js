@@ -404,9 +404,9 @@ class FileDetail extends Component {
                 }else{
                   history.push({
                     pathname: "/login",
-                    state:{
-                      back:true
-                    }
+                    // state:{
+                    //   back:true
+                    // }
                   });
                 }
                 

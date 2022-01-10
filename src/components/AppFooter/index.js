@@ -11,7 +11,7 @@ class AppFooter extends Component {
       <NavLink
         exact={item.exact}
         activeClassName="actived"
-        to={!userInfo && item.path=='/user'?'/login':item.path}
+        to={!userInfo && item.path=='/user'?'/login?url=/user':item.path}
         key={item.id}
       >
         <i className={item.icon}></i>

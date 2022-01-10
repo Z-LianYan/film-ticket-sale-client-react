@@ -13,6 +13,8 @@ import sectionA from "@/static/img/sectionA.png";
 import sectionB from "@/static/img/sectionB.png";
 import sectionC from "@/static/img/sectionC.png";
 import sectionD from "@/static/img/sectionD.png";
+import CustomSkeleton from "@/components/CustomSkeleton/index";
+
 
 import { GroupCommons } from "@/modules/group";
 class SelectSeat extends Component {
@@ -196,7 +198,7 @@ class SelectSeat extends Component {
       let result = await get_schedule_info({
         cinema_id: location.state.cinema_id,
         film_id: location.state.film_id,
-        date: location.state.date,
+        date: location.state.date
       });
       console.log('登录-',result)
       this.setState({
@@ -218,7 +220,12 @@ class SelectSeat extends Component {
         });
       }
     }catch(err){
-      if(err.error==401) this.props.login(null)//如果token认证过期 清空当前缓存的登录信息
+      if(err.error==401){
+        this.props.login(null)//如果token认证过期 清空当前缓存的登录信息
+        history.replace({
+          pathname:'/login'
+        })
+      }
     }
     
   }
@@ -248,6 +255,7 @@ class SelectSeat extends Component {
       }
     }
     this.setState({
+      isSkeleton:false,
       seat_real_rows,
     });
   }
@@ -355,11 +363,13 @@ class SelectSeat extends Component {
       hallDetail,
       seat_real_rows,
       seatListTopHeight,
+      isSkeleton
     } = this.state;
     let { film } = scheduleInfo;
     let cellWidth = 100 / hallDetail.seat_column_num;
     return (
       <div className="select-seat-buy-ticket-box">
+        {isSkeleton?<CustomSkeleton section={5} row={5}/>:null}
         <NavBar
           style={{ backgroundColor: "#fff" }}
           backArrow={true}

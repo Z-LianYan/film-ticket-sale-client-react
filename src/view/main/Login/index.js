@@ -12,6 +12,9 @@ import {
   Toast,
 } from "antd-mobile";
 import { phone_register, send_verify_code } from "@/api/user";
+import tools from "@/utils/tools";
+
+
 
 class Login extends Component {
   constructor(props) {
@@ -29,12 +32,14 @@ class Login extends Component {
     };
     this.doLogin = this.doLogin.bind(this);
   }
-  componentDidMount() {}
+  componentDidMount() {
+  }
 
   async doLogin() {
     let { formData, reg_tel } = this.state;
     let { history,location } = this.props;
     let { replace,goBack } = history;
+    let queryObj = tools.getQueryStringAll();
     if (!formData.phone_number) {
       return Toast.show({
         duration: 1000,
@@ -62,8 +67,8 @@ class Login extends Component {
     let result = await phone_register(formData);
     this.clearIntervalDis();
     this.props.login(result, () => {
-      if(location.state) return goBack();
-      replace("/user");
+      if(queryObj && queryObj.url) return replace(queryObj.url);;
+      goBack()
     });
   }
   clearIntervalDis() {
@@ -119,6 +124,12 @@ class Login extends Component {
             "--height": "0.44rem",
             color: "#000",
           }}
+          left={<i 
+            className="iconfont icon-shouye" 
+            onClick={()=>{
+              history.push('/')
+            }}
+            style={{fontSize:'0.2rem'}}></i>}
           onBack={() => {
             // this.setState({ isVisibleMask: false });
             history.goBack();

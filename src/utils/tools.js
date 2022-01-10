@@ -41,7 +41,7 @@ obj.getLocalCity = function ({ onComplete, onError }) {
   });
 };
 
-obj.getQueryString = function () {
+obj.getQueryStringAll = function () {
   var url = window.location.search.substring(1);
   let valKey = url.split("&");
   let obj = {};

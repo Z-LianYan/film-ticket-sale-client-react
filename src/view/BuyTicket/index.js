@@ -8,6 +8,7 @@ import {
   Toast,
   Image,
   List,
+  Popup
 } from "antd-mobile";
 import { DownOutline, UpOutline, CloseOutline } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
@@ -18,6 +19,8 @@ import tools from "@/utils/tools";
 
 import { GroupCommons } from "@/modules/group";
 import Item from "antd-mobile/es/components/dropdown/item";
+import CustomSkeleton from "@/components/CustomSkeleton/index";
+
 class BuyTicket extends Component {
   constructor(props) {
     super(props);
@@ -28,8 +31,7 @@ class BuyTicket extends Component {
     };
   }
   componentDidMount() {
-    console.log("1234", this.props);
-    this.getCinemaDetail();
+    this.getOrderDetail();
   }
 
   handerDate(date) {
@@ -72,42 +74,31 @@ class BuyTicket extends Component {
         return "";
     }
   }
-  async getCinemaDetail() {
+  async getOrderDetail() {
     let { history, location } = this.props;
     try {
       let result = await get_buy_ticket_detail({
         schedule_id: location.state.schedule_id,
         select_seat_ids: location.state.select_seat_ids.join(","),
+        history:history
       });
       this.setState({
+        isSkeleton:false,
         scheduleInfo: result,
       });
     } catch (err) {
-      if (err.error == 401) this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
+      if(err.error==401){
+        this.props.login(null)//如果token认证过期 清空当前缓存的登录信息
+        history.replace({
+          pathname:'/login'
+        })
+      }
     }
   }
 
-  // calcTotalPrice() {
-  //   let { selectedSeat, selectedSchedule } = this.state;
-  //   let totalPrice = 0;
-  //   for (let i = 0; i < selectedSeat.length; i++) {
-  //     if (selectedSchedule.is_section == 1) {
-  //       for (let j = 0; j < selectedSchedule.sectionPrice.length; j++) {
-  //         let it = selectedSchedule.sectionPrice[j];
-  //         if (selectedSeat[i].section_id === it.section_id) {
-  //           totalPrice += Number(it.price);
-  //         }
-  //       }
-  //     } else {
-  //       totalPrice += Number(selectedSchedule.price);
-  //     }
-  //   }
-  //   return totalPrice.toFixed(2);
-  // }
   render() {
     let { history, location } = this.props;
-    let { scheduleInfo } = this.state;
-    // let { film } = scheduleInfo;
+    let { scheduleInfo,isSkeleton } = this.state;
     console.log("scheduleInfo----", scheduleInfo);
     let arr_label = [
       <span className="hall-name" key={"abc"}>
@@ -140,6 +131,7 @@ class BuyTicket extends Component {
     }
     return (
       <div className="buy-ticket-detail-box">
+        {isSkeleton?<CustomSkeleton section={5} row={5}/>:null}
         <NavBar
           style={{ backgroundColor: "#fff" }}
           backArrow={true}
@@ -159,10 +151,10 @@ class BuyTicket extends Component {
           <div className="right-wrapper">
             <div className="title-box">
               <h3>{scheduleInfo.film_name}</h3>
-              <span className="count-price">
+              <div className="count-price">
                 {scheduleInfo.ticket_count}张{" "}
-                <span>原价¥{scheduleInfo.origin_total_price}</span>
-              </span>
+                <span>原价 ¥{scheduleInfo.origin_total_price}</span>
+              </div>
             </div>
             <div className="date-time-language-type">
               <span className="date">
@@ -183,8 +175,8 @@ class BuyTicket extends Component {
 
         <div className="content-box">
           <List model="default">
-            <List.Item arrow={true} border="none" extra={"无可用"}>
-              活动与抵用券
+            <List.Item arrow={false} border="none" extra={"无可用"}>
+              抵用券
             </List.Item>
             <List.Item
               arrow={false}
@@ -193,10 +185,93 @@ class BuyTicket extends Component {
             ></List.Item>
           </List>
         </div>
-        <div className="bottom-bar">123</div>
+        <div className="bottom-bar">
+          <div className="price">{scheduleInfo.total_price}</div>
+          <div className="right-wrapper">
+            <div className="detail-box" onClick={()=>{
+              this.$child.open();
+            }}>
+              <span className="txt">明细</span>
+              <DownOutline/>
+            </div>
+            <Button color='primary'>确认支付</Button>
+          </div>
+        </div>
+
+        <MaskDetailComponent scheduleInfo={this.state.scheduleInfo} onRef={(child)=>{
+          this.$child = child;
+        }}/>
       </div>
     );
   }
 }
 
 export default GroupCommons(BuyTicket);
+
+
+class MaskDetailComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isVisibleMask: false,
+      service: [],
+      cinema_name: "",
+    };
+  }
+  static defaultProps = {
+    scheduleInfo:{}
+  };
+  render() {
+    let { isVisibleMask } = this.state;
+    let { scheduleInfo } = this.props;
+    return (
+      <Popup visible={isVisibleMask}>
+        <div className="order-detail--mask-container">
+          <NavBar
+            style={{ backgroundColor: "#fff" }}
+            backArrow={false}
+            right={<CloseOutline fontSize={24} onClick={()=>{
+              this.close()
+            }}/>}
+            onBack={() => {
+            }}
+          >
+            价格明细
+          </NavBar>
+          <div className="content">
+            <List>
+              <List.Item arrow={false} border="none" extra={scheduleInfo.ticket_count+"张"}>
+                电影票
+              </List.Item>
+              <List.Item arrow={false} border="none" extra={<div><span className="premium">含服务费{scheduleInfo.premium}元/张</span> {scheduleInfo.total_price}元</div>}>
+                原价
+              </List.Item>
+              {/* <List.Item arrow={false} border="none" extra={'-3元'}>
+                抵用券
+              </List.Item> */}
+            </List>
+            
+          </div>
+        </div>
+      </Popup>
+    );
+  }
+  componentDidMount() {
+    this.props.onRef(this);
+  }
+  componentWillUnmount = () => {
+    this.setState = (state, callback) => {
+      return;
+    };
+  };
+  open(service, cinema_name) {
+    this.setState({
+      isVisibleMask: true,
+    });
+  }
+  close() {
+    this.setState({
+      isVisibleMask: false,
+    });
+  }
+}

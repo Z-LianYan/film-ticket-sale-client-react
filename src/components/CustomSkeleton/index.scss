@@ -1,0 +1,43 @@
+@import "../../stylesheets/_base.scss";
+
+@mixin skeleton--animate() {
+  -webkit-animation:skeleton-blink 1.2s ease-in-out infinite;
+  animation:skeleton-blink 1.2s ease-in-out infinite
+}
+@-webkit-keyframes skeleton-blink{
+  50%{
+    opacity:.6
+  }
+}
+@keyframes skeleton-blink{
+  50%{
+    opacity:.6
+  }
+}
+.skeleton-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color:#fff;
+  z-index: 100000000000;
+  display: flex;
+  // justify-content: center;
+  flex-direction: column;
+  .skeleton-content{
+    width: 100%;
+    padding: 0.2rem;
+    .skeleton__title{
+      width: 1.5rem;
+      height:16px;
+      background-color:#f2f3f5;
+    }
+    .skeleton__row{
+      height:16px;
+      background-color:#f2f3f5;
+      margin-top:0.15rem;
+      @include skeleton--animate()
+    }
+  }
+}
