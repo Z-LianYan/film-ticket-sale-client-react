@@ -399,7 +399,7 @@ class Cinema extends Component {
             return (
               <CinemaListItem
                 key={index}
-                title={item.name}
+                title={item.cinema_name}
                 value={item.low_price}
                 label={item.address}
                 distance={item.distance}
@@ -407,7 +407,7 @@ class Cinema extends Component {
                   this.props.history.push({
                     pathname: `/cinema/detail`,
                     state: {
-                      cinema_id: item.id,
+                      cinema_id: item.cinema_id, 
                       film_id: params && params.film_id,
                       date: fetchOptions.date,
                     },

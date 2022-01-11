@@ -8,6 +8,7 @@ import Swiper from "swiper";
 import "swiper/css/swiper.min.css";
 import dayjs from "dayjs";
 import { GroupCommons } from "@/modules/group";
+import CustomSkeleton from "@/components/CustomSkeleton/index";
 function CellItem(obj = {}) {
   return (
     <div className="cell-item-container">
@@ -87,8 +88,7 @@ class FileDetail extends Component {
         cinemaDetail: result,
         filmDetail: result.filmList[0],
         filmList: result.filmList,
-        activeBgImg: result.filmList.length && result.filmList[0].poster_img,
-        isSkeleton: false,
+        activeBgImg: result.filmList.length && result.filmList[0].poster_img
       },
       () => {
         if (
@@ -96,9 +96,7 @@ class FileDetail extends Component {
           this.state.filmDetail.show_date &&
           this.state.filmDetail.show_date.length
         ) {
-          this.getDateScheduleList(
-            this.state.filmDetail.show_date[this.state.activeDateKey]
-          );
+          this.getDateScheduleList(this.state.filmDetail.show_date[this.state.activeDateKey]);
         }
       }
     );
@@ -112,10 +110,11 @@ class FileDetail extends Component {
     let result = await get_date_schedule({
       cinema_id: cinemaDetail.id,
       film_id: filmDetail.film_id,
-      date: date,
+      date: date
     });
     this.setState({
       scheduleList: result,
+      isSkeleton: false,
     });
   }
   newSwiper() {
@@ -247,7 +246,7 @@ class FileDetail extends Component {
     let { history,userInfo } = this.props;
     return (
       <div className="cinema-detail-container">
-        {isSkeleton ? <div className="skeleton-box"></div> : null}
+        {isSkeleton ? <CustomSkeleton section={5} row={5}/> : null}
         <NavBar
           backArrow={true}
           onBack={() => {

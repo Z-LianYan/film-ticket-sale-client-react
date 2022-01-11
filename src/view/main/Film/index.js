@@ -268,11 +268,11 @@ class Film extends Component {
               }}
               onRightClick={() => {
                 this.props.history.push({
-                  pathname: "/film/cinema",
-                  state: {
-                    film_id: item.id,
-                    film_name: item.film_name,
-                  },
+                  pathname: `/film/cinema/${item.id}`,
+                  // state: {
+                  //   film_id: item.id,
+                  //   film_name: item.film_name,
+                  // },
                 });
               }}
             />
