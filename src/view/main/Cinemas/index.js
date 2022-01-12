@@ -400,7 +400,7 @@ class Cinema extends Component {
               <CinemaListItem
                 key={index}
                 title={item.cinema_name}
-                value={item.low_price}
+                value={item.min_low_sale_price}
                 label={item.address}
                 distance={item.distance}
                 onClick={() => {

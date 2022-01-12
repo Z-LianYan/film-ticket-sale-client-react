@@ -8,7 +8,8 @@ import {
   Toast,
   Image,
   List,
-  Popup
+  Popup,
+  Dialog
 } from "antd-mobile";
 import { DownOutline, UpOutline, CloseOutline } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
@@ -25,7 +26,7 @@ class BuyTicket extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      scheduleInfo: {},
+      orderDetail: {},
       isSkeleton: true,
       // selectedSchedule: {},
     };
@@ -79,12 +80,11 @@ class BuyTicket extends Component {
     try {
       let result = await get_buy_ticket_detail({
         schedule_id: location.state.schedule_id,
-        select_seat_ids: location.state.select_seat_ids.join(","),
-        history:history
+        select_seat_ids: location.state.select_seat_ids.join(",")
       });
       this.setState({
         isSkeleton:false,
-        scheduleInfo: result,
+        orderDetail: result,
       });
     } catch (err) {
       if(err.error==401){
@@ -96,18 +96,31 @@ class BuyTicket extends Component {
     }
   }
 
+  async onGoToPay(){
+    let { orderDetail } = this.state;
+    const result = await Dialog.confirm({
+      content: '您确认支付吗？',
+    })
+    if (result) {
+      
+      // Toast.show({ content: '点击了确认', position: 'bottom' })
+    } else {
+      // Toast.show({ content: '点击了取消', position: 'bottom' })
+    }
+  }
+
   render() {
     let { history, location } = this.props;
-    let { scheduleInfo,isSkeleton } = this.state;
-    console.log("scheduleInfo----", scheduleInfo);
+    let { orderDetail,isSkeleton } = this.state;
+    console.log("orderDetail----", orderDetail);
     let arr_label = [
       <span className="hall-name" key={"abc"}>
-        {scheduleInfo.hall_name}
+        {orderDetail.hall_name}
       </span>,
     ];
-    if (scheduleInfo.select_seats) {
-      scheduleInfo.select_seats.map((item, index) => {
-        if (scheduleInfo.is_section == 1) {
+    if (orderDetail.select_seats) {
+      orderDetail.select_seats.map((item, index) => {
+        if (orderDetail.is_section == 1) {
           arr_label.push(
             <span className="section-name" key={index + "s"}>
               {index == 0 ? "" : "|"} {item.section_name}
@@ -143,32 +156,32 @@ class BuyTicket extends Component {
         </NavBar>
         <div className="header-wrapper">
           <Image
-            src={scheduleInfo.poster_img}
+            src={orderDetail.poster_img}
             width={72}
             height={100}
             fit="fill"
           />
           <div className="right-wrapper">
             <div className="title-box">
-              <h3>{scheduleInfo.film_name}</h3>
+              <h3>{orderDetail.film_name}</h3>
               <div className="count-price">
-                {scheduleInfo.ticket_count}张{" "}
-                <span>原价 ¥{scheduleInfo.origin_total_price}</span>
+                {orderDetail.ticket_count}张{" "}
+                <span>原价 ¥{orderDetail.origin_total_price}</span>
               </div>
             </div>
             <div className="date-time-language-type">
               <span className="date">
-                {this.handerDate(scheduleInfo.start_runtime)}
+                {this.handerDate(orderDetail.start_runtime)}
               </span>
               <span className="time">
-                {dayjs(scheduleInfo.start_runtime).format("HH:mm")}
+                {dayjs(orderDetail.start_runtime).format("HH:mm")}
               </span>
               <span className="language-type">
-                ({scheduleInfo.language}
-                {scheduleInfo.play_type_name})
+                ({orderDetail.language}
+                {orderDetail.play_type_name})
               </span>
             </div>
-            <div className="cinema-box">{scheduleInfo.cinema_name}</div>
+            <div className="cinema-box">{orderDetail.cinema_name}</div>
             <div className="hall-section-seat">{arr_label}</div>
           </div>
         </div>
@@ -181,12 +194,12 @@ class BuyTicket extends Component {
             <List.Item
               arrow={false}
               border="none"
-              extra={"票价小计 ¥" + scheduleInfo.total_price}
+              extra={"票价小计 ¥" + orderDetail.total_price}
             ></List.Item>
           </List>
         </div>
         <div className="bottom-bar">
-          <div className="price">{scheduleInfo.total_price}</div>
+          <div className="price">{orderDetail.total_price}</div>
           <div className="right-wrapper">
             <div className="detail-box" onClick={()=>{
               this.$child.open();
@@ -194,11 +207,13 @@ class BuyTicket extends Component {
               <span className="txt">明细</span>
               <DownOutline/>
             </div>
-            <Button color='primary'>确认支付</Button>
+            <Button color='primary' onClick={()=>{
+              this.onGoToPay()
+            }}>确认支付</Button>
           </div>
         </div>
 
-        <MaskDetailComponent scheduleInfo={this.state.scheduleInfo} onRef={(child)=>{
+        <MaskDetailComponent orderDetail={this.state.orderDetail} onRef={(child)=>{
           this.$child = child;
         }}/>
       </div>
@@ -219,11 +234,11 @@ class MaskDetailComponent extends Component {
     };
   }
   static defaultProps = {
-    scheduleInfo:{}
+    orderDetail:{}
   };
   render() {
     let { isVisibleMask } = this.state;
-    let { scheduleInfo } = this.props;
+    let { orderDetail } = this.props;
     return (
       <Popup visible={isVisibleMask}>
         <div className="order-detail--mask-container">
@@ -240,10 +255,10 @@ class MaskDetailComponent extends Component {
           </NavBar>
           <div className="content">
             <List>
-              <List.Item arrow={false} border="none" extra={scheduleInfo.ticket_count+"张"}>
+              <List.Item arrow={false} border="none" extra={orderDetail.ticket_count+"张"}>
                 电影票
               </List.Item>
-              <List.Item arrow={false} border="none" extra={<div><span className="premium">含服务费{scheduleInfo.premium}元/张</span> {scheduleInfo.total_price}元</div>}>
+              <List.Item arrow={false} border="none" extra={<div><span className="premium">含服务费{orderDetail.premium}元/张</span> {orderDetail.total_price}元</div>}>
                 原价
               </List.Item>
               {/* <List.Item arrow={false} border="none" extra={'-3元'}>

@@ -339,7 +339,7 @@ class SelectSeat extends Component {
           }
         }
       } else {
-        totalPrice += Number(selectedSchedule.price);
+        totalPrice += Number(selectedSchedule.sale_price);
       }
     }
     return totalPrice.toFixed(2);
@@ -650,7 +650,7 @@ class SelectSeat extends Component {
                           <p className="price">
                             ¥{" "}
                             {item.is_section === 0
-                              ? item.price
+                              ? item.sale_price
                               : this.handlerSectionPrice(item.sectionPrice)}
                           </p>
                         </div>
@@ -681,7 +681,7 @@ class SelectSeat extends Component {
                       <p className="price">
                         ¥{" "}
                         {selectedSchedule.is_section === 0
-                          ? selectedSchedule.price
+                          ? selectedSchedule.sale_price
                           : this.handlerSelectedSectionPrice(item)}
                       </p>
                     </div>

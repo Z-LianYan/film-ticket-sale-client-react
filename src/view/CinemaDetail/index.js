@@ -386,7 +386,7 @@ class FileDetail extends Component {
               price={
                 item.is_section == 1
                   ? this.handlerSectionPrice(item.sectionPrice)
-                  : item.price
+                  : item.sale_price
               }
               onClick={() => {
                 if(userInfo){
