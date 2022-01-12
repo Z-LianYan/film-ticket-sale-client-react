@@ -96,14 +96,14 @@ class CinemaSearch extends Component {
           return (
             <CinemaListItem
               key={index}
-              title={item.name}
-              value={item.low_price}
+              title={item.cinema_name}
+              value={item.min_low_sale_price}
               label={item.address}
               distance={item.distance}
               onClick={() => {
                 this.props.history.push({
                   pathname: "/cinema/detail",
-                  state: { cinema_id: item.id },
+                  state: { cinema_id: item.cinema_id },
                 });
               }}
             />
@@ -180,7 +180,7 @@ class CinemaSearch extends Component {
               return (
                 <Button
                   color="default"
-                  key={item.id}
+                  key={item.cinema_id}
                   fill="none"
                   size="small"
                   style={{ "--background-color": "#f4f4f4" }}
@@ -188,12 +188,12 @@ class CinemaSearch extends Component {
                     history.push({
                       pathname: "/cinema/detail",
                       state: {
-                        cinema_id: item.id,
+                        cinema_id: item.cinema_id,
                       },
                     });
                   }}
                 >
-                  {item.name}
+                  {item.cinema_name}
                 </Button>
               );
             })}
