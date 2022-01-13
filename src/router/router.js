@@ -7,6 +7,7 @@ import CinemaSearch from "@/view/CinemaSearch/index";
 import SelectSeat from "@/view/SelectSeat/index";
 import SetPage from "@/view/set/index";
 import BuyTicket from "@/view/BuyTicket/index";
+import Recharge from "@/view/recharge/index";
 
 const routers = [
   { path: "/", component: Film, exact: true },
@@ -24,5 +25,6 @@ const routers = [
   { path: "/select/seat", component: SelectSeat },
   { path: "/set", component: SetPage },
   { path: "/buy/ticket", component: BuyTicket },
+  { path: "/recharge", component: Recharge },
 ];
 export default routers;

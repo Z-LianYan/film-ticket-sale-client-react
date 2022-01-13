@@ -94,3 +94,29 @@ export function login_out(params) {
     });
   });
 }
+
+
+export function user_recharge(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.post(Api.USER_RECHARGE, params, "充值中...").then((res) => {
+      switch (res.error) {
+        case 0:
+          resolve(res.data);
+          Toast.show({
+            icon: "success",
+            duration: 2000,
+            content: res.message,
+          });
+          break;
+        default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
+          reject(res.data);
+          break;
+      }
+    });
+  });
+}

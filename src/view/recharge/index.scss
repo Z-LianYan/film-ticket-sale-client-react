@@ -1,0 +1,61 @@
+@import "@/stylesheets/_base.scss";
+@-webkit-keyframes recharge-focus{
+    50%{
+      opacity:0
+    }
+  }
+@keyframes recharge-focus{
+    50%{
+        opacity:0
+    }
+}
+.recharge-container{
+    .font-price{
+        height: 0.4rem;
+        display: flex;
+        align-items: flex-end;
+        padding-left: 0.2rem;
+        color: #ccc;
+        .font{
+            margin-left: 0.05rem;
+        }
+    }
+    .recharge-price{
+        // width: 90vw;
+        overflow: hidden;
+        height: 0.5rem;
+        display: flex;
+        align-items: center;
+        position: relative;
+        color: #ccc;
+        
+        .price{
+            font-size: 0.2rem;
+            font-weight: bold;
+            color: #000;
+        }
+        .focus-bar{
+            width: 0.02rem;
+            height: 0.3rem;
+            background-color: $base-color;
+            -webkit-animation:recharge-focus 1s ease-in-out infinite;
+            animation:recharge-focus 1s ease-in-out infinite
+        }
+        .input-close{
+            position: absolute;
+            top:50%;
+            right: 0;
+            transform: translateY(-50%);
+        }
+    }
+    .recharge-button{
+        width: 95vw;
+        position: fixed;
+        bottom: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        
+    }
+
+}
+

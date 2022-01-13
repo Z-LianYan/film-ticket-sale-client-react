@@ -4,7 +4,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 import { BrowserRouter as Router } from "react-router-dom";
-import "antd-mobile/es/global"; // ant-mobile 按需加载样式
+// import "antd-mobile/es/global"; // ant-mobile 按需加载样式
 
 //rem
 // import "./modules/rem.js";

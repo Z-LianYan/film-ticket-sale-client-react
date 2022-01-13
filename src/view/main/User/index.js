@@ -3,7 +3,7 @@ import "./index.scss";
 
 import { GroupCommons } from "../../../modules/group";
 import { List, Button } from "antd-mobile";
-import { SetOutline, PayCircleOutline, CouponOutline } from "antd-mobile-icons";
+import { SetOutline, PayCircleOutline, CouponOutline,ReceivePaymentOutline } from "antd-mobile-icons";
 import { phone_register, send_verify_code, get_user_info } from "@/api/user";
 
 class User extends Component {
@@ -23,11 +23,16 @@ class User extends Component {
 
   render() {
     let { userInfo, history } = this.props;
+    console.log('userInfo098765432',userInfo);
     return (
       <div className="app-mine-user-page">
         <div className="header-wrapper">
           <img className="img" src={userInfo && userInfo.avatar} />
-          <span>{userInfo && userInfo.phone_number}</span>
+          <div className="content">
+            <span>手机号：<span>{userInfo && userInfo.phone_number}</span></span>
+            <div>余额：<span className="balance">{userInfo && userInfo.balance}</span></div>
+          </div>
+          
         </div>
 
         <List>
@@ -41,6 +46,17 @@ class User extends Component {
             }}
           >
             订单
+          </List.Item>
+          <List.Item
+            arrow={true}
+            onClick={() => {
+              history.push({
+                pathname: "/recharge",
+              });
+            }}
+            prefix={<ReceivePaymentOutline />}
+          >
+            充值
           </List.Item>
           <List.Item
             arrow={true}

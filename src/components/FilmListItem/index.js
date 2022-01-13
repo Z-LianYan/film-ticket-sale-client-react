@@ -60,20 +60,25 @@ class FilmListItem extends Component {
             <p
               className="actors"
               style={{
-                width: `calc(100vw - ${btnTxt ? 1.58 : 1.16}rem)`,
+                width: `calc(100vw - ${btnTxt ? 1.73 : 1}rem)`,
               }}
             >
               主演：{actors}
             </p>
-            <p className="area">
+            <p 
+            className="area"
+            style={{
+              width: `calc(100vw - ${btnTxt ? 1.73 : 1}rem)`,
+            }}
+            >
               {bottomText}
-              {/* {area}｜{time} */}
             </p>
           </div>
           {btnTxt ? (
             <Button
               color={btnColor}
               size="mini"
+              className="btn"
               fill="outline"
               onClick={(e) => {
                 this.props.onRightClick && this.props.onRightClick();
@@ -86,6 +91,7 @@ class FilmListItem extends Component {
             >
               {btnTxt}
             </Button>
+            
           ) : null}
         </div>
         {separator ? <div className="line"></div> : null}
