@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useRef } from "react";
 import "./index.scss";
 import CinemaListItem from "@/components/CinemaListItem/index";
 import { SearchOutline, DownOutline, LeftOutline } from "antd-mobile-icons";
@@ -391,6 +391,7 @@ class Cinema extends Component {
           }}
         ></div>
         <PullToRefresh
+          disabled={false}
           onRefresh={async () => {
             await this.onRefreshList();
           }}
@@ -407,7 +408,7 @@ class Cinema extends Component {
                   this.props.history.push({
                     pathname: `/cinema/detail`,
                     state: {
-                      cinema_id: item.cinema_id, 
+                      cinema_id: item.cinema_id,
                       film_id: params && params.film_id,
                       date: fetchOptions.date,
                     },
