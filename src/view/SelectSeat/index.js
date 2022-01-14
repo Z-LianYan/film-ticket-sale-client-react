@@ -722,7 +722,7 @@ class SelectSeat extends Component {
                 pathname: "/buy/ticket",
                 state: {
                   schedule_id: selectedSchedule.id,
-                  select_seat_ids: selectedSeat.map((item) => item.id),
+                  buy_seat_ids: selectedSeat.map((item) => item.id),
                 },
               });
             }}

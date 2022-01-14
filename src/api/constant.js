@@ -21,5 +21,6 @@ export const SEND_VERIFY_CODE = "/sendVerifyCode"; //发送短信验证码
 
 export const GET_USER_INFO = "/getUserInfo"; //获取用户信息
 export const LOGIN_OUT = "/loginOut"; //退出登录
-export const GET_BUY_TICHET_DETAIL = "/getBuyTicketDetail"; //购票详情
+export const GET_BUY_TICHET_DETAIL = "/getOrderDetail"; //订单详情
 export const USER_RECHARGE = "/userRecharge"; //会员充值
+export const PAY_ORDER = "/payOrder"; //支付订单

@@ -37,6 +37,7 @@ class User extends Component {
 
         <List>
           <List.Item
+            style={{fontSize:'0.16rem'}}
             arrow={true}
             prefix={<CouponOutline />}
             onClick={() => {
@@ -48,6 +49,7 @@ class User extends Component {
             订单
           </List.Item>
           <List.Item
+            style={{fontSize:'0.16rem'}}
             arrow={true}
             onClick={() => {
               history.push({
@@ -59,6 +61,7 @@ class User extends Component {
             充值
           </List.Item>
           <List.Item
+            style={{fontSize:'0.16rem'}}
             arrow={true}
             onClick={() => {
               history.push({

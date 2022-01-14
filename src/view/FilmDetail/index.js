@@ -138,6 +138,7 @@ class FileDetail extends Component {
         <List.Item
           style={{
             "--adm-border-color": "transparent",
+            "paddingLeft":"0.12rem"
           }}
         >
           演员
@@ -159,6 +160,8 @@ class FileDetail extends Component {
         <List.Item
           style={{
             "--adm-border-color": "transparent",
+            "paddingLeft":"0.12rem",
+            fontSize:'0.16rem'
           }}
           extra={`全部(${detail.stage_photo ? detail.stage_photo.length : 0})`}
           onClick={() => {

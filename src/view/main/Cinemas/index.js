@@ -18,7 +18,6 @@ import { get_city_district_list } from "@/api/citys";
 import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
 import Cookies from "js-cookie";
 import dayjs from "dayjs";
-
 class Cinema extends Component {
   constructor(props) {
     super(props);

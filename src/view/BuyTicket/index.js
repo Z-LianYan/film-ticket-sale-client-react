@@ -14,7 +14,7 @@ import {
 import { DownOutline, UpOutline, CloseOutline } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
 import { get_schedule_info, get_seat } from "@/api/selectSeat";
-import { get_buy_ticket_detail } from "@/api/order";
+import { get_buy_ticket_detail,pay_order } from "@/api/order";
 import dayjs from "dayjs";
 import tools from "@/utils/tools";
 
@@ -80,7 +80,7 @@ class BuyTicket extends Component {
     try {
       let result = await get_buy_ticket_detail({
         schedule_id: location.state.schedule_id,
-        select_seat_ids: location.state.select_seat_ids.join(",")
+        buy_seat_ids: location.state.buy_seat_ids.join(",")
       });
       this.setState({
         isSkeleton:false,
@@ -98,15 +98,25 @@ class BuyTicket extends Component {
 
   async onGoToPay(){
     let { orderDetail } = this.state;
+    let { select_seats } = orderDetail
     const result = await Dialog.confirm({
       content: '您确认支付吗？',
     })
-    if (result) {
-      
-      // Toast.show({ content: '点击了确认', position: 'bottom' })
-    } else {
-      // Toast.show({ content: '点击了取消', position: 'bottom' })
+    if (!result) return;
+    let seat_ids = []
+    for(let item of select_seats){
+      if(orderDetail.is_section==1){
+        for(let it of item.seatList){
+          seat_ids.push(it.id);
+        }
+      }else{
+        seat_ids.push(item.id);
+      }
     }
+    await pay_order({
+      schedule_id:orderDetail.schedule_id,
+      buy_seat_ids:seat_ids.join(',')
+    })
   }
 
   render() {
