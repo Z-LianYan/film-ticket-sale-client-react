@@ -15,8 +15,8 @@ import sectionC from "@/static/img/sectionC.png";
 import sectionD from "@/static/img/sectionD.png";
 import CustomSkeleton from "@/components/CustomSkeleton/index";
 
-
 import { GroupCommons } from "@/modules/group";
+import { alert } from "antd-mobile/es/components/dialog/alert";
 class SelectSeat extends Component {
   constructor(props) {
     super(props);
@@ -42,7 +42,7 @@ class SelectSeat extends Component {
     };
   }
   componentDidMount() {
-    console.log('登录信息',this.props)
+    console.log("登录信息", this.props);
     this.onGestureHander();
     this.getCinemaDetail();
   }
@@ -193,46 +193,42 @@ class SelectSeat extends Component {
     }
   }
   async getCinemaDetail() {
-    let { history, location } = this.props;
-    try{
+    let { history, location, match } = this.props;
+    let { params } = match;
+    try {
       let result = await get_schedule_info({
-        cinema_id: location.state.cinema_id,
-        film_id: location.state.film_id,
-        date: location.state.date
+        schedule_id: params && params.schedule_id,
       });
-      console.log('登录-',result)
       this.setState({
         scheduleInfo: result,
-        scheduleList: result.film.schedule,
+        scheduleList: result.schedule,
       });
-      if (location.state.hall_id) {
-        result.film.schedule.map((item, index) => {
-          if (item.id == location.state.schedule_id) {
-            this.setState(
-              {
-                selectedSchedule: item,
-              },
-              () => {
-                this.getSeatList();
-              }
-            );
-          }
+      result.schedule.map((item, index) => {
+        if (item.id == params.schedule_id) {
+          this.setState(
+            {
+              selectedSchedule: item,
+            },
+            () => {
+              this.getSeatList();
+            }
+          );
+        }
+      });
+    } catch (err) {
+      if (err.error == 401) {
+        this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
+        history.replace({
+          pathname: "/login",
         });
       }
-    }catch(err){
-      if(err.error==401){
-        this.props.login(null)//如果token认证过期 清空当前缓存的登录信息
-        history.replace({
-          pathname:'/login'
-        })
-      }
     }
-    
   }
-  async getSeatList() {
-    let { selectedSchedule } = this.state;
+  async getSeatList(schedule_id) {
+    let { selectedSchedule, scheduleInfo } = this.state;
     let result = await get_seat({
       hall_id: selectedSchedule.hall_id,
+      schedule_id: schedule_id ? schedule_id : scheduleInfo.schedule_id,
     });
 
     let seat = result.seat;
@@ -255,7 +251,7 @@ class SelectSeat extends Component {
       }
     }
     this.setState({
-      isSkeleton:false,
+      isSkeleton: false,
       seat_real_rows,
     });
   }
@@ -363,13 +359,14 @@ class SelectSeat extends Component {
       hallDetail,
       seat_real_rows,
       seatListTopHeight,
-      isSkeleton
+      isSkeleton,
     } = this.state;
+    let { already_sale_seat } = hallDetail;
     let { film } = scheduleInfo;
     let cellWidth = 100 / hallDetail.seat_column_num;
     return (
       <div className="select-seat-buy-ticket-box">
-        {isSkeleton?<CustomSkeleton section={5} row={5}/>:null}
+        {isSkeleton ? <CustomSkeleton section={5} row={5} /> : null}
         <NavBar
           style={{ backgroundColor: "#fff" }}
           backArrow={true}
@@ -480,20 +477,17 @@ class SelectSeat extends Component {
                   }}
                   onClick={() => {
                     //disabled 0可选 1不可选 2无座
-                    // this.setState({
-                    //   scaleX: scaleX >= 1.3 ? scaleX : 1.3,
-                    //   scaleY: scaleX >= 1.3 ? scaleX : 1.3,
-                    // });
-                    if (item.disabled !== 0) return;
-
-                    // let { selectedSeat } = this.state;
+                    if (
+                      item.disabled !== 0 ||
+                      already_sale_seat.includes(item.id)
+                    )
+                      return;
                     let seats = selectedSeat.map((im) => im.id);
                     if (
                       selectedSeat.length >= selectedSchedule.buy_max &&
                       selectedSchedule.buy_max &&
                       !seats.includes(item.id)
                     ) {
-                      //selectedSchedule.buy_max
                       return Toast.show({
                         content: `1次最多购买${selectedSchedule.buy_max}张`,
                       });
@@ -525,7 +519,9 @@ class SelectSeat extends Component {
                       width: "70%",
                       height: "70%",
                       backgroundImage: `url(${
-                        item.disabled == 0
+                        already_sale_seat.includes(item.id)
+                          ? alreadySaleIcon
+                          : item.disabled == 0
                           ? this.handleSelectedSeat(item)
                             ? selectedIcon
                             : selectedSchedule.is_section == 1
@@ -587,7 +583,9 @@ class SelectSeat extends Component {
           <div className="top-box">
             <div className="film-detail">
               <div className="top">
-                <h5 className="film-name">{film && film.film_name}</h5>
+                <h5 className="film-name">
+                  {scheduleInfo && scheduleInfo.film_name}
+                </h5>
                 <div
                   className="right"
                   onClick={() => {
@@ -601,7 +599,9 @@ class SelectSeat extends Component {
                 </div>
               </div>
               <div className="bot">
-                {film ? this.handerDate(film.schedule_date) : ""}{" "}
+                {scheduleInfo
+                  ? this.handerDate(scheduleInfo.schedule_date)
+                  : ""}{" "}
                 {dayjs(selectedSchedule.start_runtime).format("HH:mm")}{" "}
                 {selectedSchedule.language}
                 {selectedSchedule.play_type_name}
@@ -635,7 +635,7 @@ class SelectSeat extends Component {
                                 selectedSchedule: item,
                               },
                               () => {
-                                this.getSeatList();
+                                this.getSeatList(item.id);
                               }
                             );
                           }}

@@ -76,14 +76,8 @@ class App extends Component {
   }
 
   async getUserInfo() {
-    let _cookies = Cookies.get("film_front_token");
-    // console.log("film_front_token", _cookies);
     let result = await get_user_info();
-    // console.log('dddd',result)
-    if (result) {
-      this.props.login(result, () => {});
-    } else {
-    }
+    if (result) this.props.login(result, () => {});
   }
 
   componentDidMount() {

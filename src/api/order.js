@@ -26,27 +26,28 @@ export function get_buy_ticket_detail(params) {
 
 export function pay_order(params) {
   return new Promise((resolve, reject) => {
-    HttpUtils.post(Api.PAY_ORDER, params, "支付中...").then(
-      (res) => {
-        switch (res.error) {
-          case 0:
-            resolve(res.data);
-            Toast.show({
-              icon: "success",
-              duration: 2000,
-              content: res.message,
-            });
-            break;
-          default:
-            reject(res);
-            Toast.show({
-              icon: "fail",
-              duration: 2000,
-              content: res.message,
-            });
-            break;
-        }
+    HttpUtils.post(Api.PAY_ORDER, params, "支付中...").then((res) => {
+      switch (res.error) {
+        case 0:
+          resolve(res.data);
+          Toast.show({
+            icon: "success",
+            duration: 2000,
+            content: res.message,
+          });
+          break;
+        case "noBalance":
+          reject(res);
+          break;
+        default:
+          reject(res);
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
+          break;
       }
-    );
+    });
   });
 }

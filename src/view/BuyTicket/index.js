@@ -9,12 +9,12 @@ import {
   Image,
   List,
   Popup,
-  Dialog
+  Dialog,
 } from "antd-mobile";
 import { DownOutline, UpOutline, CloseOutline } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
-import { get_schedule_info, get_seat } from "@/api/selectSeat";
-import { get_buy_ticket_detail,pay_order } from "@/api/order";
+import { get_buy_ticket_detail, pay_order } from "@/api/order";
+import { get_user_info } from "@/api/user";
 import dayjs from "dayjs";
 import tools from "@/utils/tools";
 
@@ -80,48 +80,71 @@ class BuyTicket extends Component {
     try {
       let result = await get_buy_ticket_detail({
         schedule_id: location.state.schedule_id,
-        buy_seat_ids: location.state.buy_seat_ids.join(",")
+        buy_seat_ids: location.state.buy_seat_ids.join(","),
       });
       this.setState({
-        isSkeleton:false,
+        isSkeleton: false,
         orderDetail: result,
       });
     } catch (err) {
-      if(err.error==401){
-        this.props.login(null)//如果token认证过期 清空当前缓存的登录信息
+      if (err.error == 401) {
+        this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
         history.replace({
-          pathname:'/login'
-        })
+          pathname: "/login",
+        });
       }
     }
   }
 
-  async onGoToPay(){
+  async onGoToPay() {
+    let { history } = this.props;
     let { orderDetail } = this.state;
-    let { select_seats } = orderDetail
-    const result = await Dialog.confirm({
-      content: '您确认支付吗？',
-    })
-    if (!result) return;
-    let seat_ids = []
-    for(let item of select_seats){
-      if(orderDetail.is_section==1){
-        for(let it of item.seatList){
-          seat_ids.push(it.id);
+    let { select_seats } = orderDetail;
+    try {
+      const result = await Dialog.confirm({
+        content: "您确认支付吗？",
+      });
+      if (!result) return;
+      let seat_ids = [];
+      for (let item of select_seats) {
+        if (orderDetail.is_section == 1) {
+          for (let it of item.seatList) {
+            seat_ids.push(it.id);
+          }
+        } else {
+          seat_ids.push(item.id);
         }
-      }else{
-        seat_ids.push(item.id);
+      }
+      let pay_result = await pay_order({
+        schedule_id: orderDetail.schedule_id,
+        buy_seat_ids: seat_ids.join(","),
+        pay_type: "user_balance",
+      });
+      if (pay_result) this.getUserInfo();
+      history.replace("/order/detail/" + pay_result.order_id);
+    } catch (err) {
+      console.log(err);
+      if (err.error == "noBalance") {
+        await Dialog.confirm({
+          title: err.message,
+          content: "",
+          confirmText: "前往充值",
+          onConfirm: () => {
+            history.push("/recharge");
+          },
+        });
       }
     }
-    await pay_order({
-      schedule_id:orderDetail.schedule_id,
-      buy_seat_ids:seat_ids.join(',')
-    })
+  }
+
+  async getUserInfo() {
+    let result = await get_user_info();
+    if (result) this.props.login(result, () => {});
   }
 
   render() {
     let { history, location } = this.props;
-    let { orderDetail,isSkeleton } = this.state;
+    let { orderDetail, isSkeleton } = this.state;
     console.log("orderDetail----", orderDetail);
     let arr_label = [
       <span className="hall-name" key={"abc"}>
@@ -154,7 +177,7 @@ class BuyTicket extends Component {
     }
     return (
       <div className="buy-ticket-detail-box">
-        {isSkeleton?<CustomSkeleton section={5} row={5}/>:null}
+        {isSkeleton ? <CustomSkeleton section={5} row={5} /> : null}
         <NavBar
           style={{ backgroundColor: "#fff" }}
           backArrow={true}
@@ -211,28 +234,38 @@ class BuyTicket extends Component {
         <div className="bottom-bar">
           <div className="price">{orderDetail.total_price}</div>
           <div className="right-wrapper">
-            <div className="detail-box" onClick={()=>{
-              this.$child.open();
-            }}>
+            <div
+              className="detail-box"
+              onClick={() => {
+                this.$child.open();
+              }}
+            >
               <span className="txt">明细</span>
-              <DownOutline/>
+              <DownOutline />
             </div>
-            <Button color='primary' onClick={()=>{
-              this.onGoToPay()
-            }}>确认支付</Button>
+            <Button
+              color="primary"
+              onClick={() => {
+                this.onGoToPay();
+              }}
+            >
+              确认支付
+            </Button>
           </div>
         </div>
 
-        <MaskDetailComponent orderDetail={this.state.orderDetail} onRef={(child)=>{
-          this.$child = child;
-        }}/>
+        <MaskDetailComponent
+          orderDetail={this.state.orderDetail}
+          onRef={(child) => {
+            this.$child = child;
+          }}
+        />
       </div>
     );
   }
 }
 
 export default GroupCommons(BuyTicket);
-
 
 class MaskDetailComponent extends Component {
   constructor(props) {
@@ -244,7 +277,7 @@ class MaskDetailComponent extends Component {
     };
   }
   static defaultProps = {
-    orderDetail:{}
+    orderDetail: {},
   };
   render() {
     let { isVisibleMask } = this.state;
@@ -255,27 +288,45 @@ class MaskDetailComponent extends Component {
           <NavBar
             style={{ backgroundColor: "#fff" }}
             backArrow={false}
-            right={<CloseOutline fontSize={24} onClick={()=>{
-              this.close()
-            }}/>}
-            onBack={() => {
-            }}
+            right={
+              <CloseOutline
+                fontSize={24}
+                onClick={() => {
+                  this.close();
+                }}
+              />
+            }
+            onBack={() => {}}
           >
             价格明细
           </NavBar>
           <div className="content">
             <List>
-              <List.Item arrow={false} border="none" extra={orderDetail.ticket_count+"张"}>
+              <List.Item
+                arrow={false}
+                border="none"
+                extra={orderDetail.ticket_count + "张"}
+              >
                 电影票
               </List.Item>
-              <List.Item arrow={false} border="none" extra={<div><span className="premium">含服务费{orderDetail.premium}元/张</span> {orderDetail.total_price}元</div>}>
+              <List.Item
+                arrow={false}
+                border="none"
+                extra={
+                  <div>
+                    <span className="premium">
+                      含服务费{orderDetail.premium}元/张
+                    </span>{" "}
+                    {orderDetail.total_price}元
+                  </div>
+                }
+              >
                 原价
               </List.Item>
               {/* <List.Item arrow={false} border="none" extra={'-3元'}>
                 抵用券
               </List.Item> */}
             </List>
-            
           </div>
         </div>
       </Popup>

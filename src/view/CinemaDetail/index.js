@@ -88,7 +88,7 @@ class FileDetail extends Component {
         cinemaDetail: result,
         filmDetail: result.filmList[0],
         filmList: result.filmList,
-        activeBgImg: result.filmList.length && result.filmList[0].poster_img
+        activeBgImg: result.filmList.length && result.filmList[0].poster_img,
       },
       () => {
         if (
@@ -96,7 +96,9 @@ class FileDetail extends Component {
           this.state.filmDetail.show_date &&
           this.state.filmDetail.show_date.length
         ) {
-          this.getDateScheduleList(this.state.filmDetail.show_date[this.state.activeDateKey]);
+          this.getDateScheduleList(
+            this.state.filmDetail.show_date[this.state.activeDateKey]
+          );
         }
       }
     );
@@ -110,7 +112,7 @@ class FileDetail extends Component {
     let result = await get_date_schedule({
       cinema_id: cinemaDetail.id,
       film_id: filmDetail.film_id,
-      date: date
+      date: date,
     });
     this.setState({
       scheduleList: result,
@@ -243,10 +245,10 @@ class FileDetail extends Component {
       activeDateKey,
       isSkeleton,
     } = this.state;
-    let { history,userInfo } = this.props;
+    let { history, userInfo } = this.props;
     return (
       <div className="cinema-detail-container">
-        {isSkeleton ? <CustomSkeleton section={5} row={5}/> : null}
+        {isSkeleton ? <CustomSkeleton section={5} row={5} /> : null}
         <NavBar
           backArrow={true}
           onBack={() => {
@@ -389,18 +391,18 @@ class FileDetail extends Component {
                   : item.sale_price
               }
               onClick={() => {
-                if(userInfo){
+                if (userInfo) {
                   history.push({
-                    pathname: "/select/seat",
+                    pathname: "/select/seat/" + item.id,
                     state: {
-                      cinema_id: item.cinema_id,
-                      hall_id: item.hall_id,
-                      film_id: item.film_id,
-                      schedule_id: item.id,
-                      date: filmDetail.show_date[this.state.activeDateKey],
+                      // cinema_id: item.cinema_id,
+                      // hall_id: item.hall_id,
+                      // film_id: item.film_id,
+                      // schedule_id: item.id,
+                      // date: filmDetail.show_date[this.state.activeDateKey],
                     },
                   });
-                }else{
+                } else {
                   history.push({
                     pathname: "/login",
                     // state:{
@@ -408,7 +410,6 @@ class FileDetail extends Component {
                     // }
                   });
                 }
-                
               }}
             />
           );

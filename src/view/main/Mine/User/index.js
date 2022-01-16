@@ -4,7 +4,7 @@ import "./index.scss";
 import { GroupCommons } from "../../../../modules/group";
 import { List, Button } from "antd-mobile";
 import { SetOutline, PayCircleOutline, CouponOutline } from "antd-mobile-icons";
-import { phone_register, send_verify_code, get_user_info } from "@/api/user";
+import { phone_register, send_verify_code } from "@/api/user";
 
 class User extends Component {
   constructor(props) {
