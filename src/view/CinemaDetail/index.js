@@ -72,7 +72,8 @@ class FileDetail extends Component {
       cinema_id: location.state.cinema_id,
       isHasFilmList: true,
     });
-
+    if (result && result.filmList && !result.filmList.length)
+      return history.goBack(); //当前选择的影院无排片返回上一页
     if (location.state.film_id && location.state.date) {
       if (result.filmList[0].film_id == location.state.film_id) {
         let index = result.filmList[0].show_date.indexOf(location.state.date);

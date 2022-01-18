@@ -2,7 +2,8 @@
 .app-mine-user-page{
     .header-wrapper{
         height: 2rem;
-        background: url('http://zly.imgresource.com.cn/siteLogo/mineBg.png');
+        // background: url('http://zly.imgresource.com.cn/siteLogo/mineBg.png');
+        background: $base-color;
         background-size: cover;
         padding: 0.64rem 0 0 0.22rem;
         margin-top: -0.44rem;

@@ -76,7 +76,7 @@ class Cinema extends Component {
     }
   }
   async getFilmInScheduleDates() {
-    let { location, locationInfo, match } = this.props;
+    let { location, locationInfo, match, history } = this.props;
     let { params } = match;
     let { fetchOptions } = this.state;
     let _cookies = Cookies.get("locationInfo");
@@ -91,7 +91,8 @@ class Cinema extends Component {
           : locationInfo.city_id,
       film_id: params && params.film_id,
     });
-    if (!result) return;
+    // if (!result) return;
+    if (!result || !result.rows.length) return history.goBack(); //无排片日期时返回
     fetchOptions.date = result.rows[0];
     fetchOptions.film_id = params && params.film_id;
     let film_detail_result = await get_film_detail({
