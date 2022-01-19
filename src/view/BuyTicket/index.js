@@ -19,7 +19,6 @@ import dayjs from "dayjs";
 import tools from "@/utils/tools";
 
 import { GroupCommons } from "@/modules/group";
-import Item from "antd-mobile/es/components/dropdown/item";
 import CustomSkeleton from "@/components/CustomSkeleton/index";
 
 class BuyTicket extends Component {

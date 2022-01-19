@@ -19,11 +19,11 @@ class User extends Component {
 
   componentDidMount() {
     let { userInfo, history } = this.props;
-    if (!userInfo) {
-      history.replace({
-        pathname: "/login",
-      });
-    }
+    // if (!userInfo) {
+    //   history.replace({
+    //     pathname: "/login",
+    //   });
+    // }
   }
 
   componentWillReceiveProps(props) {
@@ -57,9 +57,9 @@ class User extends Component {
             arrow={true}
             prefix={<CouponOutline />}
             onClick={() => {
-              // history.push({
-              //   pathname: "/set",
-              // });
+              history.push({
+                pathname: "/order",
+              });
             }}
           >
             订单

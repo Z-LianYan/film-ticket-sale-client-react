@@ -9,6 +9,7 @@ import SetPage from "@/view/set/index";
 import BuyTicket from "@/view/BuyTicket/index";
 import Recharge from "@/view/recharge/index";
 import OrderDetail from "@/view/orderDetail/index";
+import Order from "@/view/order/index";
 
 const routers = [
   { path: "/", component: Film, exact: true },
@@ -28,5 +29,6 @@ const routers = [
   { path: "/buy/ticket", component: BuyTicket },
   { path: "/recharge", component: Recharge },
   { path: "/order/detail/:order_id", component: OrderDetail },
+  { path: "/order", component: Order },
 ];
 export default routers;
