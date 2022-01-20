@@ -73,7 +73,7 @@ class Recharge extends Component {
     let { isSkeleton, orderDetail } = this.state;
 
     return (
-      <div className="order-detail-container">
+      <div className="order-list-container">
         {isSkeleton ? <CustomSkeleton section={5} row={5} /> : null}
         <NavBar
           style={{

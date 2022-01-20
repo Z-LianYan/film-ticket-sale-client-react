@@ -10,6 +10,7 @@ import BuyTicket from "@/view/BuyTicket/index";
 import Recharge from "@/view/recharge/index";
 import OrderDetail from "@/view/orderDetail/index";
 import Order from "@/view/order/index";
+import ViewLocation from "@/view/ViewLocation/index";
 
 const routers = [
   { path: "/", component: Film, exact: true },
@@ -30,5 +31,6 @@ const routers = [
   { path: "/recharge", component: Recharge },
   { path: "/order/detail/:order_id", component: OrderDetail },
   { path: "/order", component: Order },
+  { path: "/viewlocation", component: ViewLocation },
 ];
 export default routers;

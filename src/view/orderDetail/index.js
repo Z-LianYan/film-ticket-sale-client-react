@@ -47,12 +47,12 @@ class Recharge extends Component {
   }
   async getOrderDetail() {
     let { history, location, match } = this.props;
-    console.log("location", this.props, match.params.order_id);
+    // console.log("location", this.props, match.params.order_id);
     try {
       let result = await get_buy_ticket_detail({
         order_id: match.params.order_id,
       });
-      console.log(result);
+      // console.log(result);
       this.setState({
         isSkeleton: false,
         orderDetail: result,
@@ -79,7 +79,7 @@ class Recharge extends Component {
       isDownImage: true,
     });
     domToImage.toBlob(node).then((blob) => {
-      console.log("url", blob);
+      // console.log("url", blob);
       saveAs(blob, "二维码.png");
       // Toast.show({
       //   duration: 2000,
@@ -187,11 +187,38 @@ class Recharge extends Component {
         <div className="content-container">
           <div className="header-content">
             <div className="head-top">
-              <div className="cinema-name">{orderDetail.cinema_name}</div>
-              <RightOutline style={{ margin: "0 0.1rem" }} fontSize={20} />|
+              <div
+                className="cinema-name-wrapper"
+                onClick={() => {
+                  history.push({
+                    pathname: `/cinema/detail`,
+                    state: {
+                      cinema_id: orderDetail && orderDetail.cinema_id,
+                    },
+                  });
+                }}
+              >
+                <div className="cinema-name">
+                  {orderDetail.cinema_name}发烧呢地方
+                </div>
+                <RightOutline style={{ margin: "0 0.1rem" }} fontSize={20} /> |
+              </div>
+
               <EnvironmentOutline
-                style={{ margin: "0 0.1rem" }}
+                style={{ margin: "0 0.2rem" }}
                 fontSize={20}
+                onClick={() => {
+                  // console.log("2345t");
+                  history.push({
+                    pathname: "/viewlocation",
+                    state: {
+                      lat: orderDetail.lat,
+                      lng: orderDetail.lng,
+                      cinema_name: orderDetail.cinema_name,
+                      cinema_address: orderDetail.cinema_address,
+                    },
+                  });
+                }}
               />
               <a href={"tel:" + orderDetail.phone}>
                 <PhoneFill
@@ -295,9 +322,9 @@ class Recharge extends Component {
     );
   }
   handleVerifyCode() {
-    console.log(
-      dayjs("2022-01-20 01:40").diff(dayjs("2022-01-20 01:33"), "minute")
-    );
+    // console.log(
+    //   dayjs("2022-01-20 01:40").diff(dayjs("2022-01-20 01:33"), "minute")
+    // );
     let { orderDetail } = this.state;
     let { order_verify_code } = orderDetail;
     if (!order_verify_code) return;

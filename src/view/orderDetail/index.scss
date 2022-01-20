@@ -18,10 +18,14 @@
           align-items: center;
           padding: 0.1rem;
           color: #fff;
-          .cinema-name{
+          .cinema-name-wrapper{
+            display: flex;
             flex: 1;
-            width: 1rem;
-            @include ellipsis-one()
+            .cinema-name{
+              flex: 1;
+              width: calc(100vw - 2rem);
+              @include ellipsis-one()
+            }
           }
         }
         .content-wrapper{
