@@ -171,7 +171,7 @@ class Cinema extends Component {
       film_name,
     } = this.state;
     return (
-      <div className="app-cinema-page">
+      <div className="order-list-container">
         {location.pathname == "/cinemas" ? null : isSkeleton ? (
           <div className="skeleton-box"></div>
         ) : null}
@@ -207,11 +207,11 @@ class Cinema extends Component {
             })}
           </Tabs>
         </div>
-        <div
+        {/* <div
           style={{
             height: params && params.film_id ? "1.26rem" : "0.87rem",
           }}
-        ></div>
+        ></div> */}
         <PullToRefresh
           disabled={false}
           onRefresh={async () => {
