@@ -299,6 +299,17 @@ class FileDetail extends Component {
             p-id="2446"
             width="25"
             height="25"
+            onClick={() => {
+              history.push({
+                pathname: "/viewlocation",
+                state: {
+                  lat: cinemaDetail.lat,
+                  lng: cinemaDetail.lng,
+                  cinema_name: cinemaDetail.name,
+                  cinema_address: cinemaDetail.address,
+                },
+              });
+            }}
           >
             <path
               d="M512 32c176.448 0 320 151.392 320 337.504 0 60.992-15.616 120.8-45.12 172.896l-247.552 435.936a26.432 26.432 0 0 1-22.688 13.664h-0.192a26.4 26.4 0 0 1-22.656-13.28L239.776 546.976A350.592 350.592 0 0 1 192 369.504C192 183.36 335.552 32 512 32z m219.808 478.272A288.192 288.192 0 0 0 768 370.112C768 219.168 653.12 96 512.096 96S256 219.168 256 370.112c0 50.976 13.536 100.736 38.464 143.872L515.968 896l215.84-385.728zM512 192c88.224 0 160 71.776 160 160 0 86.72-69.504 160-160 160-89.376 0-160-72.32-160-160 0-88.224 71.776-160 160-160z m0.064 256A95.936 95.936 0 0 0 608 352c0-52.768-43.104-96-95.936-96A96.384 96.384 0 0 0 416 352c0 52.896 43.008 96 96.064 96z"
@@ -336,7 +347,7 @@ class FileDetail extends Component {
             if (filmDetail && filmDetail.film_id) {
               history.push({
                 pathname: "/film/detail/" + filmDetail.film_id,
-                // state: { film_id: filmDetail.film_id },
+                state: { isNotCanSelectSeatBuy: true },
               });
             }
           }}

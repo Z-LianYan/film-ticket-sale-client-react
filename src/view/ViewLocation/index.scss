@@ -5,6 +5,10 @@
 .view-location-map-container{
     width: 100vw;
     height: 100vh;
+    .adm-nav-bar{
+        background-color: $base-color !important;
+        color: $base-color;
+    }
     .poi-info{
         position: fixed;
         bottom: 0;

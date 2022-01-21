@@ -199,7 +199,7 @@ class Recharge extends Component {
                 }}
               >
                 <div className="cinema-name">
-                  {orderDetail.cinema_name}发烧呢地方
+                  {orderDetail.cinema_name}
                 </div>
                 <RightOutline style={{ margin: "0 0.1rem" }} fontSize={20} /> |
               </div>
@@ -208,7 +208,6 @@ class Recharge extends Component {
                 style={{ margin: "0 0.2rem" }}
                 fontSize={20}
                 onClick={() => {
-                  // console.log("2345t");
                   history.push({
                     pathname: "/viewlocation",
                     state: {

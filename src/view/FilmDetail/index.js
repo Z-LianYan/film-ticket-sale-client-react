@@ -78,7 +78,7 @@ class FileDetail extends Component {
 
   render() {
     let { isShowNavBar, detail, isSkeleton } = this.state;
-    let { history } = this.props;
+    let { history,location } = this.props;
     return (
       <div className="film-detail-container">
         {isSkeleton ? <div className="skeleton-box"></div> : null}
@@ -195,7 +195,7 @@ class FileDetail extends Component {
 
         {this.renderStill()}
 
-        {detail.hasSchedule ? (
+        {(location.state && location.state.isNotCanSelectSeatBuy)? null:detail.hasSchedule ? (
           <Button
             style={{
               "--border-radius": 0,

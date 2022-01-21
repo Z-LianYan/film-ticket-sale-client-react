@@ -120,9 +120,10 @@ class BuyTicket extends Component {
         pay_type: "user_balance",
       });
       if (pay_result) this.getUserInfo();
-      history.replace("/order/detail/" + pay_result.order_id);
+      setTimeout(() => {
+        history.replace("/order/detail/" + pay_result.order_id);
+      }, 800);
     } catch (err) {
-      console.log(err);
       if (err.error == "noBalance") {
         await Dialog.confirm({
           title: err.message,
@@ -144,7 +145,6 @@ class BuyTicket extends Component {
   render() {
     let { history, location } = this.props;
     let { orderDetail, isSkeleton } = this.state;
-    console.log("orderDetail----", orderDetail);
     let arr_label = [
       <span className="hall-name" key={"abc"}>
         {orderDetail.hall_name}

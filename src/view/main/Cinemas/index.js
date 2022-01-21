@@ -113,7 +113,7 @@ class Cinema extends Component {
   }
   async onRefreshList() {
     let { fetchOptions, hotList } = this.state;
-    let { match, locationInfo } = this.props;
+    let { match, locationInfo,userInfo } = this.props;
     fetchOptions.page = 1;
     this.setState(
       {
@@ -125,6 +125,7 @@ class Cinema extends Component {
           city_id: locationInfo.city_id,
           lat: locationInfo.lat,
           lng: locationInfo.lng,
+          user_id: userInfo && userInfo.user_id
         });
         this.setState(
           {
@@ -219,7 +220,7 @@ class Cinema extends Component {
     }
   }
   render() {
-    let { location, history, locationInfo, match } = this.props;
+    let { location, history, locationInfo, match, userInfo } = this.props;
     let { params } = match;
     let {
       list,
@@ -342,47 +343,41 @@ class Cinema extends Component {
                 })}
               </Grid>
             </Dropdown.Item>
-            <Dropdown.Item
-              key="recently"
-              title={checkListDefaultLabel}
-              closeOnContentClick={true}
-              closeOnMaskClick={true}
-            >
-              {/* <CinemaListItem
-                title="广州中影火山湖电影城东山口店"
-                value="40"
-                label="广州市越秀区农林下路4-6号锦轩现代城四楼飞机失联飞机老师"
-                distance="距离未知"
-              /> */}
-              <CheckList
-                defaultValue={checkListDefaultValue}
-                onChange={(res) => {
-                  let { fetchOptions } = this.state;
-                  this.checkListDefaultValue = res;
-                  checkList.map((item) => {
-                    if (item.value == res[0]) {
-                      fetchOptions.type = res[0];
-                      this.setState({
-                        fetchOptions,
-                        checkListDefaultLabel: item.label,
-                      });
-                      this.onRefresh();
-                      return;
-                    }
-                  });
-                }}
+            {
+              userInfo?<Dropdown.Item
+                key="recently"
+                title={checkListDefaultLabel}
+                closeOnContentClick={true}
+                closeOnMaskClick={true}
               >
-                {checkList.map((item, index) => {
-                  return (
-                    <CheckList.Item key={index} value={item.value}>
-                      {item.label}
-                    </CheckList.Item>
-                  );
-                })}
-                {/* <CheckList.Item value="zjqg">最近去过</CheckList.Item>
-                <CheckList.Item value="lwzj">离我最近</CheckList.Item> */}
-              </CheckList>
-            </Dropdown.Item>
+                <CheckList
+                  defaultValue={checkListDefaultValue}
+                  onChange={(res) => {
+                    let { fetchOptions } = this.state;
+                    this.checkListDefaultValue = res;
+                    checkList.map((item) => {
+                      if (item.value == res[0]) {
+                        fetchOptions.type = res[0];
+                        this.setState({
+                          fetchOptions,
+                          checkListDefaultLabel: item.label,
+                        });
+                        this.onRefresh();
+                        return;
+                      }
+                    });
+                  }}
+                >
+                  {checkList.map((item, index) => {
+                    return (
+                      <CheckList.Item key={index} value={item.value}>
+                        {item.label}
+                      </CheckList.Item>
+                    );
+                  })}
+                </CheckList>
+              </Dropdown.Item>:null
+            }
           </Dropdown>
         </div>
         <div
