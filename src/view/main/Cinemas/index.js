@@ -113,7 +113,7 @@ class Cinema extends Component {
   }
   async onRefreshList() {
     let { fetchOptions, hotList } = this.state;
-    let { match, locationInfo,userInfo } = this.props;
+    let { match, locationInfo, userInfo } = this.props;
     fetchOptions.page = 1;
     this.setState(
       {
@@ -125,7 +125,7 @@ class Cinema extends Component {
           city_id: locationInfo.city_id,
           lat: locationInfo.lat,
           lng: locationInfo.lng,
-          user_id: userInfo && userInfo.user_id
+          user_id: userInfo && userInfo.user_id,
         });
         this.setState(
           {
@@ -343,8 +343,8 @@ class Cinema extends Component {
                 })}
               </Grid>
             </Dropdown.Item>
-            {
-              userInfo?<Dropdown.Item
+            {userInfo ? (
+              <Dropdown.Item
                 key="recently"
                 title={checkListDefaultLabel}
                 closeOnContentClick={true}
@@ -376,8 +376,8 @@ class Cinema extends Component {
                     );
                   })}
                 </CheckList>
-              </Dropdown.Item>:null
-            }
+              </Dropdown.Item>
+            ) : null}
           </Dropdown>
         </div>
         <div

@@ -24,3 +24,4 @@ export const LOGIN_OUT = "/loginOut"; //退出登录
 export const GET_BUY_TICHET_DETAIL = "/getOrderDetail"; //订单详情
 export const USER_RECHARGE = "/userRecharge"; //会员充值
 export const PAY_ORDER = "/payOrder"; //支付订单
+export const GET_ORDER_LIST = "/getOrderList"; //订单列表
