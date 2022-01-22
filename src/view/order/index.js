@@ -1,21 +1,19 @@
 import React, { Component, useRef } from "react";
 import "./index.scss";
 import CinemaListItem from "@/components/CinemaListItem/index";
-import { SearchOutline, DownOutline, LeftOutline } from "antd-mobile-icons";
+import { LeftOutline } from "antd-mobile-icons";
 import {
   InfiniteScroll,
   PullToRefresh,
   NavBar,
-  Dropdown,
-  Grid,
   Tabs,
-  CheckList,
+  Input,
+  Button,
+  List,
+  Image
 } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
-import { get_cinema_list, get_film_in_schedule_dates } from "@/api/cinema";
-import { get_buy_ticket_detail, pay_order, get_order_list } from "@/api/order";
-import { get_film_detail } from "@/api/film";
-// import { get_city_district_list } from "@/api/citys";
+import { get_order_list } from "@/api/order";
 import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
 import Cookies from "js-cookie";
 import dayjs from "dayjs";
@@ -25,26 +23,15 @@ class Cinema extends Component {
     this.state = {
       fetchOptions: {
         page: 0,
-        limit: 15,
+        limit: 10,
         status: "",
+        keywords:''
       },
       list: [],
       isHasMore: false,
-      // city_district_list: [],
-      dateList: [
-        { text: "全部", value: "" },
-        { text: "待支付", value: 0 },
-        { text: "已出票", value: 1 },
-        { text: "已完成", value: 2 },
-      ],
+      statusData: [],
       dateActiveKey: 0,
       isSkeleton: true,
-      // checkListDefaultValue: [""],
-      // checkListDefaultLabel: "全部",
-      // checkList: [
-      //   { label: "全部", value: "" },
-      //   { label: "最近去过", value: "zjqg" },
-      // ],
       film_name: "",
     };
   }
@@ -53,41 +40,9 @@ class Cinema extends Component {
     this.getData();
   }
   getData() {
-    let { location, locationInfo, match } = this.props;
-    let { params } = match;
-
     this.onRefresh();
   }
-  // async getFilmInScheduleDates() {
-  //   let { location, locationInfo, match, history } = this.props;
-  //   let { params } = match;
-  //   let { fetchOptions } = this.state;
-  //   let _cookies = Cookies.get("locationInfo");
-  //   let _cookiesInfo = null;
-  //   if (_cookies) {
-  //     _cookiesInfo = JSON.parse(_cookies);
-  //   }
-  //   let result = await get_film_in_schedule_dates({
-  //     city_id:
-  //       _cookiesInfo && _cookiesInfo.city_id
-  //         ? _cookiesInfo.city_id
-  //         : locationInfo.city_id,
-  //     film_id: params && params.film_id,
-  //   });
-  //   // if (!result) return;
-  //   if (!result || !result.rows.length) return history.goBack(); //无排片日期时返回
-  //   fetchOptions.date = result.rows[0];
-  //   fetchOptions.film_id = params && params.film_id;
-  //   let film_detail_result = await get_film_detail({
-  //     film_id: params && params.film_id,
-  //   });
-  //   this.setState({
-  //     fetchOptions,
-  //     film_name: film_detail_result.film_name,
-  //     dateList: result.rows,
-  //   });
-  //   this.onRefresh();
-  // }
+  
   onRefresh() {
     this.setState({
       isHasMore: false, //防止执行 this.props.locationInfo.locationReady方法时 死循环
@@ -96,67 +51,51 @@ class Cinema extends Component {
   }
   async onRefreshList() {
     let { fetchOptions } = this.state;
+    let { history } = this.props;
     fetchOptions.page = 1;
     this.setState(
       {
         fetchOptions,
       },
       async () => {
-        let result = await get_order_list({
-          ...fetchOptions,
-        });
-        this.setState(
-          {
-            list: result.rows,
-            isSkeleton: false,
-          },
-          () => {
-            if (this.state.list.length >= result.count) {
-              this.setState({
-                isHasMore: false,
-              });
-            } else {
-              this.setState({
-                isHasMore: true,
-              });
-            }
+        try{
+          let result = await get_order_list({
+            ...fetchOptions,
+          });
+          let status_arr = [{text:'全部',value:''}];
+          for(let key in result.order_status){
+            status_arr.push({ text: result.order_status[key], value: key },)
           }
-        );
+          this.setState(
+            {
+              list: result.rows,
+              isSkeleton: false,
+              statusData:status_arr
+            },
+            () => {
+              if (this.state.list.length >= result.count) {
+                this.setState({
+                  isHasMore: false,
+                });
+              } else {
+                this.setState({
+                  isHasMore: true,
+                });
+              }
+            }
+          );
+        }catch(err){
+          if (err.error == 401) {
+            this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
+            history.replace({
+              pathname: "/",
+            });
+          }
+        }
+        
       }
     );
   }
-  // async getDistrictList() {
-  //   let { city_id } = this.props.locationInfo;
-  //   let _cookies = Cookies.get("locationInfo");
-  //   let _cookiesInfo = null;
-  //   if (_cookies) {
-  //     _cookiesInfo = JSON.parse(_cookies);
-  //   }
-  //   let result = await get_city_district_list({
-  //     city_id:
-  //       _cookiesInfo && _cookiesInfo.city_id ? _cookiesInfo.city_id : city_id,
-  //   });
-  //   result.rows.unshift({
-  //     first_letter: null,
-  //     id: "",
-  //     is_hot: null,
-  //     module_id: "",
-  //     name: "全城",
-  //     pinyin: "quanbu",
-  //   });
-  //   this.setState({
-  //     city_district_list: result.rows,
-  //   });
-  // }
-  // onDistrictName() {
-  //   let { fetchOptions, city_district_list } = this.state;
-  //   if (!fetchOptions.district_id) return "全城";
-  //   return city_district_list.map((item) => {
-  //     if (item.id == fetchOptions.district_id) {
-  //       return item.name;
-  //     }
-  //   });
-  // }
 
   render() {
     let { location, history, locationInfo, match, userInfo } = this.props;
@@ -165,10 +104,9 @@ class Cinema extends Component {
       list,
       fetchOptions,
       isHasMore,
-      dateList,
+      statusData,
       dateActiveKey,
       isSkeleton,
-      film_name,
     } = this.state;
     return (
       <div className="order-list-container">
@@ -185,14 +123,44 @@ class Cinema extends Component {
                 }}
               />
             }
+            right={
+              <Button color='default' shape='rounded' type="button" size="small" onClick={()=>{
+                this.onRefresh()
+              }}>搜索</Button>
+            }
           >
-            订单列表
+            <Input
+              placeholder='搜索电影名称，影院名称'
+              clearable={true}
+              value={fetchOptions.keywords}
+              style={{background:'#fff',borderRadius:'0.1rem',padding:'0.05rem'}}
+              onEnterPress={()=>{
+                this.onRefresh()
+              }}
+              onClear={()=>{
+                fetchOptions.keywords = '';
+                this.setState({
+                  fetchOptions,
+                },()=>{
+                  this.onRefresh()
+                })
+              }}
+              onChange={val => {
+                fetchOptions.keywords = val;
+                this.setState({
+                  fetchOptions,
+                },()=>{
+                  // this.onRefresh()
+                })
+              }}
+            />
           </NavBar>
 
           <Tabs
+            style={{background:"#fff"}}
             activeKey={dateActiveKey.toString()}
             onChange={(val) => {
-              fetchOptions.status = dateList[val].value;
+              fetchOptions.status = statusData[val].value;
               this.setState({
                 fetchOptions,
                 dateActiveKey: val,
@@ -202,23 +170,19 @@ class Cinema extends Component {
             stretch={false}
             activeLineMode="auto"
           >
-            {dateList.map((item, index) => {
+            {statusData.map((item,index) => {
               return <Tabs.Tab title={item.text} key={index} />;
             })}
           </Tabs>
         </div>
-        {/* <div
-          style={{
-            height: params && params.film_id ? "1.26rem" : "0.87rem",
-          }}
-        ></div> */}
+        <div style={{height: "0.9rem"}}></div>
         <PullToRefresh
           disabled={false}
           onRefresh={async () => {
             await this.onRefreshList();
           }}
         >
-          {list.map((item, index) => {
+          {/* {list.map((item, index) => {
             return (
               <CinemaListItem
                 key={index}
@@ -238,6 +202,9 @@ class Cinema extends Component {
                 }}
               />
             );
+          })} */}
+          {list.map((item, index) => {
+            return <ItemList item={item} history={history}/>;
           })}
           <InfiniteScroll
             threshold="50"
@@ -262,9 +229,7 @@ class Cinema extends Component {
             hasMore={isHasMore}
           >
             <InfiniteScrollContent
-              text={`该区域没有排${
-                params && params.film_id ? "此" : ""
-              }片的影院哦`}
+              text={`没有查到相关内容哦！`}
               noContent={!isHasMore && !this.state.list.length}
               hasMore={isHasMore}
             />
@@ -282,3 +247,33 @@ class Cinema extends Component {
 }
 
 export default GroupCommons(Cinema);
+
+function ItemList({item,history}){
+  console.log('history',item);
+  return <div className="item-list">
+    <List mode='card' header=''>
+      <List.Item extra={item.status_text}>{item.film_name}</List.Item>
+      <div className="item-list-content">
+        <Image 
+        style={{ borderRadius: 8 }}
+        src={item.poster_img} 
+        width={60} 
+        height={60} fit='cover' />
+        <div className="right-content">
+          <div>影院：{item.cinema_name}</div>
+          <div>场次：{item.start_runtime}</div>
+          <div>场次：{item.buy_seat_ids.length} 张</div>
+          <div>总价：¥{item.price}</div>
+        </div>
+      </div>
+      <div className="comment-btn">
+        <Button color="primary" size="small" onClick={()=>{
+          history.push({
+            pathname:'/comment'
+          })
+        }}>写影评</Button>
+      </div>
+      
+    </List>
+  </div>
+}

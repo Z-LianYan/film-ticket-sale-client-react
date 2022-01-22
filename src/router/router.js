@@ -11,6 +11,7 @@ import Recharge from "@/view/recharge/index";
 import OrderDetail from "@/view/orderDetail/index";
 import Order from "@/view/order/index";
 import ViewLocation from "@/view/ViewLocation/index";
+import Comment from "@/view/comment/index";
 
 const routers = [
   { path: "/", component: Film, exact: true },
@@ -32,5 +33,6 @@ const routers = [
   { path: "/order/detail/:order_id", component: OrderDetail },
   { path: "/order", component: Order },
   { path: "/viewlocation", component: ViewLocation },
+  { path: "/comment", component: Comment },
 ];
 export default routers;

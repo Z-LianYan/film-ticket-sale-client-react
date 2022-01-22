@@ -1,9 +1,33 @@
 @import "@/stylesheets/_base.scss";
 @import "@/stylesheets/_mixin.scss";
 .order-list-container{
-  .adm-nav-bar{
-    background-color: $base-color !important;
-    color: #fff;
+  background-color: #f4f4f4;
+  min-height: 100%;
+  .header-wrapper{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    .adm-nav-bar{
+      background-color: $base-color !important;
+      color: #fff;
+    }
+  }
+  
+  .item-list-content{
+    padding: 0.12rem;
+    display: flex;
+
+    .right-content{
+      padding: 0 0.1rem;
+      font-size: 0.14rem;
+    }
+  }
+  .comment-btn{
+    padding: 0.12rem;
+    display: flex;
+    justify-content: flex-end;
   }
 
 }

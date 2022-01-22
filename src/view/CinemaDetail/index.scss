@@ -43,13 +43,14 @@
     padding: 0 0.15rem;
     justify-content: space-between;
     .addr{
-      margin: 0 0.15rem 0 0.05rem;
+      margin: 0 0.15rem 0 0.1rem;
       font-size: 0.14rem;
       color: #191a1b;
       @include ellipsis-one();
     }
     .phone-icon{
       border-left: 0.01rem solid #eee;
+      padding-left: 0.05rem;
     }
   }
   .wrapper-container{
