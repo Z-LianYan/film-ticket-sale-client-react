@@ -1,7 +1,63 @@
 @import "@/stylesheets/_base.scss";
 @import "@/stylesheets/_mixin.scss";
 .comment-container{
-    
+  min-height: 100%;
+  background: #f4f4f4;
+  .header-wrapper{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    .adm-nav-bar{
+      background-color: $base-color !important;
+      color: #fff;
+      .comment-title{
+        color: #24292f;
+        font-size: 0.16rem;
+      }
+      .comment-film{
+        font-size: 0.12rem;
+      }
+    }
+  }
+  .content-container{
+    padding: 0 0.25rem;
+    margin-top: 0.3rem;
+    .jilu{
+      color: #ccc;
+      font-size: 0.14rem;
+      .num{
+        color: $base-color;
+        font-weight: bold;
+      }
+    }
+    .rate-wrapper{
+      padding: 0.2rem 0 0.15rem 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .left-content{
+        .left-txt{
+          font-size: 0.13rem;
+        }
+        .star{
+          margin-right: 0.2rem;
+        }
+      }
+      
+      .right-txt{
+        font-size: 0.13rem;
+        .score{
+          color: $base-color;
+          font-size: 0.13rem;
+          margin-right: 0.1rem;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+  
 
 }
 

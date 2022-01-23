@@ -12,6 +12,7 @@ import OrderDetail from "@/view/orderDetail/index";
 import Order from "@/view/order/index";
 import ViewLocation from "@/view/ViewLocation/index";
 import Comment from "@/view/comment/index";
+import CommentList from "@/view/commentList/index";
 
 const routers = [
   { path: "/", component: Film, exact: true },
@@ -34,5 +35,6 @@ const routers = [
   { path: "/order", component: Order },
   { path: "/viewlocation", component: ViewLocation },
   { path: "/comment", component: Comment },
+  { path: "/commentList", component: CommentList },
 ];
 export default routers;

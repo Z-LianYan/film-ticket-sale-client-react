@@ -1,0 +1,96 @@
+@import "@/stylesheets/_base.scss";
+@import "@/stylesheets/_mixin.scss";
+.comment-item{
+  display: flex;
+  padding: 0.15rem 0.15rem 0.1rem 0.15rem;
+  .left-wrapper{
+    // width: 0.6rem;
+    display: flex;
+    justify-content: center;
+    margin-right: 0.15rem;
+    .avatar{
+      width: 0.4rem;
+      height: 0.4rem;
+      border-radius: 50%;
+      img{
+        width: 0.4rem;
+        height: 0.4rem;
+        border-radius: 50%;
+      }
+    }
+  }
+  .right-wrapper{
+    flex: 1;
+    .head{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .nickname-score{
+        font-size: 0.13rem;
+        .nickname{
+          margin-bottom: 0.03rem;
+          color: #000;
+        }
+        .score-box{
+          color: #999;
+          font-size: 0.13rem;
+          .tag-item{
+            font-size: 0.12rem;
+            margin-right: 0.1rem;
+          }
+        }
+      }
+      .menu{
+        font-size: 0.3rem;
+        font-weight: bold;
+      }
+    }
+    .comment-content{
+      padding: 0.1rem 0;
+      color: #000;
+    }
+    .bottom-box{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.1rem 0 0.15rem 0;
+      font-size: 0.13rem;
+      color: #999;
+      .left-date{
+        
+      }
+      .right-dz-message{
+        display: flex;
+        align-items: center;
+        .dz{
+          padding: 0.03rem 0.06rem;
+          border-radius: 0.3rem;
+          border: 0.01rem solid #eee;
+          display: flex;
+          align-items: center;
+          .dz-icon{
+            margin-right: 0.05rem;
+          }
+        }
+        .message{
+          padding: 0.03rem 0.06rem;
+          border: 0.01rem solid #eee;
+          border-radius:0.3rem;
+          margin-left: 0.12rem;
+          display: flex;
+          align-items: center;
+          .me-icon{
+            margin-right: 0.05rem;
+          }
+        }
+      }
+    }
+    .line{
+      height: 0.01rem;
+      background: #eee;
+    }
+  }
+  
+}
+
+ 

@@ -10,14 +10,14 @@ import {
   Input,
   Button,
   List,
-  Image
+  Image,
 } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import { get_order_list } from "@/api/order";
 import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
 import Cookies from "js-cookie";
 import dayjs from "dayjs";
-class Cinema extends Component {
+class OrderComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,7 +25,7 @@ class Cinema extends Component {
         page: 0,
         limit: 10,
         status: "",
-        keywords:''
+        keywords: "",
       },
       list: [],
       isHasMore: false,
@@ -42,7 +42,7 @@ class Cinema extends Component {
   getData() {
     this.onRefresh();
   }
-  
+
   onRefresh() {
     this.setState({
       isHasMore: false, //防止执行 this.props.locationInfo.locationReady方法时 死循环
@@ -58,19 +58,19 @@ class Cinema extends Component {
         fetchOptions,
       },
       async () => {
-        try{
+        try {
           let result = await get_order_list({
             ...fetchOptions,
           });
-          let status_arr = [{text:'全部',value:''}];
-          for(let key in result.order_status){
-            status_arr.push({ text: result.order_status[key], value: key },)
+          let status_arr = [{ text: "全部", value: "" }];
+          for (let key in result.order_status) {
+            status_arr.push({ text: result.order_status[key], value: key });
           }
           this.setState(
             {
               list: result.rows,
               isSkeleton: false,
-              statusData:status_arr
+              statusData: status_arr,
             },
             () => {
               if (this.state.list.length >= result.count) {
@@ -84,7 +84,7 @@ class Cinema extends Component {
               }
             }
           );
-        }catch(err){
+        } catch (err) {
           if (err.error == 401) {
             this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
             history.replace({
@@ -92,7 +92,6 @@ class Cinema extends Component {
             });
           }
         }
-        
       }
     );
   }
@@ -124,40 +123,58 @@ class Cinema extends Component {
               />
             }
             right={
-              <Button color='default' shape='rounded' type="button" size="small" onClick={()=>{
-                this.onRefresh()
-              }}>搜索</Button>
+              <Button
+                color="default"
+                shape="rounded"
+                type="button"
+                size="small"
+                onClick={() => {
+                  this.onRefresh();
+                }}
+              >
+                搜索
+              </Button>
             }
           >
             <Input
-              placeholder='搜索电影名称，影院名称'
+              placeholder="搜索电影名称，影院名称"
               clearable={true}
               value={fetchOptions.keywords}
-              style={{background:'#fff',borderRadius:'0.1rem',padding:'0.05rem'}}
-              onEnterPress={()=>{
-                this.onRefresh()
+              style={{
+                background: "#fff",
+                borderRadius: "0.1rem",
+                padding: "0.05rem",
               }}
-              onClear={()=>{
-                fetchOptions.keywords = '';
-                this.setState({
-                  fetchOptions,
-                },()=>{
-                  this.onRefresh()
-                })
+              onEnterPress={() => {
+                this.onRefresh();
               }}
-              onChange={val => {
+              onClear={() => {
+                fetchOptions.keywords = "";
+                this.setState(
+                  {
+                    fetchOptions,
+                  },
+                  () => {
+                    this.onRefresh();
+                  }
+                );
+              }}
+              onChange={(val) => {
                 fetchOptions.keywords = val;
-                this.setState({
-                  fetchOptions,
-                },()=>{
-                  // this.onRefresh()
-                })
+                this.setState(
+                  {
+                    fetchOptions,
+                  },
+                  () => {
+                    // this.onRefresh()
+                  }
+                );
               }}
             />
           </NavBar>
 
           <Tabs
-            style={{background:"#fff"}}
+            style={{ background: "#fff" }}
             activeKey={dateActiveKey.toString()}
             onChange={(val) => {
               fetchOptions.status = statusData[val].value;
@@ -170,12 +187,12 @@ class Cinema extends Component {
             stretch={false}
             activeLineMode="auto"
           >
-            {statusData.map((item,index) => {
+            {statusData.map((item, index) => {
               return <Tabs.Tab title={item.text} key={index} />;
             })}
           </Tabs>
         </div>
-        <div style={{height: "0.9rem"}}></div>
+        <div style={{ height: "0.9rem" }}></div>
         <PullToRefresh
           disabled={false}
           onRefresh={async () => {
@@ -204,7 +221,7 @@ class Cinema extends Component {
             );
           })} */}
           {list.map((item, index) => {
-            return <ItemList item={item} history={history}/>;
+            return <ItemList item={item} history={history} key={index} />;
           })}
           <InfiniteScroll
             threshold="50"
@@ -246,34 +263,48 @@ class Cinema extends Component {
   };
 }
 
-export default GroupCommons(Cinema);
+export default GroupCommons(OrderComponent);
 
-function ItemList({item,history}){
-  console.log('history',item);
-  return <div className="item-list">
-    <List mode='card' header=''>
-      <List.Item extra={item.status_text}>{item.film_name}</List.Item>
-      <div className="item-list-content">
-        <Image 
-        style={{ borderRadius: 8 }}
-        src={item.poster_img} 
-        width={60} 
-        height={60} fit='cover' />
-        <div className="right-content">
-          <div>影院：{item.cinema_name}</div>
-          <div>场次：{item.start_runtime}</div>
-          <div>场次：{item.buy_seat_ids.length} 张</div>
-          <div>总价：¥{item.price}</div>
+function ItemList({ item, history }) {
+  console.log("history", item);
+  return (
+    <div className="item-list">
+      <List mode="card" header="">
+        <List.Item extra={item.status_text}>{item.film_name}</List.Item>
+        <div className="item-list-content">
+          <Image
+            style={{ borderRadius: 8 }}
+            src={item.poster_img}
+            width={60}
+            height={60}
+            fit="cover"
+          />
+          <div className="right-content">
+            <div>影院：{item.cinema_name}</div>
+            <div>场次：{item.start_runtime}</div>
+            <div>场次：{item.buy_seat_ids.length} 张</div>
+            <div>总价：¥{item.price}</div>
+          </div>
         </div>
-      </div>
-      <div className="comment-btn">
-        <Button color="primary" size="small" onClick={()=>{
-          history.push({
-            pathname:'/comment'
-          })
-        }}>写影评</Button>
-      </div>
-      
-    </List>
-  </div>
+        <div className="comment-btn">
+          <Button
+            color="primary"
+            size="small"
+            onClick={() => {
+              history.push({
+                pathname: "/comment",
+                state: {
+                  // schedule_id: item.schedule_id,
+                  film_id: item.film_id,
+                  film_name: item.film_name,
+                },
+              });
+            }}
+          >
+            写影评
+          </Button>
+        </div>
+      </List>
+    </div>
+  );
 }

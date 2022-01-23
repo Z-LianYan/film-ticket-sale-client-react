@@ -25,3 +25,8 @@ export const GET_BUY_TICHET_DETAIL = "/getOrderDetail"; //订单详情
 export const USER_RECHARGE = "/userRecharge"; //会员充值
 export const PAY_ORDER = "/payOrder"; //支付订单
 export const GET_ORDER_LIST = "/getOrderList"; //订单列表
+
+export const GET_COMMENT_LIST = "/getCommentList"; //评论列表
+export const ADD_COMMENT = "/addComment"; //添加评论
+export const EDIT_COMMENT = "/editComment"; //编辑评论
+export const DEL_COMMENT = "/delComment"; //删除列表

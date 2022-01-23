@@ -157,6 +157,7 @@
     overflow-x: scroll;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE 10+ */
+    padding-bottom: 0.1rem;
     &::-webkit-scrollbar {
       display: none; /* Chrome Safari */
     }
@@ -216,6 +217,21 @@
         border-right: none;
       }
     }
+  }
+  .edit-mine-comment-btn{
+    color: $base-color;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+  }
+  .show-comment-btn{
+    height: 0.5rem;
+    line-height: 0.5rem;
+    text-align: center;
+    color: $base-color;
+    font-weight: bold;
+    border-top: 0.01rem solid #ccc;
   }
   .select-seat-buy-btn{
     position: fixed;

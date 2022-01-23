@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import "./index.scss";
-import { DownOutline, UpOutline } from "antd-mobile-icons";
+import { DownOutline, UpOutline, RightOutline } from "antd-mobile-icons";
 import { List, Image, Mask, NavBar, ImageViewer, Button } from "antd-mobile";
 import { get_film_detail } from "@/api/film";
+import { get_comment_list } from "@/api/comment";
 import dayjs from "dayjs";
 import { GroupCommons } from "@/modules/group";
+import CommentItem from "@/components/comment-item/index";
+
 class FileDetail extends Component {
   constructor(props) {
     super(props);
@@ -13,7 +16,22 @@ class FileDetail extends Component {
       isShowNavBar: "",
       detail: {},
       isSkeleton: true,
+      commentList: [],
     };
+  }
+  async getCommentList() {
+    let { locationInfo, match, userInfo } = this.props;
+    let { params } = match;
+    let result = await get_comment_list({
+      page: 1,
+      limit: 3,
+      film_id: params && params.film_id,
+      city_id: locationInfo && locationInfo.city_id,
+      user_id: userInfo && userInfo.user_id,
+    });
+    this.setState({
+      commentList: result.rows,
+    });
   }
   componentDidMount() {
     window.addEventListener("scroll", (e) => {
@@ -23,6 +41,7 @@ class FileDetail extends Component {
       });
     });
     this.getFilmDetail();
+    this.getCommentList();
   }
   async getFilmDetail() {
     let { history, locationInfo, match } = this.props;
@@ -77,8 +96,8 @@ class FileDetail extends Component {
   }
 
   render() {
-    let { isShowNavBar, detail, isSkeleton } = this.state;
-    let { history,location } = this.props;
+    let { isShowNavBar, detail, isSkeleton, commentList } = this.state;
+    let { history, location, userInfo } = this.props;
     return (
       <div className="film-detail-container">
         {isSkeleton ? <div className="skeleton-box"></div> : null}
@@ -94,7 +113,6 @@ class FileDetail extends Component {
             color: "#000",
           }}
           onBack={() => {
-            // this.setState({ isVisibleMask: false });
             history.goBack();
           }}
         >
@@ -106,7 +124,7 @@ class FileDetail extends Component {
         <div className="film-detail">
           <div className="film-name-score">
             <h3 className="film-name">
-              {detail.film_name}{" "}
+              {detail.film_name}
               <span className="show-type">{detail.play_type_name}</span>
             </h3>
             <span className="score-val">
@@ -117,8 +135,7 @@ class FileDetail extends Component {
 
           <div className="record-film">{detail.category_names}</div>
           <div className="show-date">
-            {" "}
-            {dayjs(detail.show_time).format("YYYY年MM月DD日")}上映{" "}
+            {dayjs(detail.show_time).format("YYYY年MM月DD日")}上映
           </div>
           <div className="area-and-play-time">
             {detail.area} | {detail.runtime}分钟
@@ -138,10 +155,10 @@ class FileDetail extends Component {
         <List.Item
           style={{
             "--adm-border-color": "transparent",
-            "paddingLeft":"0.12rem"
+            paddingLeft: "0.12rem",
           }}
         >
-          演员
+          演职人员
         </List.Item>
         <div className="actors-wrapper">
           {detail && detail.actors
@@ -160,10 +177,16 @@ class FileDetail extends Component {
         <List.Item
           style={{
             "--adm-border-color": "transparent",
-            "paddingLeft":"0.12rem",
-            fontSize:'0.16rem'
+            paddingLeft: "0.12rem",
+            fontSize: "0.16rem",
           }}
-          extra={`全部(${detail.stage_photo ? detail.stage_photo.length : 0})`}
+          extra={
+            <div
+              style={{ display: "flex", height: "100%", alignItems: "center" }}
+            >{`全部(${
+              detail.stage_photo ? detail.stage_photo.length : 0
+            })`}</div>
+          }
           onClick={() => {
             this.setState({ isVisibleMask: true });
           }}
@@ -194,8 +217,104 @@ class FileDetail extends Component {
         </div>
 
         {this.renderStill()}
+        <div className="separator"></div>
+        {commentList.length ? (
+          <div>
+            <List style={{ background: "transparent" }}>
+              <List.Item
+                style={{ background: "transparent" }}
+                extra={
+                  userInfo && (
+                    <div
+                      className="edit-mine-comment-btn"
+                      onClick={() => {
+                        history.push({
+                          pathname: "/comment",
+                          state: {
+                            film_id: detail.id,
+                            film_name: detail.film_name,
+                          },
+                        });
+                      }}
+                    >
+                      编辑我的讨论
+                    </div>
+                  )
+                }
+              >
+                讨论
+              </List.Item>
+            </List>
+            {commentList.map((item, index) => {
+              return (
+                <CommentItem
+                  key={index}
+                  nickname={item.nickname}
+                  scoreText={`给这部作品打了${item.score}分`}
+                  dzNum={143}
+                  messageNum={785}
+                  date={item.date}
+                  separator={commentList.length != index + 1}
+                  avatar={item.avatar}
+                  score={item.score}
+                  actionsOption={[{ text: "举报", key: "jubao" }]}
+                  commentContent={item.comment_content}
+                  isShowMineCommentTag={
+                    userInfo && userInfo.user_id == item.user_id
+                  }
+                  isShowMenuBtn={true}
+                  onClickJubao={() => {
+                    console.log("jubao");
+                  }}
+                  onAction={(val) => {
+                    console.log("val", val);
+                  }}
+                />
+              );
+            })}
+            <div
+              className="show-comment-btn"
+              onClick={() => {
+                history.push({
+                  pathname: "/commentList",
+                  state: {
+                    film_id: detail.id,
+                    film_name: detail.film_name,
+                  },
+                });
+              }}
+            >
+              查看全部128条讨论
+              <RightOutline />
+            </div>
+            <div className="separator"></div>
+          </div>
+        ) : null}
 
-        {(location.state && location.state.isNotCanSelectSeatBuy)? null:detail.hasSchedule ? (
+        {/* <CommentItem
+          nickname={"nickname"}
+          scoreText={`给这部作品打了${10}分`}
+          dzNum={143}
+          messageNum={785}
+          date={"2021-01-23"}
+          avatar={
+            "http://zly.imgresource.com.cn/siteLogo/20200911182118789.jpeg"
+          }
+          score={10}
+          actionsOption={[{ text: "举报", key: "jubao" }]}
+          commentContent="只是评论内容哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈😂"
+          isShowMineCommentTag={true}
+          isShowMenuBtn
+          onClickJubao={() => {
+            console.log("jubao");
+          }}
+          onAction={(val) => {
+            console.log("val", val);
+          }}
+        /> */}
+
+        {location.state &&
+        location.state.isNotCanSelectSeatBuy ? null : detail.hasSchedule ? (
           <Button
             style={{
               "--border-radius": 0,

@@ -75,6 +75,9 @@
         border-top-right-radius: 0.3rem;
         margin-top: -0.3rem;
         padding-top: 0.3rem;
+        .adm-list-item-content-main{
+            min-height: 0.45rem;
+        }
     }
     .bottom-bar{
         position: fixed;
