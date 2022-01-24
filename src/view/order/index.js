@@ -246,7 +246,7 @@ class OrderComponent extends Component {
             hasMore={isHasMore}
           >
             <InfiniteScrollContent
-              text={`没有查到相关内容哦！`}
+              text={'暂无内容哦'}
               noContent={!isHasMore && !this.state.list.length}
               hasMore={isHasMore}
             />

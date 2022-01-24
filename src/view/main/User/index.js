@@ -71,12 +71,20 @@ class User extends Component {
           )}
 
           <div className="content">
-            {userInfo && userInfo.phone_number && (
+            {userInfo && userInfo.nickname && (
               <span>
-                手机号：<span>{userInfo && userInfo.phone_number}</span>
+                用户：<span>{userInfo && userInfo.nickname}</span>
               </span>
             )}
-            {userInfo && userInfo.balance && (
+            {/* {userInfo && userInfo.phone_number && (
+              <div>
+                <span>
+                  手机号：<span>{userInfo && userInfo.phone_number}</span>
+                </span>
+              </div>
+              
+            )} */}
+            {(userInfo && userInfo.balance || userInfo && userInfo.balance===0) && (
               <div>
                 余额：
                 <span className="balance">{userInfo && userInfo.balance}</span>

@@ -17,6 +17,7 @@ class FileDetail extends Component {
       detail: {},
       isSkeleton: true,
       commentList: [],
+      commentTotalCount:0
     };
   }
   async getCommentList() {
@@ -31,6 +32,7 @@ class FileDetail extends Component {
     });
     this.setState({
       commentList: result.rows,
+      commentTotalCount: result.count
     });
   }
   componentDidMount() {
@@ -96,7 +98,7 @@ class FileDetail extends Component {
   }
 
   render() {
-    let { isShowNavBar, detail, isSkeleton, commentList } = this.state;
+    let { isShowNavBar, detail, isSkeleton, commentList,commentTotalCount } = this.state;
     let { history, location, userInfo } = this.props;
     return (
       <div className="film-detail-container">
@@ -182,7 +184,7 @@ class FileDetail extends Component {
           }}
           extra={
             <div
-              style={{ display: "flex", height: "100%", alignItems: "center" }}
+              style={{ marginTop:'0.13rem' }}
             >{`全部(${
               detail.stage_photo ? detail.stage_photo.length : 0
             })`}</div>
@@ -224,15 +226,21 @@ class FileDetail extends Component {
               <List.Item
                 style={{ background: "transparent" }}
                 extra={
-                  userInfo && (
+                  userInfo && commentList.some(item=>item.user_id==userInfo.user_id) && (
                     <div
                       className="edit-mine-comment-btn"
                       onClick={() => {
+                        let commentData = {};
+                        for(let item of commentList){
+                          if(item.user_id == userInfo.user_id){
+                            commentData = item;
+                          }
+                        }
                         history.push({
                           pathname: "/comment",
                           state: {
                             film_id: detail.id,
-                            film_name: detail.film_name,
+                            comment_id:commentData.comment_id
                           },
                         });
                       }}
@@ -284,7 +292,7 @@ class FileDetail extends Component {
                 });
               }}
             >
-              查看全部128条讨论
+              查看全部 {commentTotalCount} 条讨论
               <RightOutline />
             </div>
             <div className="separator"></div>

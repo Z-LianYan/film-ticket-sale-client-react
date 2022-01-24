@@ -4,15 +4,16 @@
   min-height: 100%;
   // background: #f4f4f4;
   .header-wrapper{
-    position: absolute;
+    position: fixed;
     left: 0;
     right: 0;
     top: 0;
+    z-index: 1000;
     .adm-nav-bar{
       background-color: $base-color !important;
       color: #fff;
       .comment-title{
-        color: #24292f;
+        color: #fff;
         font-size: 0.16rem;
       }
       .comment-film{
@@ -25,14 +26,7 @@
     padding: 0.12rem;
     display: flex;
     justify-content: space-between;
-    // .what-comment-wrapper{
-    //   text-align: center;
-    //   color: $base-color;
-    //   h3{
-    //     color: $base-color;
-    //     font-weight: bold;
-    //   }
-    // }
+    
   }
   
 

@@ -57,7 +57,7 @@ class CommentList extends Component {
   }
   async onRefreshList() {
     let { fetchOptions } = this.state;
-    let { history, match, locationInfo, userInfo } = this.props;
+    let { history, match, locationInfo, userInfo,location } = this.props;
     let { params } = match;
     fetchOptions.page = 1;
     this.setState(
@@ -68,9 +68,9 @@ class CommentList extends Component {
         try {
           let result = await get_comment_list({
             ...fetchOptions,
-            film_id: params && params.film_id,
-            city_id: locationInfo && locationInfo.city_id,
-            user_id: userInfo && userInfo.user_id,
+            film_id: location.state && location.state.film_id,
+            // city_id: locationInfo && locationInfo.city_id,
+            user_id: userInfo && userInfo.user_id
           });
           let status_arr = [{ text: "全部", value: "" }];
           for (let key in result.order_status) {
@@ -123,24 +123,31 @@ class CommentList extends Component {
               />
             }
             right={
-              <Button
+              userInfo && list.some(item=>item.user_id==userInfo.user_id) &&  <Button
                 color="success"
                 shape="rounded"
                 type="button"
                 size="small"
                 onClick={() => {
-                  // this.addComment();
+                  let commentData = {};
+                  for(let item of list){
+                    if(item.user_id == userInfo.user_id){
+                      commentData = item;
+                    }
+                  }
+                  console.log('23456789',params.film_id,commentData)
                   history.push({
                     pathname: "/comment",
                     state: {
-                      film_id: params && params.film_id,
-                      film_name: location.state && location.state.film_name,
+                      film_id: location.state && location.state.film_id,
+                      comment_id:commentData.comment_id
                     },
                   });
                 }}
               >
                 编辑我的讨论
               </Button>
+              
             }
           >
             <div className="comment-title">

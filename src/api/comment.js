@@ -93,3 +93,28 @@ export function del_comment(params) {
     });
   });
 }
+
+export function get_comment_detail(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.get(Api.GET_COMMENT_DETAIL, params, "删除中...").then((res) => {
+      switch (res.error) {
+        case 0:
+          // Toast.show({
+          //   icon: "success",
+          //   duration: 2000,
+          //   content: res.message,
+          // });
+          resolve(res.data);
+          break;
+        default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
+          reject(res.data);
+          break;
+      }
+    });
+  });
+}

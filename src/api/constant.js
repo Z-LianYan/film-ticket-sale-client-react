@@ -30,3 +30,6 @@ export const GET_COMMENT_LIST = "/getCommentList"; //评论列表
 export const ADD_COMMENT = "/addComment"; //添加评论
 export const EDIT_COMMENT = "/editComment"; //编辑评论
 export const DEL_COMMENT = "/delComment"; //删除列表
+export const GET_COMMENT_DETAIL = "/getCommentDetail"; //删除列表
+
+
