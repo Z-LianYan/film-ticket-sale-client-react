@@ -35,6 +35,8 @@ class CommentItem extends Component {
       nickname,
       actionsOption,
       onAction,
+      onThumbUp,
+      onReplyMessage,
     } = this.props;
     return (
       <div className="comment-item">
@@ -103,11 +105,21 @@ class CommentItem extends Component {
           <div className="bottom-box">
             <div className="left-date">{date}</div>
             <div className="right-dz-message">
-              <span className="dz">
+              <span
+                className="dz"
+                onClick={() => {
+                  onThumbUp && onThumbUp();
+                }}
+              >
                 <i className="dz-icon iconfont icon-dianzan"></i>
                 {dzNum}
               </span>
-              <span className="message">
+              <span
+                className="message"
+                onClick={() => {
+                  onReplyMessage && onReplyMessage();
+                }}
+              >
                 <i className="me-icon iconfont icon-duihuaxinxi"></i>
                 {messageNum}
               </span>

@@ -32,4 +32,4 @@ export const EDIT_COMMENT = "/editComment"; //编辑评论
 export const DEL_COMMENT = "/delComment"; //删除列表
 export const GET_COMMENT_DETAIL = "/getCommentDetail"; //删除列表
 
-
+export const THUMB_UP = "/thumbUp"; //点赞 取消点赞

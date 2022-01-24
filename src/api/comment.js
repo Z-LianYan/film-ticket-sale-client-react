@@ -99,11 +99,26 @@ export function get_comment_detail(params) {
     HttpUtils.get(Api.GET_COMMENT_DETAIL, params, "删除中...").then((res) => {
       switch (res.error) {
         case 0:
-          // Toast.show({
-          //   icon: "success",
-          //   duration: 2000,
-          //   content: res.message,
-          // });
+          resolve(res.data);
+          break;
+        default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
+          reject(res.data);
+          break;
+      }
+    });
+  });
+}
+
+export function thumb_up(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.post(Api.THUMB_UP, params, "...").then((res) => {
+      switch (res.error) {
+        case 0:
           resolve(res.data);
           break;
         default:

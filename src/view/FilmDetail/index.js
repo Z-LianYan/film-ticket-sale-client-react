@@ -3,7 +3,7 @@ import "./index.scss";
 import { DownOutline, UpOutline, RightOutline } from "antd-mobile-icons";
 import { List, Image, Mask, NavBar, ImageViewer, Button } from "antd-mobile";
 import { get_film_detail } from "@/api/film";
-import { get_comment_list } from "@/api/comment";
+import { get_comment_list, thumb_up } from "@/api/comment";
 import dayjs from "dayjs";
 import { GroupCommons } from "@/modules/group";
 import CommentItem from "@/components/comment-item/index";
@@ -17,7 +17,7 @@ class FileDetail extends Component {
       detail: {},
       isSkeleton: true,
       commentList: [],
-      commentTotalCount:0
+      commentTotalCount: 0,
     };
   }
   async getCommentList() {
@@ -32,7 +32,7 @@ class FileDetail extends Component {
     });
     this.setState({
       commentList: result.rows,
-      commentTotalCount: result.count
+      commentTotalCount: result.count,
     });
   }
   componentDidMount() {
@@ -98,7 +98,8 @@ class FileDetail extends Component {
   }
 
   render() {
-    let { isShowNavBar, detail, isSkeleton, commentList,commentTotalCount } = this.state;
+    let { isShowNavBar, detail, isSkeleton, commentList, commentTotalCount } =
+      this.state;
     let { history, location, userInfo } = this.props;
     return (
       <div className="film-detail-container">
@@ -183,9 +184,7 @@ class FileDetail extends Component {
             fontSize: "0.16rem",
           }}
           extra={
-            <div
-              style={{ marginTop:'0.13rem' }}
-            >{`全部(${
+            <div style={{ marginTop: "0.13rem" }}>{`全部(${
               detail.stage_photo ? detail.stage_photo.length : 0
             })`}</div>
           }
@@ -226,13 +225,16 @@ class FileDetail extends Component {
               <List.Item
                 style={{ background: "transparent" }}
                 extra={
-                  userInfo && commentList.some(item=>item.user_id==userInfo.user_id) && (
+                  userInfo &&
+                  commentList.some(
+                    (item) => item.user_id == userInfo.user_id
+                  ) && (
                     <div
                       className="edit-mine-comment-btn"
                       onClick={() => {
                         let commentData = {};
-                        for(let item of commentList){
-                          if(item.user_id == userInfo.user_id){
+                        for (let item of commentList) {
+                          if (item.user_id == userInfo.user_id) {
                             commentData = item;
                           }
                         }
@@ -240,7 +242,7 @@ class FileDetail extends Component {
                           pathname: "/comment",
                           state: {
                             film_id: detail.id,
-                            comment_id:commentData.comment_id
+                            comment_id: commentData.comment_id,
                           },
                         });
                       }}
@@ -276,6 +278,18 @@ class FileDetail extends Component {
                   }}
                   onAction={(val) => {
                     console.log("val", val);
+                  }}
+                  onThumbUp={async () => {
+                    let result = await thumb_up({
+                      thumb_up_id: item.comment_id,
+                    });
+                    console.log(result);
+                  }}
+                  onReplyMessage={() => {
+                    console.log("12345");
+                    // await thumb_up({
+                    //   thumb_up_id:item.comment_id
+                    // })
                   }}
                 />
               );
