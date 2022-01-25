@@ -261,8 +261,6 @@ class FileDetail extends Component {
                   key={index}
                   nickname={item.nickname}
                   scoreText={`给这部作品打了${item.score}分`}
-                  dzNum={143}
-                  messageNum={785}
                   date={item.date}
                   separator={commentList.length != index + 1}
                   avatar={item.avatar}
@@ -279,11 +277,22 @@ class FileDetail extends Component {
                   onAction={(val) => {
                     console.log("val", val);
                   }}
+                  messageNum={785}
+                  dzNum={item.thumb_up_count}
                   onThumbUp={async () => {
                     let result = await thumb_up({
-                      thumb_up_id: item.comment_id,
+                      comment_id: item.comment_id,
                     });
-                    console.log(result);
+                    // console.log(result);
+                    if (result.type == "add") {
+                      item.thumb_up_count += 1;
+                    }
+                    if (result.type == "reduce") {
+                      item.thumb_up_count -= 1;
+                    }
+                    this.setState({
+                      commentList,
+                    });
                   }}
                   history={history}
                   onReplyMessage={() => {}}

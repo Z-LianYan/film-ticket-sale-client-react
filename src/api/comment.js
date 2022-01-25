@@ -116,10 +116,10 @@ export function get_comment_detail(params) {
 
 export function thumb_up(params) {
   return new Promise((resolve, reject) => {
-    HttpUtils.post(Api.THUMB_UP, params, "...").then((res) => {
+    HttpUtils.post(Api.THUMB_UP, params, "").then((res) => {
       switch (res.error) {
         case 0:
-          resolve(res.data);
+          resolve(res);
           break;
         default:
           Toast.show({

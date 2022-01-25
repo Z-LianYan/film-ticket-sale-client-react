@@ -1,7 +1,15 @@
 import React, { Component, useRef } from "react";
 import "./index.scss";
 import CinemaListItem from "@/components/CinemaListItem/index";
-import { LeftOutline, InformationCircleOutline } from "antd-mobile-icons";
+import {
+  LeftOutline,
+  InformationCircleOutline,
+  MoreOutline,
+  MinusOutline,
+  DownOutline,
+  UpOutline,
+  PlayOutline,
+} from "antd-mobile-icons";
 import {
   InfiniteScroll,
   PullToRefresh,
@@ -12,6 +20,7 @@ import {
   List,
   Image,
   Dialog,
+  DotLoading,
 } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import { get_order_list } from "@/api/order";
@@ -19,7 +28,7 @@ import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
 import Cookies from "js-cookie";
 import dayjs from "dayjs";
 import CommentItem from "@/components/Comment-item/index";
-import { get_comment_list,thumb_up } from "@/api/comment";
+import { get_comment_list, thumb_up } from "@/api/comment";
 import CustomSkeleton from "@/components/CustomSkeleton/index";
 
 class CommentList extends Component {
@@ -39,6 +48,8 @@ class CommentList extends Component {
       isHasMore: false,
       isSkeleton: true,
       film_name: "",
+      isReplyCommentLoading: false,
+      isShowUnfold: true,
     };
   }
   async componentDidMount() {
@@ -57,7 +68,7 @@ class CommentList extends Component {
   }
   async onRefreshList() {
     let { fetchOptions } = this.state;
-    let { history, match, locationInfo, userInfo,location } = this.props;
+    let { history, match, locationInfo, userInfo, location } = this.props;
     let { params } = match;
     fetchOptions.page = 1;
     this.setState(
@@ -70,7 +81,7 @@ class CommentList extends Component {
             ...fetchOptions,
             film_id: location.state && location.state.film_id,
             // city_id: locationInfo && locationInfo.city_id,
-            user_id: userInfo && userInfo.user_id
+            user_id: userInfo && userInfo.user_id,
           });
           let status_arr = [{ text: "全部", value: "" }];
           for (let key in result.order_status) {
@@ -108,7 +119,15 @@ class CommentList extends Component {
   render() {
     let { location, history, locationInfo, match, userInfo } = this.props;
     let { params } = match;
-    let { list, fetchOptions, isHasMore, statusData, isSkeleton } = this.state;
+    let {
+      list,
+      fetchOptions,
+      isHasMore,
+      statusData,
+      isSkeleton,
+      isReplyCommentLoading,
+      isShowUnfold,
+    } = this.state;
     return (
       <div className="comment-list-container">
         {isSkeleton ? <CustomSkeleton section={5} row={5} /> : null}
@@ -123,31 +142,33 @@ class CommentList extends Component {
               />
             }
             right={
-              userInfo && list.some(item=>item.user_id==userInfo.user_id) &&  <Button
-                color="success"
-                shape="rounded"
-                type="button"
-                size="small"
-                onClick={() => {
-                  let commentData = {};
-                  for(let item of list){
-                    if(item.user_id == userInfo.user_id){
-                      commentData = item;
+              userInfo &&
+              list.some((item) => item.user_id == userInfo.user_id) && (
+                <Button
+                  color="success"
+                  shape="rounded"
+                  type="button"
+                  size="small"
+                  onClick={() => {
+                    let commentData = {};
+                    for (let item of list) {
+                      if (item.user_id == userInfo.user_id) {
+                        commentData = item;
+                      }
                     }
-                  }
-                  console.log('23456789',params.film_id,commentData)
-                  history.push({
-                    pathname: "/comment",
-                    state: {
-                      film_id: location.state && location.state.film_id,
-                      comment_id:commentData.comment_id
-                    },
-                  });
-                }}
-              >
-                编辑我的讨论
-              </Button>
-              
+                    console.log("23456789", params.film_id, commentData);
+                    history.push({
+                      pathname: "/comment",
+                      state: {
+                        film_id: location.state && location.state.film_id,
+                        comment_id: commentData.comment_id,
+                      },
+                    });
+                  }}
+                >
+                  编辑我的讨论
+                </Button>
+              )
             }
           >
             <div className="comment-title">
@@ -220,8 +241,6 @@ class CommentList extends Component {
                 key={index}
                 nickname={item.nickname}
                 scoreText={`给这部作品打了${item.score}分`}
-                dzNum={143}
-                messageNum={785}
                 date={item.date}
                 separator={list.length != index + 1}
                 avatar={item.avatar}
@@ -238,16 +257,69 @@ class CommentList extends Component {
                 onAction={(val) => {
                   console.log("val", val);
                 }}
-                onThumbUp={async ()=>{
+                // isShowUnfoldPackUp={true}
+                // showUnfold={false}
+                // showPackUp={true}
+                onReplyTextBtn={() => {}}
+                history={history}
+                messageNum={785}
+                dzNum={item.thumb_up_count}
+                onThumbUp={async () => {
                   let result = await thumb_up({
-                    thumb_up_id: item.comment_id,
+                    comment_id: item.comment_id,
+                  });
+                  if (result.type == "add") {
+                    item.thumb_up_count += 1;
+                  }
+                  if (result.type == "reduce") {
+                    item.thumb_up_count -= 1;
+                  }
+                  this.setState({
+                    list,
                   });
                 }}
-                showUnfoldPackUp={true}
-                showUnfold={false}
-                showPackUp={true}
-                onReplyTextBtn={()=>{}}
-                history={history}
+                bottomNode={
+                  <div className="unfold-reply-btn">
+                    {isReplyCommentLoading ? (
+                      <DotLoading color="#00b578" />
+                    ) : (
+                      <div>
+                        <MinusOutline color="#ccc" />
+                        {isShowUnfold ? (
+                          <span
+                            className="btn"
+                            onClick={() => {
+                              this.setState({
+                                isReplyCommentLoading: true,
+                                isShowUnfold: true,
+                              });
+                              setTimeout(() => {
+                                this.setState({
+                                  isReplyCommentLoading: false,
+                                });
+                              }, 1000);
+                            }}
+                          >
+                            展开{123}条回复
+                            <DownOutline className="icon" />
+                          </span>
+                        ) : (
+                          <span
+                            className="btn"
+                            onClick={() => {
+                              this.setState({
+                                isShowUnfold: false,
+                              });
+                            }}
+                          >
+                            收起
+                            <UpOutline className="icon" />
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                }
               >
                 <CommentItem
                   itemPaddingTop={0}
@@ -255,11 +327,10 @@ class CommentList extends Component {
                   itemPaddingBottom={0.1}
                   itemPaddingLeft={0}
                   separator={false}
-                  key={index+'a'}
+                  key={index + "a"}
                   nickname={item.nickname}
-                  replyName={'nickname'}
+                  replyName={"nickname"}
                   dzNum={143}
-                  messageNum={785}
                   date={item.date}
                   avatar={item.avatar}
                   score={item.score}
@@ -277,14 +348,12 @@ class CommentList extends Component {
                   }}
                   onThumbUp={async () => {
                     let result = await thumb_up({
-                      thumb_up_id: item.comment_id,
+                      comment_id: item.comment_id,
                     });
                     console.log(result);
                   }}
                   history={history}
-                  onReplyTextBtn={()=>{
-
-                  }}
+                  onReplyTextBtn={() => {}}
                 />
               </CommentItem>
             );
