@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import "./index.scss";
-import { MoreOutline } from "antd-mobile-icons";
+import { MoreOutline,MinusOutline,DownOutline,UpOutline,PlayOutline } from "antd-mobile-icons";
 import { Button, Tag, Image, Dialog, ActionSheet } from "antd-mobile";
-
+import { GroupCommons } from "@/modules/group";
 class CommentItem extends Component {
   constructor(props) {
     super(props);
@@ -19,27 +19,50 @@ class CommentItem extends Component {
     separator: true,
     isShowMineCommentTag: false,
     commentContent: "",
+    showThumbUpBtn:true,
+    showReplyMessageBtn:false,
+    showUnfoldPackUp:false,
+    showUnfold:true,
+    showPackUp:false,
+    itemPaddingTop:0.15,
+    itemPaddingRight:0.15,
+    itemPaddingBottom:0.1,
+    itemPaddingLeft:0.15,
   };
   render() {
     let { isVisibleAction } = this.state;
     let {
-      isShowMineCommentTag,
-      commentContent,
-      scoreText,
-      avatar,
-      separator,
-      messageNum,
-      dzNum,
-      date,
-      isShowMenuBtn,
-      nickname,
-      actionsOption,
-      onAction,
-      onThumbUp,
-      onReplyMessage,
+      isShowMineCommentTag,//是否显示我的评分tag
+      commentContent,//评论内容
+      scoreText,//评分
+      avatar,//头像
+      separator,//分割线
+      messageNum,//回复评论数
+      dzNum,//点赞数
+      date,//评论日期
+      isShowMenuBtn,//是否显示菜单按钮
+      nickname,//评论人名称
+      replyName,//回复人
+      actionsOption,//菜单设置项
+      onAction,//选中菜单项返回事件
+      onThumbUp,//点赞按钮事件
+      onReplyMessage,//右边的信息按钮
+      userInfo,//用户信息
+      history,//路由历史对象
+      onReplyTextBtn,//左边回复按钮事件
+      children,//插槽
+      itemPaddingTop,
+      itemPaddingRight,
+      itemPaddingBottom,
+      itemPaddingLeft,
+      showUnfoldPackUp,//是否显示展开收起按钮
+      isShowUnfoldPackUp,
+      showUnfold,//显示展开
+      // showPackUp,//显示收起
     } = this.props;
+    // console.log(this.props)
     return (
-      <div className="comment-item">
+      <div className="comment-item" style={{padding:`${itemPaddingTop}rem ${itemPaddingRight}rem ${itemPaddingBottom}rem ${itemPaddingLeft}rem`}}>
         <div className="left-wrapper">
           {avatar ? (
             <Image className="avatar" src={avatar} fit="cover" />
@@ -75,7 +98,12 @@ class CommentItem extends Component {
         <div className="right-wrapper">
           <div className="head">
             <div className="nickname-score">
-              <p className="nickname">{nickname}</p>
+              <div className="nickname">
+                <div 
+                className="nk" style={{maxWidth:replyName?'calc(100vw - 2.7rem)':''}}>{nickname}</div>
+                {replyName&&<div 
+                className="rp"> <PlayOutline color='#000' /> {replyName}</div>}
+              </div>
               <p className="score-box">
                 {isShowMineCommentTag && (
                   <Tag
@@ -94,38 +122,83 @@ class CommentItem extends Component {
               <MoreOutline
                 className="menu"
                 onClick={() => {
-                  this.setState({
-                    isVisibleAction: true,
-                  });
+                  if(userInfo){
+                    this.setState({
+                      isVisibleAction: true,
+                    });
+                  }else{
+                    history && history.push({
+                      pathname: "/login",
+                    });
+                  }
                 }}
               />
             )}
           </div>
           <div className="comment-content">{commentContent}</div>
           <div className="bottom-box">
-            <div className="left-date">{date}</div>
+            <div className="left-date">
+              {date} {
+                onReplyTextBtn && <span className="reply-text-btn" onClick={()=>{
+                  if(userInfo){
+                    onReplyTextBtn && onReplyTextBtn();
+                  }else{
+                    history && history.push({
+                      pathname: "/login",
+                    });
+                  }
+                }}>回复</span>
+              }
+            </div>
             <div className="right-dz-message">
-              <span
+              {
+                onThumbUp && <span
                 className="dz"
                 onClick={() => {
-                  onThumbUp && onThumbUp();
+                  if(userInfo){
+                    onThumbUp && onThumbUp();
+                  }else{
+                    history && history.push({
+                      pathname: "/login",
+                    });
+                  }
                 }}
               >
                 <i className="dz-icon iconfont icon-dianzan"></i>
                 {dzNum}
               </span>
-              <span
-                className="message"
-                onClick={() => {
-                  onReplyMessage && onReplyMessage();
-                }}
-              >
-                <i className="me-icon iconfont icon-duihuaxinxi"></i>
-                {messageNum}
-              </span>
+              }
+              {
+                onReplyMessage && <span
+                  className="message"
+                  onClick={() => {
+                    onReplyMessage && onReplyMessage();
+                  }}
+                >
+                  <i className="me-icon iconfont icon-duihuaxinxi"></i>
+                  {messageNum}
+                </span>
+              }
             </div>
           </div>
-
+          <div className="animation-comment-content">
+            {
+              Array.isArray(children)? children.map(item=>{
+                return item
+              }):children
+            }
+          </div>
+          
+          {
+            showUnfoldPackUp && <div className="unfold-reply-btn">
+              <MinusOutline color="#ccc"/> {showUnfold?<span 
+              className="btn">展开{messageNum}条回复<DownOutline className="icon"/></span>:<span 
+              className="btn">收起<UpOutline className="icon"/></span>
+            } 
+            {/* {showPackUp && <span 
+              className="btn" for="check">收起<UpOutline className="icon"/></span>} */}
+            </div>
+          }
           {separator ? <div className="line"></div> : null}
         </div>
         <ActionSheet
@@ -147,4 +220,4 @@ class CommentItem extends Component {
     );
   }
 }
-export default CommentItem;
+export default GroupCommons(CommentItem);

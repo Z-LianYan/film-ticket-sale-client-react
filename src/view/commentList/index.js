@@ -18,8 +18,8 @@ import { get_order_list } from "@/api/order";
 import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
 import Cookies from "js-cookie";
 import dayjs from "dayjs";
-import CommentItem from "@/components/comment-item/index";
-import { get_comment_list } from "@/api/comment";
+import CommentItem from "@/components/Comment-item/index";
+import { get_comment_list,thumb_up } from "@/api/comment";
 import CustomSkeleton from "@/components/CustomSkeleton/index";
 
 class CommentList extends Component {
@@ -238,7 +238,55 @@ class CommentList extends Component {
                 onAction={(val) => {
                   console.log("val", val);
                 }}
-              />
+                onThumbUp={async ()=>{
+                  let result = await thumb_up({
+                    thumb_up_id: item.comment_id,
+                  });
+                }}
+                showUnfoldPackUp={true}
+                showUnfold={false}
+                showPackUp={true}
+                onReplyTextBtn={()=>{}}
+                history={history}
+              >
+                <CommentItem
+                  itemPaddingTop={0}
+                  itemPaddingRight={0}
+                  itemPaddingBottom={0.1}
+                  itemPaddingLeft={0}
+                  separator={false}
+                  key={index+'a'}
+                  nickname={item.nickname}
+                  replyName={'nickname'}
+                  dzNum={143}
+                  messageNum={785}
+                  date={item.date}
+                  avatar={item.avatar}
+                  score={item.score}
+                  actionsOption={[{ text: "举报", key: "jubao" }]}
+                  commentContent={item.comment_content}
+                  isShowMineCommentTag={
+                    userInfo && userInfo.user_id == item.user_id
+                  }
+                  isShowMenuBtn={true}
+                  onClickJubao={() => {
+                    console.log("jubao");
+                  }}
+                  onAction={(val) => {
+                    console.log("val", val);
+                  }}
+                  onThumbUp={async () => {
+                    let result = await thumb_up({
+                      thumb_up_id: item.comment_id,
+                    });
+                    console.log(result);
+                  }}
+                  history={history}
+                  onReplyTextBtn={()=>{
+
+                  }}
+                />
+              </CommentItem>
             );
           })}
           <InfiniteScroll

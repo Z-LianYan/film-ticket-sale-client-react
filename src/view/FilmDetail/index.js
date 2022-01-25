@@ -6,7 +6,7 @@ import { get_film_detail } from "@/api/film";
 import { get_comment_list, thumb_up } from "@/api/comment";
 import dayjs from "dayjs";
 import { GroupCommons } from "@/modules/group";
-import CommentItem from "@/components/comment-item/index";
+import CommentItem from "@/components/Comment-item/index";
 
 class FileDetail extends Component {
   constructor(props) {
@@ -268,14 +268,14 @@ class FileDetail extends Component {
                   avatar={item.avatar}
                   score={item.score}
                   actionsOption={[{ text: "举报", key: "jubao" }]}
+                  onAction={() => {
+                    console.log("jubao");
+                  }}
                   commentContent={item.comment_content}
                   isShowMineCommentTag={
                     userInfo && userInfo.user_id == item.user_id
                   }
                   isShowMenuBtn={true}
-                  onClickJubao={() => {
-                    console.log("jubao");
-                  }}
                   onAction={(val) => {
                     console.log("val", val);
                   }}
@@ -285,11 +285,9 @@ class FileDetail extends Component {
                     });
                     console.log(result);
                   }}
-                  onReplyMessage={() => {
-                    console.log("12345");
-                    // await thumb_up({
-                    //   thumb_up_id:item.comment_id
-                    // })
+                  history={history}
+                  onReplyMessage={()=>{
+
                   }}
                 />
               );
@@ -313,27 +311,7 @@ class FileDetail extends Component {
           </div>
         ) : null}
 
-        {/* <CommentItem
-          nickname={"nickname"}
-          scoreText={`给这部作品打了${10}分`}
-          dzNum={143}
-          messageNum={785}
-          date={"2021-01-23"}
-          avatar={
-            "http://zly.imgresource.com.cn/siteLogo/20200911182118789.jpeg"
-          }
-          score={10}
-          actionsOption={[{ text: "举报", key: "jubao" }]}
-          commentContent="只是评论内容哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈😂"
-          isShowMineCommentTag={true}
-          isShowMenuBtn
-          onClickJubao={() => {
-            console.log("jubao");
-          }}
-          onAction={(val) => {
-            console.log("val", val);
-          }}
-        /> */}
+        
 
         {location.state &&
         location.state.isNotCanSelectSeatBuy ? null : detail.hasSchedule ? (

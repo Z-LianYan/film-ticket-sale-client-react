@@ -2,19 +2,19 @@
 @import "@/stylesheets/_mixin.scss";
 .comment-item{
   display: flex;
-  padding: 0.15rem 0.15rem 0.1rem 0.15rem;
+  // padding: 0.15rem 0.15rem 0.1rem 0.15rem;
   .left-wrapper{
     // width: 0.6rem;
     display: flex;
     justify-content: center;
-    margin-right: 0.15rem;
+    margin-right: 0.10rem;
     .avatar{
-      width: 0.4rem;
-      height: 0.4rem;
+      width: 0.3rem;
+      height: 0.3rem;
       border-radius: 50%;
       img{
-        width: 0.4rem;
-        height: 0.4rem;
+        width: 0.3rem;
+        height: 0.3rem;
         border-radius: 50%;
       }
     }
@@ -27,9 +27,22 @@
       align-items: center;
       .nickname-score{
         font-size: 0.13rem;
+        @include ellipsis-one();
         .nickname{
           margin-bottom: 0.03rem;
           color: #000;
+          display: flex;
+          align-items: center;
+          .nk{
+            // width: 1rem;
+            @include ellipsis-one();
+            margin-right: 0.03rem;
+          }
+          .rp{
+            max-width: calc(100vw - 2.7rem);
+            // width: calc(100vw - 60vw);
+            @include ellipsis-one();
+          }
         }
         .score-box{
           color: #999;
@@ -53,11 +66,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.1rem 0 0.15rem 0;
+      padding: 0rem 0 0.1rem 0;
       font-size: 0.13rem;
       color: #999;
       .left-date{
-        
+        .reply-text-btn{
+          color: #605d5d;
+        }
       }
       .right-dz-message{
         display: flex;
@@ -85,6 +100,37 @@
         }
       }
     }
+    .unfold-reply-btn{
+      font-size: 0.13rem;
+      color: #605d5d;
+      padding-bottom: 0.1rem;
+      .btn{
+        margin-left: 0.03rem;
+        .icon{
+          margin-left: 0.05rem;
+        }
+      }
+    }
+
+
+    // @keyframes slide-down{
+    //   0%{transform: scale(1,0);}
+    //   25%{transform: scale(1,1.2);}
+    //   50%{transform: scale(1,0.85);}
+    //   75%{transform: scale(1,1.05);}
+    //   100%{transform: scale(1,1);}
+    // }
+    // .select-open{
+    //   animation: slide-down .5s ease-in;
+    //   transition:  .3s ease-in;
+    //   transform-origin: 50% 0;
+    // }
+    // .select-close{
+    //   transform: scaleY(0);
+    //   transition: transform 0.2s;
+    //   transform-origin: top center;
+    // }
+    
     .line{
       height: 0.01rem;
       background: #eee;
