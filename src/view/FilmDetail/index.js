@@ -286,9 +286,7 @@ class FileDetail extends Component {
                     console.log(result);
                   }}
                   history={history}
-                  onReplyMessage={()=>{
-
-                  }}
+                  onReplyMessage={() => {}}
                 />
               );
             })}
@@ -310,8 +308,6 @@ class FileDetail extends Component {
             <div className="separator"></div>
           </div>
         ) : null}
-
-        
 
         {location.state &&
         location.state.isNotCanSelectSeatBuy ? null : detail.hasSchedule ? (
