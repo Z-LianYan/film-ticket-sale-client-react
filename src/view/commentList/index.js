@@ -80,7 +80,7 @@ class CommentList extends Component {
           let result = await get_comment_list({
             ...fetchOptions,
             film_id: location.state && location.state.film_id,
-            // city_id: locationInfo && locationInfo.city_id,
+            city_id: locationInfo && locationInfo.city_id,
             user_id: userInfo && userInfo.user_id,
           });
           let status_arr = [{ text: "全部", value: "" }];
