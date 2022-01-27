@@ -279,15 +279,18 @@ class FileDetail extends Component {
                   }}
                   messageNum={785}
                   dzNum={item.thumb_up_count}
+                  alreadyThumbUp={item.already_thumb_up}
                   onThumbUp={async () => {
                     let result = await thumb_up({
-                      comment_id: item.comment_id,
+                      thumb_up_id: item.comment_id,
+                      thumb_up_type: "comment",
                     });
-                    // console.log(result);
                     if (result.type == "add") {
+                      item.already_thumb_up = true;
                       item.thumb_up_count += 1;
                     }
                     if (result.type == "reduce") {
+                      item.already_thumb_up = false;
                       item.thumb_up_count -= 1;
                     }
                     this.setState({

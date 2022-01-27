@@ -28,7 +28,13 @@ import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
 import Cookies from "js-cookie";
 import dayjs from "dayjs";
 import CommentItem from "@/components/Comment-item/index";
-import { get_comment_list, thumb_up } from "@/api/comment";
+import {
+  get_comment_list,
+  thumb_up,
+  get_comment_reply_list,
+  add_comment_reply,
+  del_comment_reply,
+} from "@/api/comment";
 import CustomSkeleton from "@/components/CustomSkeleton/index";
 
 class CommentList extends Component {
@@ -44,12 +50,13 @@ class CommentList extends Component {
         city_id: "",
         user_id: "",
       },
-      list: [],
+      commentlist: [],
       isHasMore: false,
       isSkeleton: true,
       film_name: "",
-      isReplyCommentLoading: false,
+      // isReplyCommentLoading: false,
       isShowUnfold: true,
+      selectReplyItem: null,
     };
   }
   async componentDidMount() {
@@ -89,11 +96,11 @@ class CommentList extends Component {
           }
           this.setState(
             {
-              list: result.rows,
+              commentlist: result.rows,
               isSkeleton: false,
             },
             () => {
-              if (this.state.list.length >= result.count) {
+              if (this.state.commentlist.length >= result.count) {
                 this.setState({
                   isHasMore: false,
                 });
@@ -116,17 +123,40 @@ class CommentList extends Component {
     );
   }
 
+  async getCommentReplyList(item, comment_id) {
+    item.isReplyCommentLoading = true;
+    item.page = item.page ? item.page + 1 : 1;
+    this.setState({
+      commentlist: this.state.commentlist,
+    });
+    let result = await get_comment_reply_list({
+      page: item.page,
+      limit: 3,
+      comment_id: comment_id,
+    });
+    item.replyList =
+      item.page == 1 ? result.rows : item.replyList.concat(result.rows);
+    item.isReplyCommentLoading = false;
+    item.isShowUnfold = item.replyList.length >= result.count ? true : false;
+    item.isFinalllyPage = item.replyList.length >= result.count ? true : false;
+    this.setState({
+      commentlist: this.state.commentlist,
+    });
+    console.log("result", result);
+  }
+
   render() {
     let { location, history, locationInfo, match, userInfo } = this.props;
     let { params } = match;
     let {
-      list,
+      commentlist,
       fetchOptions,
       isHasMore,
       statusData,
       isSkeleton,
-      isReplyCommentLoading,
-      isShowUnfold,
+      // isReplyCommentLoading,
+      // isShowUnfold,
+      selectReplyItem,
     } = this.state;
     return (
       <div className="comment-list-container">
@@ -143,7 +173,7 @@ class CommentList extends Component {
             }
             right={
               userInfo &&
-              list.some((item) => item.user_id == userInfo.user_id) && (
+              commentlist.some((item) => item.user_id == userInfo.user_id) && (
                 <Button
                   color="success"
                   shape="rounded"
@@ -151,7 +181,7 @@ class CommentList extends Component {
                   size="small"
                   onClick={() => {
                     let commentData = {};
-                    for (let item of list) {
+                    for (let item of commentlist) {
                       if (item.user_id == userInfo.user_id) {
                         commentData = item;
                       }
@@ -235,16 +265,15 @@ class CommentList extends Component {
             await this.onRefreshList();
           }}
         >
-          {list.map((item, index) => {
+          {commentlist.map((item, index) => {
             return (
               <CommentItem
                 key={index}
                 nickname={item.nickname}
                 scoreText={`给这部作品打了${item.score}分`}
                 date={item.date}
-                separator={list.length != index + 1}
+                separator={commentlist.length != index + 1}
                 avatar={item.avatar}
-                score={item.score}
                 actionsOption={[{ text: "举报", key: "jubao" }]}
                 commentContent={item.comment_content}
                 isShowMineCommentTag={
@@ -260,101 +289,156 @@ class CommentList extends Component {
                 // isShowUnfoldPackUp={true}
                 // showUnfold={false}
                 // showPackUp={true}
-                onReplyTextBtn={() => {}}
+                onReplyTextBtn={() => {
+                  selectReplyItem = {
+                    commentListIndex: index,
+                    reply_person_nickname: item.nickname,
+                    reply_parent_id: 0,
+                    reply_content: "",
+                    parent_user_id: item.user_id,
+                    comment_id: item.comment_id,
+                  };
+                  this.setState({
+                    selectReplyItem,
+                  });
+                }}
                 history={history}
-                messageNum={785}
+                messageNum={item.reply_count}
                 dzNum={item.thumb_up_count}
+                alreadyThumbUp={item.already_thumb_up}
                 onThumbUp={async () => {
                   let result = await thumb_up({
-                    comment_id: item.comment_id,
+                    thumb_up_id: item.comment_id,
+                    thumb_up_type: "comment",
                   });
                   if (result.type == "add") {
+                    item.already_thumb_up = true;
                     item.thumb_up_count += 1;
                   }
                   if (result.type == "reduce") {
+                    item.already_thumb_up = false;
                     item.thumb_up_count -= 1;
                   }
                   this.setState({
-                    list,
+                    commentlist,
                   });
                 }}
                 bottomNode={
-                  <div className="unfold-reply-btn">
-                    {isReplyCommentLoading ? (
-                      <DotLoading color="#00b578" />
-                    ) : (
-                      <div>
-                        <MinusOutline color="#ccc" />
-                        {isShowUnfold ? (
-                          <span
-                            className="btn"
-                            onClick={() => {
-                              this.setState({
-                                isReplyCommentLoading: true,
-                                isShowUnfold: true,
-                              });
-                              setTimeout(() => {
+                  item.reply_count ? (
+                    <div className="unfold-reply-btn">
+                      {item.isReplyCommentLoading ? (
+                        <DotLoading color="#00b578" />
+                      ) : (
+                        <div>
+                          <MinusOutline color="#ccc" />
+                          {item.isShowUnfold ? (
+                            <span
+                              className="btn"
+                              onClick={() => {
+                                item.isShowUnfold = false;
+                                item.isNotShowReplyContent = true;
                                 this.setState({
-                                  isReplyCommentLoading: false,
+                                  commentlist: commentlist,
                                 });
-                              }, 1000);
-                            }}
-                          >
-                            展开{123}条回复
-                            <DownOutline className="icon" />
-                          </span>
-                        ) : (
-                          <span
-                            className="btn"
-                            onClick={() => {
-                              this.setState({
-                                isShowUnfold: false,
-                              });
-                            }}
-                          >
-                            收起
-                            <UpOutline className="icon" />
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                                console.log(
+                                  "item.isFinalllyPage",
+                                  item.isFinalllyPage
+                                );
+                              }}
+                            >
+                              收起
+                              <UpOutline className="icon" />
+                            </span>
+                          ) : (
+                            <span
+                              className="btn"
+                              onClick={() => {
+                                if (item.isFinalllyPage) {
+                                  item.isShowUnfold = true;
+                                  item.isNotShowReplyContent = false;
+                                  this.setState({
+                                    commentlist: commentlist,
+                                  });
+                                  return;
+                                }
+                                this.getCommentReplyList(item, item.comment_id);
+                              }}
+                            >
+                              展开
+                              {item.replyList
+                                ? "更多"
+                                : item.reply_count + "条"}
+                              回复
+                              <DownOutline className="icon" />
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ) : null
                 }
               >
-                <CommentItem
-                  itemPaddingTop={0}
-                  itemPaddingRight={0}
-                  itemPaddingBottom={0.1}
-                  itemPaddingLeft={0}
-                  separator={false}
-                  key={index + "a"}
-                  nickname={item.nickname}
-                  replyName={"nickname"}
-                  dzNum={143}
-                  date={item.date}
-                  avatar={item.avatar}
-                  score={item.score}
-                  actionsOption={[{ text: "举报", key: "jubao" }]}
-                  commentContent={item.comment_content}
-                  isShowMineCommentTag={
-                    userInfo && userInfo.user_id == item.user_id
-                  }
-                  isShowMenuBtn={true}
-                  onClickJubao={() => {
-                    console.log("jubao");
-                  }}
-                  onAction={(val) => {
-                    console.log("val", val);
-                  }}
-                  onThumbUp={async () => {
-                    let result = await thumb_up({
-                      comment_id: item.comment_id,
-                    });
-                    console.log(result);
-                  }}
-                  history={history}
-                  onReplyTextBtn={() => {}}
-                />
+                {item.replyList &&
+                  !item.isNotShowReplyContent &&
+                  item.replyList.map((it) => {
+                    return (
+                      <CommentItem
+                        itemPaddingTop={0}
+                        itemPaddingRight={0}
+                        itemPaddingBottom={0.1}
+                        itemPaddingLeft={0}
+                        separator={false}
+                        key={it.reply_id + "r"}
+                        nickname={it.nickname}
+                        replyName={it.parent_nickname}
+                        date={it.date}
+                        avatar={item.avatar}
+                        score={item.score}
+                        actionsOption={[{ text: "举报", key: "jubao" }]}
+                        commentContent={it.reply_content}
+                        isShowMenuBtn={true}
+                        onClickJubao={() => {
+                          console.log("jubao");
+                        }}
+                        onAction={(val) => {
+                          console.log("val", val);
+                        }}
+                        dzNum={it.thumb_up_count}
+                        alreadyThumbUp={it.already_thumb_up}
+                        onThumbUp={async () => {
+                          let result = await thumb_up({
+                            thumb_up_id: it.reply_id,
+                            thumb_up_type: "reply",
+                          });
+                          if (result.type == "add") {
+                            it.already_thumb_up = true;
+                            it.thumb_up_count += 1;
+                          }
+                          if (result.type == "reduce") {
+                            it.already_thumb_up = false;
+                            it.thumb_up_count -= 1;
+                          }
+                          this.setState({
+                            commentlist,
+                          });
+                        }}
+                        history={history}
+                        onReplyTextBtn={() => {
+                          selectReplyItem = {
+                            commentListIndex: index,
+                            reply_person_nickname: it.nickname,
+                            reply_parent_id: it.reply_id,
+                            reply_content: "",
+                            parent_user_id: it.user_id,
+                            comment_id: item.comment_id,
+                          };
+                          this.setState({
+                            selectReplyItem,
+                          });
+                        }}
+                      />
+                    );
+                  })}
               </CommentItem>
             );
           })}
@@ -370,12 +454,12 @@ class CommentList extends Component {
                 user_id: userInfo && userInfo.user_id,
               });
               this.setState({
-                list:
+                commentlist:
                   fetchOptions.page === 1
                     ? result.rows
-                    : list.concat(result.rows),
+                    : commentlist.concat(result.rows),
               });
-              if (this.state.list.length >= result.count) {
+              if (this.state.commentlist.length >= result.count) {
                 this.setState({
                   isHasMore: false,
                 });
@@ -385,12 +469,41 @@ class CommentList extends Component {
           >
             <InfiniteScrollContent
               text={`没有查到相关内容哦！`}
-              noContent={!isHasMore && !this.state.list.length}
+              noContent={!isHasMore && !this.state.commentlist.length}
               hasMore={isHasMore}
             />
           </InfiniteScroll>
           <div style={{ height: "1rem" }}></div>
         </PullToRefresh>
+
+        {selectReplyItem && (
+          <div className="reply-input-wrapper">
+            <Input
+              placeholder={`回复 ${selectReplyItem.reply_person_nickname} :`}
+              value={selectReplyItem.reply_content}
+              onChange={(val) => {
+                console.log("val--", val);
+                selectReplyItem.reply_content = val;
+                this.setState({
+                  selectReplyItem,
+                });
+              }}
+              onEnterPress={async () => {
+                console.log("123456", this.state.selectReplyItem);
+                let result = await add_comment_reply(
+                  this.state.selectReplyItem
+                );
+                commentlist[
+                  this.state.selectReplyItem.commentListIndex
+                ].replyList.push(result);
+                this.setState({
+                  commentlist,
+                });
+                console.log("result---", result);
+              }}
+            />
+          </div>
+        )}
       </div>
     );
   }

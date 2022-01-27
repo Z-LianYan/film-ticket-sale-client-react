@@ -76,6 +76,7 @@ class CommentItem extends Component {
       // onPackUp,
       isLoading,
       bottomNode,
+      alreadyThumbUp, //判断当前用户是否点赞过
     } = this.props;
     // console.log(this.props)
     return (
@@ -191,7 +192,7 @@ class CommentItem extends Component {
             <div className="right-dz-message">
               {onThumbUp && (
                 <span
-                  className="dz"
+                  className={[`dz ${alreadyThumbUp ? "dz-active" : ""}`]}
                   onClick={() => {
                     if (userInfo) {
                       onThumbUp && onThumbUp();

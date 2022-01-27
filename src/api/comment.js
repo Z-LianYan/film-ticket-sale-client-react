@@ -133,3 +133,71 @@ export function thumb_up(params) {
     });
   });
 }
+
+export function get_comment_reply_list(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.get(Api.GET_COMMENT_REPLY_LIST, params, "").then((res) => {
+      switch (res.error) {
+        case 0:
+          resolve(res.data);
+          break;
+        default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
+          reject(res.data);
+          break;
+      }
+    });
+  });
+}
+export function add_comment_reply(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.post(Api.ADD_COMMENT_REPLY, params, "提交中...").then((res) => {
+      switch (res.error) {
+        case 0:
+          Toast.show({
+            icon: "success",
+            duration: 2000,
+            content: res.message,
+          });
+          resolve(res.data);
+          break;
+        default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
+          reject(res.data);
+          break;
+      }
+    });
+  });
+}
+export function del_comment_reply(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.post(Api.DEL_COMMENT_REPLY, params, "删除中...").then((res) => {
+      switch (res.error) {
+        case 0:
+          Toast.show({
+            icon: "success",
+            duration: 2000,
+            content: res.message,
+          });
+          resolve(res.data);
+          break;
+        default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
+          reject(res.data);
+          break;
+      }
+    });
+  });
+}

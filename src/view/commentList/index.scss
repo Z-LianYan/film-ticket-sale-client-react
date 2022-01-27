@@ -31,6 +31,7 @@
 
 
   .unfold-reply-btn{
+    height: 0.3rem;
     font-size: 0.13rem;
     color: #605d5d;
     padding-bottom: 0.1rem;
@@ -42,6 +43,15 @@
     }
   }
   
+  .reply-input-wrapper{
+    padding: 0.1rem 0.2rem;
+    border-top: 0.01rem solid #eee;
+    background: #fff;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
 
 }
 
