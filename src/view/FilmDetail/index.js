@@ -1,12 +1,37 @@
 import React, { Component } from "react";
 import "./index.scss";
-import { DownOutline, UpOutline, RightOutline } from "antd-mobile-icons";
-import { List, Image, Mask, NavBar, ImageViewer, Button } from "antd-mobile";
+import {
+  DownOutline,
+  UpOutline,
+  RightOutline,
+  LeftOutline,
+  InformationCircleOutline,
+  MoreOutline,
+  MinusOutline,
+  PlayOutline,
+} from "antd-mobile-icons";
+import {
+  List,
+  Image,
+  Mask,
+  NavBar,
+  ImageViewer,
+  Button,
+  DotLoading,
+  Input,
+  Popup,
+} from "antd-mobile";
 import { get_film_detail } from "@/api/film";
-import { get_comment_list, thumb_up } from "@/api/comment";
 import dayjs from "dayjs";
 import { GroupCommons } from "@/modules/group";
 import CommentItem from "@/components/Comment-item/index";
+import {
+  get_comment_list,
+  thumb_up,
+  get_comment_reply_list,
+  add_comment_reply,
+  del_comment_reply,
+} from "@/api/comment";
 
 class FileDetail extends Component {
   constructor(props) {
@@ -16,11 +41,12 @@ class FileDetail extends Component {
       isShowNavBar: "",
       detail: {},
       isSkeleton: true,
-      commentList: [],
+      commentlist: [],
       commentTotalCount: 0,
+      selectReplyItem: null,
     };
   }
-  async getCommentList() {
+  async getcommentlist() {
     let { locationInfo, match, userInfo } = this.props;
     let { params } = match;
     let result = await get_comment_list({
@@ -31,7 +57,7 @@ class FileDetail extends Component {
       user_id: userInfo && userInfo.user_id,
     });
     this.setState({
-      commentList: result.rows,
+      commentlist: result.rows,
       commentTotalCount: result.count,
     });
   }
@@ -43,7 +69,7 @@ class FileDetail extends Component {
       });
     });
     this.getFilmDetail();
-    this.getCommentList();
+    this.getcommentlist();
   }
   async getFilmDetail() {
     let { history, locationInfo, match } = this.props;
@@ -97,9 +123,49 @@ class FileDetail extends Component {
     );
   }
 
+  async getCommentReplyList(item, comment_id) {
+    item.isReplyCommentLoading = true;
+    item.page = item.page ? item.page + 1 : 1;
+    this.setState({
+      commentlist: this.state.commentlist,
+    });
+    let result = await get_comment_reply_list({
+      page: item.page,
+      limit: 3,
+      comment_id: comment_id,
+    });
+    if (item.replyList) {
+      for (let it of item.replyList) {
+        for (let i = 0; i < result.rows.length; i++) {
+          if (it.reply_id == result.rows[i].reply_id) {
+            result.rows.splice(i, 1);
+          }
+        }
+      }
+    } else {
+      item.replyList = [];
+    }
+
+    item.replyList = item.replyList.concat(result.rows);
+    item.backup_reply_list = item.replyList;
+    item.isReplyCommentLoading = false;
+    item.isShowUnfold = item.replyList.length >= result.count ? true : false;
+    item.isFinalllyPage = item.replyList.length >= result.count ? true : false;
+    this.setState({
+      commentlist: this.state.commentlist,
+    });
+    console.log("result", result);
+  }
+
   render() {
-    let { isShowNavBar, detail, isSkeleton, commentList, commentTotalCount } =
-      this.state;
+    let {
+      isShowNavBar,
+      detail,
+      isSkeleton,
+      commentlist,
+      commentTotalCount,
+      selectReplyItem,
+    } = this.state;
     let { history, location, userInfo } = this.props;
     return (
       <div className="film-detail-container">
@@ -219,21 +285,21 @@ class FileDetail extends Component {
 
         {this.renderStill()}
         <div className="separator"></div>
-        {commentList.length ? (
+        {commentlist.length ? (
           <div>
             <List style={{ background: "transparent" }}>
               <List.Item
                 style={{ background: "transparent" }}
                 extra={
                   userInfo &&
-                  commentList.some(
+                  commentlist.some(
                     (item) => item.user_id == userInfo.user_id
                   ) && (
                     <div
                       className="edit-mine-comment-btn"
                       onClick={() => {
                         let commentData = {};
-                        for (let item of commentList) {
+                        for (let item of commentlist) {
                           if (item.user_id == userInfo.user_id) {
                             commentData = item;
                           }
@@ -255,14 +321,14 @@ class FileDetail extends Component {
                 讨论
               </List.Item>
             </List>
-            {commentList.map((item, index) => {
+            {commentlist.map((item, index) => {
               return (
                 <CommentItem
                   key={index}
                   nickname={item.nickname}
                   scoreText={`给这部作品打了${item.score}分`}
                   date={item.date}
-                  separator={commentList.length != index + 1}
+                  separator={commentlist.length != index + 1}
                   avatar={item.avatar}
                   score={item.score}
                   actionsOption={[{ text: "举报", key: "jubao" }]}
@@ -273,11 +339,24 @@ class FileDetail extends Component {
                   isShowMineCommentTag={
                     userInfo && userInfo.user_id == item.user_id
                   }
+                  onReplyTextBtn={() => {
+                    selectReplyItem = {
+                      commentlistIndex: index,
+                      reply_person_nickname: item.nickname,
+                      reply_parent_id: 0,
+                      reply_content: "",
+                      parent_user_id: item.user_id,
+                      comment_id: item.comment_id,
+                    };
+                    this.setState({
+                      selectReplyItem,
+                    });
+                  }}
                   isShowMenuBtn={true}
                   onAction={(val) => {
                     console.log("val", val);
                   }}
-                  messageNum={785}
+                  // messageNum={785}
                   dzNum={item.thumb_up_count}
                   alreadyThumbUp={item.already_thumb_up}
                   onThumbUp={async () => {
@@ -294,12 +373,166 @@ class FileDetail extends Component {
                       item.thumb_up_count -= 1;
                     }
                     this.setState({
-                      commentList,
+                      commentlist,
                     });
                   }}
                   history={history}
                   onReplyMessage={() => {}}
-                />
+                  bottomNode={
+                    item.reply_count ? (
+                      <div className="unfold-reply-btn">
+                        {item.isReplyCommentLoading ? (
+                          <DotLoading color="#00b578" />
+                        ) : (
+                          <div>
+                            <MinusOutline color="#ccc" />
+                            {item.isShowUnfold ? (
+                              <span
+                                className="btn"
+                                onClick={() => {
+                                  item.isShowUnfold = false;
+                                  // item.isNotShowReplyContent = true;
+                                  item.replyList = [];
+                                  this.setState({
+                                    commentlist: commentlist,
+                                  });
+                                  console.log(
+                                    "item.isFinalllyPage",
+                                    item.isFinalllyPage
+                                  );
+                                }}
+                              >
+                                收起
+                                <UpOutline className="icon" />
+                              </span>
+                            ) : (
+                              <span
+                                className="btn"
+                                onClick={() => {
+                                  if (
+                                    item.replyList &&
+                                    item.replyList.length <
+                                      item.backup_reply_list.length
+                                  ) {
+                                    let _item = item.backup_reply_list.slice(
+                                      item.replyList.length,
+                                      item.replyList.length + 3
+                                    );
+                                    item.replyList =
+                                      item.replyList.concat(_item);
+                                    if (
+                                      item.replyList.length ==
+                                      item.backup_reply_list.length
+                                    ) {
+                                      item.isShowUnfold = true;
+                                    }
+                                    this.setState({
+                                      commentlist: commentlist,
+                                    });
+                                    console.log(
+                                      "----",
+                                      item.backup_reply_list,
+                                      _item
+                                    );
+
+                                    return;
+                                  }
+                                  if (item.isFinalllyPage) {
+                                    item.isShowUnfold = true;
+                                    // item.isNotShowReplyContent = false;
+                                    // item.replyList = [];
+                                    this.setState({
+                                      commentlist: commentlist,
+                                    });
+                                    return;
+                                  }
+                                  this.getCommentReplyList(
+                                    item,
+                                    item.comment_id
+                                  );
+                                }}
+                              >
+                                展开
+                                {!item.replyList ||
+                                (item.replyList &&
+                                  !item.replyList.length &&
+                                  item.backup_reply_list)
+                                  ? item.reply_count + "条"
+                                  : "更多"}
+                                回复
+                                <DownOutline className="icon" />
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ) : null
+                  }
+                >
+                  {item.replyList &&
+                    item.replyList.map((it) => {
+                      return (
+                        <CommentItem
+                          itemPaddingTop={0}
+                          itemPaddingRight={0}
+                          itemPaddingBottom={0.1}
+                          itemPaddingLeft={0}
+                          separator={false}
+                          key={it.reply_id + "r"}
+                          nickname={it.nickname}
+                          replyName={it.parent_nickname}
+                          date={it.date}
+                          avatar={it.avatar}
+                          score={item.score}
+                          actionsOption={[{ text: "举报", key: "jubao" }]}
+                          commentContent={it.reply_content}
+                          isShowMenuBtn={true}
+                          onClickJubao={() => {
+                            console.log("jubao");
+                          }}
+                          onAction={(val) => {
+                            console.log("val", val);
+                          }}
+                          dzNum={it.thumb_up_count}
+                          alreadyThumbUp={it.already_thumb_up}
+                          onThumbUp={async () => {
+                            let result = await thumb_up({
+                              thumb_up_id: it.reply_id,
+                              thumb_up_type: "reply",
+                            });
+                            if (result.type == "add") {
+                              it.already_thumb_up = true;
+                              it.thumb_up_count = it.thumb_up_count
+                                ? it.thumb_up_count
+                                : 0;
+                              it.thumb_up_count += 1;
+                            }
+                            if (result.type == "reduce") {
+                              it.already_thumb_up = false;
+                              it.thumb_up_count -= 1;
+                            }
+                            this.setState({
+                              commentlist,
+                            });
+                          }}
+                          history={history}
+                          onReplyTextBtn={() => {
+                            selectReplyItem = {
+                              commentlistIndex: index,
+                              reply_person_nickname: it.nickname,
+                              reply_parent_id: it.reply_id,
+                              reply_content: "",
+                              parent_user_id: it.user_id,
+                              comment_id: item.comment_id,
+                            };
+                            this.setState({
+                              selectReplyItem,
+                            });
+                          }}
+                        />
+                      );
+                    })}
+                </CommentItem>
               );
             })}
             <div
@@ -345,6 +578,73 @@ class FileDetail extends Component {
             选座购票
           </Button>
         ) : null}
+
+        <Popup
+          visible={selectReplyItem ? true : false}
+          onMaskClick={() => {
+            this.setState({
+              selectReplyItem: null,
+            });
+          }}
+        >
+          {selectReplyItem && (
+            <div style={{ padding: "0.1rem 0.2rem 0.5rem 0.2rem" }}>
+              <Input
+                placeholder={`回复 ${selectReplyItem.reply_person_nickname} :`}
+                value={selectReplyItem.reply_content}
+                onChange={(val) => {
+                  console.log("val--", val);
+                  selectReplyItem.reply_content = val;
+                  this.setState({
+                    selectReplyItem,
+                  });
+                }}
+                onEnterPress={async () => {
+                  let { selectReplyItem } = this.state;
+                  let result = await add_comment_reply(selectReplyItem);
+                  if (
+                    !commentlist[selectReplyItem.commentlistIndex].replyList
+                  ) {
+                    commentlist[selectReplyItem.commentlistIndex].replyList =
+                      [];
+                  }
+
+                  if (
+                    !commentlist[selectReplyItem.commentlistIndex]
+                      .backup_reply_list
+                  ) {
+                    commentlist[
+                      selectReplyItem.commentlistIndex
+                    ].backup_reply_list = [];
+                  }
+
+                  commentlist[selectReplyItem.commentlistIndex].replyList.push(
+                    result
+                  );
+
+                  commentlist[
+                    selectReplyItem.commentlistIndex
+                  ].backup_reply_list.push(result);
+                  if (
+                    !commentlist[selectReplyItem.commentlistIndex].reply_count
+                  ) {
+                    commentlist[
+                      selectReplyItem.commentlistIndex
+                    ].reply_count = 0;
+                  }
+
+                  commentlist[
+                    selectReplyItem.commentlistIndex
+                  ].reply_count += 1;
+
+                  this.setState({
+                    commentlist,
+                  });
+                }}
+              />
+            </div>
+          )}
+        </Popup>
       </div>
     );
   }
