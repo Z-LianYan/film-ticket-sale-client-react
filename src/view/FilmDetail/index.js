@@ -401,6 +401,7 @@ class FileDetail extends Component {
                   onThumbUp={async () => {
                     let result = await thumb_up({
                       thumb_up_id: item.comment_id,
+                      comment_id: item.comment_id,
                       thumb_up_type: "comment",
                     });
                     if (result.type == "add") {
@@ -552,6 +553,7 @@ class FileDetail extends Component {
                           onThumbUp={async () => {
                             let result = await thumb_up({
                               thumb_up_id: it.reply_id,
+                              comment_id: item.comment_id,
                               thumb_up_type: "reply",
                             });
                             if (result.type == "add") {
