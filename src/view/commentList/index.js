@@ -34,9 +34,11 @@ import {
   thumb_up,
   get_comment_reply_list,
   add_comment_reply,
+  del_comment,
   del_comment_reply,
 } from "@/api/comment";
 import CustomSkeleton from "@/components/CustomSkeleton/index";
+import _lodash from "lodash";
 
 class CommentList extends Component {
   constructor(props) {
@@ -148,7 +150,7 @@ class CommentList extends Component {
     }
 
     item.replyList = item.replyList.concat(result.rows);
-    item.backup_reply_list = item.replyList;
+    item.backup_reply_list = _lodash.cloneDeep(item.replyList);
     item.isReplyCommentLoading = false;
     item.isShowUnfold = item.replyList.length >= result.count ? true : false;
     item.isFinalllyPage = item.replyList.length >= result.count ? true : false;
@@ -156,6 +158,36 @@ class CommentList extends Component {
       commentlist: this.state.commentlist,
     });
     console.log("result", result);
+  }
+
+  async onDel(item, it, type, index) {
+    let { commentlist, commentTotalCount } = this.state;
+    if (type == "comment") {
+      let result = await del_comment({
+        comment_id: item.comment_id,
+      });
+      commentlist.splice(index, 1);
+      commentTotalCount -= 1;
+      // this.getcommentlist();
+      this.setState({
+        commentlist,
+        commentTotalCount,
+      });
+      console.log("删除评论", result);
+    }
+    if (type == "reply") {
+      console.log("reply", type, item);
+      let result = await del_comment_reply({
+        reply_id: it.reply_id,
+      });
+      item.replyList.splice(index, 1);
+      item.backup_reply_list.splice(index, 1);
+      item.reply_count -= 1;
+      this.setState({
+        commentlist,
+      });
+      console.log("删除回复", result);
+    }
   }
 
   render() {
@@ -279,6 +311,13 @@ class CommentList extends Component {
           }}
         >
           {commentlist.map((item, index) => {
+            let actionsOptionComment = [{ text: "举报", key: "jubao" }];
+            if (userInfo && userInfo.user_id == item.user_id) {
+              actionsOptionComment.push({
+                text: "删除",
+                key: "del",
+              });
+            }
             return (
               <CommentItem
                 key={index}
@@ -287,7 +326,7 @@ class CommentList extends Component {
                 date={item.date}
                 separator={commentlist.length != index + 1}
                 avatar={item.avatar}
-                actionsOption={[{ text: "举报", key: "jubao" }]}
+                actionsOption={actionsOptionComment}
                 commentContent={item.comment_content}
                 isShowMineCommentTag={
                   userInfo && userInfo.user_id == item.user_id
@@ -298,6 +337,9 @@ class CommentList extends Component {
                 }}
                 onAction={(val) => {
                   console.log("val", val);
+                  if (val.key == "del") {
+                    this.onDel(item, null, "comment", index);
+                  }
                 }}
                 // isShowUnfoldPackUp={true}
                 // showUnfold={false}
@@ -350,6 +392,7 @@ class CommentList extends Component {
                               onClick={() => {
                                 item.isShowUnfold = false;
                                 // item.isNotShowReplyContent = true;
+                                item.sliceIndex = 0;
                                 item.replyList = [];
                                 this.setState({
                                   commentlist: commentlist,
@@ -372,32 +415,41 @@ class CommentList extends Component {
                                   item.replyList.length <
                                     item.backup_reply_list.length
                                 ) {
-                                  let _item = item.backup_reply_list.slice(
-                                    item.replyList.length,
-                                    item.replyList.length + 3
+                                  item.sliceIndex = item.sliceIndex
+                                    ? item.sliceIndex
+                                    : 0;
+                                  let arr = item.backup_reply_list.slice(
+                                    item.sliceIndex,
+                                    item.sliceIndex + 3
                                   );
-                                  item.replyList = item.replyList.concat(_item);
+                                  item.sliceIndex += 3;
+                                  let _arr = [];
+                                  for (let i = 0; i < arr.length; i++) {
+                                    let flag = false;
+                                    for (let it of item.replyList) {
+                                      if (arr[i].reply_id == it.reply_id) {
+                                        flag = true;
+                                      }
+                                    }
+                                    if (!flag) _arr.push(arr[i]);
+                                  }
+                                  item.replyList = item.replyList.concat(_arr);
                                   if (
                                     item.replyList.length ==
                                     item.backup_reply_list.length
                                   ) {
                                     item.isShowUnfold = true;
+                                    item.backup_reply_list = _lodash.cloneDeep(
+                                      item.replyList
+                                    );
                                   }
                                   this.setState({
                                     commentlist: commentlist,
                                   });
-                                  console.log(
-                                    "----",
-                                    item.backup_reply_list,
-                                    _item
-                                  );
-
                                   return;
                                 }
                                 if (item.isFinalllyPage) {
                                   item.isShowUnfold = true;
-                                  // item.isNotShowReplyContent = false;
-                                  // item.replyList = [];
                                   this.setState({
                                     commentlist: commentlist,
                                   });
@@ -424,7 +476,14 @@ class CommentList extends Component {
                 }
               >
                 {item.replyList &&
-                  item.replyList.map((it) => {
+                  item.replyList.map((it, idx) => {
+                    let actionsOptionReply = [{ text: "举报", key: "jubao" }];
+                    if (userInfo && userInfo.user_id == it.user_id) {
+                      actionsOptionReply.push({
+                        text: "删除",
+                        key: "del",
+                      });
+                    }
                     return (
                       <CommentItem
                         itemPaddingTop={0}
@@ -438,7 +497,7 @@ class CommentList extends Component {
                         date={it.date}
                         avatar={it.avatar}
                         score={item.score}
-                        actionsOption={[{ text: "举报", key: "jubao" }]}
+                        actionsOption={actionsOptionReply}
                         commentContent={it.reply_content}
                         isShowMenuBtn={true}
                         onClickJubao={() => {
@@ -446,6 +505,10 @@ class CommentList extends Component {
                         }}
                         onAction={(val) => {
                           console.log("val", val);
+                          if (val.key == "del") {
+                            console.log("val---", val);
+                            this.onDel(item, it, "reply", idx);
+                          }
                         }}
                         dzNum={it.thumb_up_count}
                         alreadyThumbUp={it.already_thumb_up}
@@ -537,28 +600,24 @@ class CommentList extends Component {
                 placeholder={`回复 ${selectReplyItem.reply_person_nickname} :`}
                 value={selectReplyItem.reply_content}
                 onChange={(val) => {
-                  console.log("val--", val);
                   selectReplyItem.reply_content = val;
                   this.setState({
                     selectReplyItem,
                   });
                 }}
                 onEnterPress={async () => {
-                  // console.log(
-                  //   "123456",
-                  //   this.state.selectReplyItem,
-                  //   commentlist[this.state.selectReplyItem.commentlistIndex]
-                  // );
                   let { selectReplyItem } = this.state;
                   let result = await add_comment_reply(selectReplyItem);
-                  console.log("1235执行了几次？");
-                  // return;
                   if (
                     !commentlist[selectReplyItem.commentlistIndex].replyList
                   ) {
                     commentlist[selectReplyItem.commentlistIndex].replyList =
                       [];
                   }
+                  commentlist[selectReplyItem.commentlistIndex].replyList.push(
+                    result
+                  );
+
                   if (
                     !commentlist[selectReplyItem.commentlistIndex]
                       .backup_reply_list
@@ -567,14 +626,10 @@ class CommentList extends Component {
                       selectReplyItem.commentlistIndex
                     ].backup_reply_list = [];
                   }
+                  commentlist[
+                    selectReplyItem.commentlistIndex
+                  ].backup_reply_list.push(result);
 
-                  commentlist[selectReplyItem.commentlistIndex].replyList.push(
-                    result
-                  );
-
-                  // commentlist[
-                  //   selectReplyItem.commentlistIndex
-                  // ].backup_reply_list.push(result);
                   if (
                     !commentlist[selectReplyItem.commentlistIndex].reply_count
                   ) {

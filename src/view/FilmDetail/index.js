@@ -31,8 +31,9 @@ import {
   get_comment_reply_list,
   add_comment_reply,
   del_comment_reply,
+  del_comment,
 } from "@/api/comment";
-
+import _lodash from "lodash";
 class FileDetail extends Component {
   constructor(props) {
     super(props);
@@ -123,7 +124,38 @@ class FileDetail extends Component {
     );
   }
 
-  async getCommentReplyList(item, comment_id) {
+  async onDel(item, it, type, index) {
+    let { commentlist, commentTotalCount } = this.state;
+    if (type == "comment") {
+      let result = await del_comment({
+        comment_id: item.comment_id,
+      });
+      commentlist.splice(index, 1);
+      commentTotalCount -= 1;
+      // this.getcommentlist();
+      this.setState({
+        commentlist,
+        commentTotalCount,
+      });
+      // console.log("删除评论", result);
+    }
+    if (type == "reply") {
+      console.log("reply", type, item);
+      let result = await del_comment_reply({
+        reply_id: it.reply_id,
+      });
+      item.replyList.splice(index, 1);
+      item.backup_reply_list.splice(index, 1);
+      item.reply_count -= 1;
+      this.setState({
+        commentlist,
+      });
+      // console.log("删除回复", result);
+    }
+  }
+
+  async getCommentReplyList(item) {
+    console.log("getCommentReplyList----=");
     item.isReplyCommentLoading = true;
     item.page = item.page ? item.page + 1 : 1;
     this.setState({
@@ -132,7 +164,7 @@ class FileDetail extends Component {
     let result = await get_comment_reply_list({
       page: item.page,
       limit: 3,
-      comment_id: comment_id,
+      comment_id: item.comment_id,
     });
     if (item.replyList) {
       for (let it of item.replyList) {
@@ -147,7 +179,7 @@ class FileDetail extends Component {
     }
 
     item.replyList = item.replyList.concat(result.rows);
-    item.backup_reply_list = item.replyList;
+    item.backup_reply_list = _lodash.cloneDeep(item.replyList);
     item.isReplyCommentLoading = false;
     item.isShowUnfold = item.replyList.length >= result.count ? true : false;
     item.isFinalllyPage = item.replyList.length >= result.count ? true : false;
@@ -322,6 +354,13 @@ class FileDetail extends Component {
               </List.Item>
             </List>
             {commentlist.map((item, index) => {
+              let actionsOptionComment = [{ text: "举报", key: "jubao" }];
+              if (userInfo && userInfo.user_id == item.user_id) {
+                actionsOptionComment.push({
+                  text: "删除",
+                  key: "del",
+                });
+              }
               return (
                 <CommentItem
                   key={index}
@@ -331,9 +370,12 @@ class FileDetail extends Component {
                   separator={commentlist.length != index + 1}
                   avatar={item.avatar}
                   score={item.score}
-                  actionsOption={[{ text: "举报", key: "jubao" }]}
-                  onAction={() => {
-                    console.log("jubao");
+                  actionsOption={actionsOptionComment}
+                  onAction={(val) => {
+                    console.log("val", val);
+                    if (val.key == "del") {
+                      this.onDel(item, null, "comment", index);
+                    }
                   }}
                   commentContent={item.comment_content}
                   isShowMineCommentTag={
@@ -353,9 +395,6 @@ class FileDetail extends Component {
                     });
                   }}
                   isShowMenuBtn={true}
-                  onAction={(val) => {
-                    console.log("val", val);
-                  }}
                   // messageNum={785}
                   dzNum={item.thumb_up_count}
                   alreadyThumbUp={item.already_thumb_up}
@@ -377,7 +416,6 @@ class FileDetail extends Component {
                     });
                   }}
                   history={history}
-                  onReplyMessage={() => {}}
                   bottomNode={
                     item.reply_count ? (
                       <div className="unfold-reply-btn">
@@ -391,7 +429,7 @@ class FileDetail extends Component {
                                 className="btn"
                                 onClick={() => {
                                   item.isShowUnfold = false;
-                                  // item.isNotShowReplyContent = true;
+                                  item.sliceIndex = 0; //收起时sliceIndex 要 设为0；
                                   item.replyList = [];
                                   this.setState({
                                     commentlist: commentlist,
@@ -414,42 +452,47 @@ class FileDetail extends Component {
                                     item.replyList.length <
                                       item.backup_reply_list.length
                                   ) {
-                                    let _item = item.backup_reply_list.slice(
-                                      item.replyList.length,
-                                      item.replyList.length + 3
+                                    item.sliceIndex = item.sliceIndex
+                                      ? item.sliceIndex
+                                      : 0;
+                                    let arr = item.backup_reply_list.slice(
+                                      item.sliceIndex,
+                                      item.sliceIndex + 3
                                     );
+                                    item.sliceIndex += 3;
+                                    let _arr = [];
+                                    for (let i = 0; i < arr.length; i++) {
+                                      let flag = false;
+                                      for (let it of item.replyList) {
+                                        if (arr[i].reply_id == it.reply_id) {
+                                          flag = true;
+                                        }
+                                      }
+                                      if (!flag) _arr.push(arr[i]);
+                                    }
                                     item.replyList =
-                                      item.replyList.concat(_item);
+                                      item.replyList.concat(_arr);
                                     if (
                                       item.replyList.length ==
                                       item.backup_reply_list.length
                                     ) {
                                       item.isShowUnfold = true;
+                                      item.backup_reply_list =
+                                        _lodash.cloneDeep(item.replyList);
                                     }
                                     this.setState({
                                       commentlist: commentlist,
                                     });
-                                    console.log(
-                                      "----",
-                                      item.backup_reply_list,
-                                      _item
-                                    );
-
                                     return;
                                   }
                                   if (item.isFinalllyPage) {
                                     item.isShowUnfold = true;
-                                    // item.isNotShowReplyContent = false;
-                                    // item.replyList = [];
                                     this.setState({
                                       commentlist: commentlist,
                                     });
                                     return;
                                   }
-                                  this.getCommentReplyList(
-                                    item,
-                                    item.comment_id
-                                  );
+                                  this.getCommentReplyList(item);
                                 }}
                               >
                                 展开
@@ -470,7 +513,14 @@ class FileDetail extends Component {
                   }
                 >
                   {item.replyList &&
-                    item.replyList.map((it) => {
+                    item.replyList.map((it, idx) => {
+                      let actionsOptionReply = [{ text: "举报", key: "jubao" }];
+                      if (userInfo && userInfo.user_id == it.user_id) {
+                        actionsOptionReply.push({
+                          text: "删除",
+                          key: "del",
+                        });
+                      }
                       return (
                         <CommentItem
                           itemPaddingTop={0}
@@ -484,14 +534,18 @@ class FileDetail extends Component {
                           date={it.date}
                           avatar={it.avatar}
                           score={item.score}
-                          actionsOption={[{ text: "举报", key: "jubao" }]}
+                          actionsOption={actionsOptionReply}
+                          onAction={(val) => {
+                            console.log("val", val);
+                            if (val.key == "del") {
+                              console.log("val---", val);
+                              this.onDel(item, it, "reply", idx);
+                            }
+                          }}
                           commentContent={it.reply_content}
                           isShowMenuBtn={true}
                           onClickJubao={() => {
                             console.log("jubao");
-                          }}
-                          onAction={(val) => {
-                            console.log("val", val);
                           }}
                           dzNum={it.thumb_up_count}
                           alreadyThumbUp={it.already_thumb_up}
@@ -593,7 +647,6 @@ class FileDetail extends Component {
                 placeholder={`回复 ${selectReplyItem.reply_person_nickname} :`}
                 value={selectReplyItem.reply_content}
                 onChange={(val) => {
-                  console.log("val--", val);
                   selectReplyItem.reply_content = val;
                   this.setState({
                     selectReplyItem,
@@ -608,6 +661,9 @@ class FileDetail extends Component {
                     commentlist[selectReplyItem.commentlistIndex].replyList =
                       [];
                   }
+                  commentlist[selectReplyItem.commentlistIndex].replyList.push(
+                    result
+                  );
 
                   if (
                     !commentlist[selectReplyItem.commentlistIndex]
@@ -617,14 +673,10 @@ class FileDetail extends Component {
                       selectReplyItem.commentlistIndex
                     ].backup_reply_list = [];
                   }
-
-                  commentlist[selectReplyItem.commentlistIndex].replyList.push(
-                    result
-                  );
-
                   commentlist[
                     selectReplyItem.commentlistIndex
                   ].backup_reply_list.push(result);
+
                   if (
                     !commentlist[selectReplyItem.commentlistIndex].reply_count
                   ) {
@@ -632,13 +684,13 @@ class FileDetail extends Component {
                       selectReplyItem.commentlistIndex
                     ].reply_count = 0;
                   }
-
                   commentlist[
                     selectReplyItem.commentlistIndex
                   ].reply_count += 1;
 
                   this.setState({
                     commentlist,
+                    selectReplyItem: null,
                   });
                 }}
               />
