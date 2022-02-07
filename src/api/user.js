@@ -120,3 +120,30 @@ export function user_recharge(params) {
     });
   });
 }
+
+export function edit_user_info(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.post(Api.EDIT_USER_INFO, params, "修改中...").then((res) => {
+      switch (res.error) {
+        case 0:
+          resolve(res.data);
+          Toast.show({
+            icon: "success",
+            duration: 2000,
+            content: res.message,
+          });
+          break;
+        default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
+          reject(res);
+          break;
+      }
+    });
+  });
+}
+
+

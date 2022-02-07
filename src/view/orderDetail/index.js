@@ -31,7 +31,6 @@ var calendar = require("dayjs/plugin/calendar");
 dayjs.extend(relativeTime);
 dayjs.extend(calendar);
 dayjs.locale("zh-cn");
-// console.log(dayjs().toNow());
 
 class Recharge extends Component {
   constructor(props) {
@@ -309,16 +308,19 @@ class Recharge extends Component {
     let { orderDetail } = this.state;
     let { start_runtime } = orderDetail;
     if (!start_runtime) return;
+    // return dayjs(dayjs('2022-02-08 15:24').valueOf()).fromNow()
     return (
       dayjs(start_runtime).calendar(null, {
         sameDay: "[今天] A h:mm ", // The same day ( Today at 2:30 AM )
         nextDay: "[明天]", // The next day ( Tomorrow at 2:30 AM )
-        nextWeek: "下周", // The next week ( Sunday at 2:30 AM )
+        nextWeek: "[下周]", // The next week ( Sunday at 2:30 AM )
         lastDay: "[昨天]", // The day before ( Yesterday at 2:30 AM )
         lastWeek: "[上周] dddd", // Last week ( Last Monday at 2:30 AM )
         sameElse: "YY年MM月DD日", // Everything else ( 7/10/2011 )
       }) + "开场"
     );
+
+    
   }
   handleVerifyCode() {
     // console.log(

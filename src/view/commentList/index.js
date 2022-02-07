@@ -27,7 +27,7 @@ import { GroupCommons } from "@/modules/group";
 import { get_order_list } from "@/api/order";
 import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
 import Cookies from "js-cookie";
-import dayjs from "dayjs";
+
 import CommentItem from "@/components/Comment-item/index";
 import {
   get_comment_list,
@@ -36,9 +36,18 @@ import {
   add_comment_reply,
   del_comment,
   del_comment_reply,
+  comment_jubao,
 } from "@/api/comment";
 import CustomSkeleton from "@/components/CustomSkeleton/index";
 import _lodash from "lodash";
+
+import dayjs from "dayjs";
+import "dayjs/locale/zh-cn";
+var relativeTime = require("dayjs/plugin/relativeTime");
+var calendar = require("dayjs/plugin/calendar");
+dayjs.extend(relativeTime);
+dayjs.extend(calendar);
+dayjs.locale("zh-cn");
 
 class CommentList extends Component {
   constructor(props) {
@@ -162,31 +171,79 @@ class CommentList extends Component {
 
   async onDel(item, it, type, index) {
     let { commentlist, commentTotalCount } = this.state;
-    if (type == "comment") {
-      let result = await del_comment({
-        comment_id: item.comment_id,
-      });
-      commentlist.splice(index, 1);
-      commentTotalCount -= 1;
-      // this.getcommentlist();
-      this.setState({
-        commentlist,
-        commentTotalCount,
-      });
-      console.log("删除评论", result);
+    let { history } = this.props;
+    const result = await Dialog.confirm({
+      content: "您确定删除吗？",
+    });
+    if(!result) return;
+    try{
+      if (type == "comment") {
+        let result = await del_comment({
+          comment_id: item.comment_id,
+        });
+        commentlist.splice(index, 1);
+        commentTotalCount -= 1;
+        // this.getcommentlist();
+        this.setState({
+          commentlist,
+          commentTotalCount,
+        });
+        console.log("删除评论", result);
+      }
+      if (type == "reply") {
+        console.log("reply", type, item);
+        let result = await del_comment_reply({
+          reply_id: it.reply_id,
+        });
+        item.replyList.splice(index, 1);
+        item.backup_reply_list.splice(index, 1);
+        item.reply_count -= 1;
+        this.setState({
+          commentlist,
+        });
+        console.log("删除回复", result);
+      }
+    }catch(err){
+      if (err.error == 401) {
+        this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
+        history.push({
+          pathname: "/login",
+        });
+      }
     }
-    if (type == "reply") {
-      console.log("reply", type, item);
-      let result = await del_comment_reply({
-        reply_id: it.reply_id,
-      });
-      item.replyList.splice(index, 1);
-      item.backup_reply_list.splice(index, 1);
-      item.reply_count -= 1;
-      this.setState({
-        commentlist,
-      });
-      console.log("删除回复", result);
+    
+  }
+  handleDate(date){
+    let diff = dayjs().diff(dayjs(date),'day');
+    if(diff>10){
+      return dayjs(date).format('YYYY-MM-DD HH:mm')
+    }
+    let fromNow = dayjs(date).fromNow();
+    if(fromNow=='几秒前'){
+      return '刚刚';
+    }
+    return fromNow;
+  }
+
+  async onJubao(report_id,type,comment_id){//举报
+    let { history } = this.props;
+    const result = await Dialog.confirm({
+      content: "您确定举报吗？",
+    });
+    if(!result) return;
+    try{
+      await comment_jubao({
+        report_id:report_id,
+        report_type:type,
+        comment_id:comment_id
+      })
+    }catch(err){
+      if (err.error == 401) {
+        this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
+        history.push({
+          pathname: "/login",
+        });
+      }
     }
   }
 
@@ -323,7 +380,7 @@ class CommentList extends Component {
                 key={index}
                 nickname={item.nickname}
                 scoreText={`给这部作品打了${item.score}分`}
-                date={item.date}
+                date={this.handleDate(item.date)}
                 separator={commentlist.length != index + 1}
                 avatar={item.avatar}
                 actionsOption={actionsOptionComment}
@@ -332,13 +389,14 @@ class CommentList extends Component {
                   userInfo && userInfo.user_id == item.user_id
                 }
                 isShowMenuBtn={true}
-                onClickJubao={() => {
-                  console.log("jubao");
-                }}
+                
                 onAction={(val) => {
-                  console.log("val", val);
+                  // console.log("val", val);
                   if (val.key == "del") {
                     this.onDel(item, null, "comment", index);
+                  }
+                  if (val.key == 'jubao'){
+                    this.onJubao(item.comment_id,'comment',item.comment_id)
                   }
                 }}
                 // isShowUnfoldPackUp={true}
@@ -362,22 +420,32 @@ class CommentList extends Component {
                 dzNum={item.thumb_up_count}
                 alreadyThumbUp={item.already_thumb_up}
                 onThumbUp={async () => {
-                  let result = await thumb_up({
-                    thumb_up_id: item.comment_id,
-                    comment_id: item.comment_id,
-                    thumb_up_type: "comment",
-                  });
-                  if (result.type == "add") {
-                    item.already_thumb_up = true;
-                    item.thumb_up_count += 1;
+                  try{
+                    let result = await thumb_up({
+                      thumb_up_id: item.comment_id,
+                      comment_id: item.comment_id,
+                      thumb_up_type: "comment",
+                    });
+                    if (result.type == "add") {
+                      item.already_thumb_up = true;
+                      item.thumb_up_count += 1;
+                    }
+                    if (result.type == "reduce") {
+                      item.already_thumb_up = false;
+                      item.thumb_up_count -= 1;
+                    }
+                    this.setState({
+                      commentlist,
+                    });
+                  }catch(err){
+                    if (err.error == 401) {
+                      this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
+                      history.push({
+                        pathname: "/login",
+                      });
+                    }
                   }
-                  if (result.type == "reduce") {
-                    item.already_thumb_up = false;
-                    item.thumb_up_count -= 1;
-                  }
-                  this.setState({
-                    commentlist,
-                  });
+                  
                 }}
                 bottomNode={
                   item.reply_count ? (
@@ -495,7 +563,7 @@ class CommentList extends Component {
                         key={it.reply_id + "rL"}
                         nickname={it.nickname}
                         replyName={it.parent_nickname}
-                        date={it.date}
+                        date={this.handleDate(it.date)}
                         avatar={it.avatar}
                         score={item.score}
                         actionsOption={actionsOptionReply}
@@ -505,34 +573,46 @@ class CommentList extends Component {
                           console.log("jubao");
                         }}
                         onAction={(val) => {
-                          console.log("val", val);
                           if (val.key == "del") {
-                            console.log("val---", val);
                             this.onDel(item, it, "reply", idx);
+                          }
+                          if (val.key == 'jubao'){
+                            this.onJubao(it.reply_id,'reply',item.comment_id)
                           }
                         }}
                         dzNum={it.thumb_up_count}
                         alreadyThumbUp={it.already_thumb_up}
                         onThumbUp={async () => {
-                          let result = await thumb_up({
-                            thumb_up_id: it.reply_id,
-                            comment_id: item.comment_id,
-                            thumb_up_type: "reply",
-                          });
-                          if (result.type == "add") {
-                            it.already_thumb_up = true;
-                            it.thumb_up_count = it.thumb_up_count
-                              ? it.thumb_up_count
-                              : 0;
-                            it.thumb_up_count += 1;
+                          try{
+                            let result = await thumb_up({
+                              thumb_up_id: it.reply_id,
+                              comment_id: item.comment_id,
+                              thumb_up_type: "reply",
+                            });
+                            if (result.type == "add") {
+                              it.already_thumb_up = true;
+                              it.thumb_up_count = it.thumb_up_count
+                                ? it.thumb_up_count
+                                : 0;
+                              it.thumb_up_count += 1;
+                            }
+                            if (result.type == "reduce") {
+                              it.already_thumb_up = false;
+                              it.thumb_up_count -= 1;
+                            }
+                            this.setState({
+                              commentlist,
+                            });
+                          }catch(err){
+                            console.log('哈哈哈',err);
+                            if (err.error == 401) {
+                              this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
+                              history.push({
+                                pathname: "/login",
+                              });
+                            }
                           }
-                          if (result.type == "reduce") {
-                            it.already_thumb_up = false;
-                            it.thumb_up_count -= 1;
-                          }
-                          this.setState({
-                            commentlist,
-                          });
+                          
                         }}
                         history={history}
                         onReplyTextBtn={() => {
@@ -609,45 +689,54 @@ class CommentList extends Component {
                 }}
                 onEnterPress={async () => {
                   let { selectReplyItem } = this.state;
-                  let result = await add_comment_reply(selectReplyItem);
-                  if (
-                    !commentlist[selectReplyItem.commentlistIndex].replyList
-                  ) {
-                    commentlist[selectReplyItem.commentlistIndex].replyList =
-                      [];
-                  }
-                  commentlist[selectReplyItem.commentlistIndex].replyList.push(
-                    result
-                  );
-
-                  if (
-                    !commentlist[selectReplyItem.commentlistIndex]
-                      .backup_reply_list
-                  ) {
+                  try{
+                    let result = await add_comment_reply(selectReplyItem);
+                    if (
+                      !commentlist[selectReplyItem.commentlistIndex].replyList
+                    ) {
+                      commentlist[selectReplyItem.commentlistIndex].replyList =
+                        [];
+                    }
+                    commentlist[selectReplyItem.commentlistIndex].replyList.push(
+                      result
+                    );
+  
+                    if (
+                      !commentlist[selectReplyItem.commentlistIndex]
+                        .backup_reply_list
+                    ) {
+                      commentlist[
+                        selectReplyItem.commentlistIndex
+                      ].backup_reply_list = [];
+                    }
                     commentlist[
                       selectReplyItem.commentlistIndex
-                    ].backup_reply_list = [];
-                  }
-                  commentlist[
-                    selectReplyItem.commentlistIndex
-                  ].backup_reply_list.push(result);
-
-                  if (
-                    !commentlist[selectReplyItem.commentlistIndex].reply_count
-                  ) {
+                    ].backup_reply_list.push(result);
+  
+                    if (
+                      !commentlist[selectReplyItem.commentlistIndex].reply_count
+                    ) {
+                      commentlist[
+                        selectReplyItem.commentlistIndex
+                      ].reply_count = 0;
+                    }
+  
                     commentlist[
                       selectReplyItem.commentlistIndex
-                    ].reply_count = 0;
+                    ].reply_count += 1;
+  
+                    this.setState({
+                      commentlist,
+                      selectReplyItem: null,
+                    });
+                  }catch(err){
+                    if (err.error == 401) {
+                      this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
+                      history.push({
+                        pathname: "/login",
+                      });
+                    }
                   }
-
-                  commentlist[
-                    selectReplyItem.commentlistIndex
-                  ].reply_count += 1;
-
-                  this.setState({
-                    commentlist,
-                    selectReplyItem: null,
-                  });
                 }}
               />
             </div>

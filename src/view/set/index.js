@@ -47,14 +47,20 @@ class CinemaSearch extends Component {
             arrow={false}
             border="none"
             extra={userInfo && userInfo.user_id}
+            onClick={()=>{}}
           >
             账号ID
           </List.Item>
-          <List.Item arrow={false} extra={userInfo && userInfo.phone_number}>
+          <List.Item arrow={false} extra={userInfo && userInfo.phone_number}  onClick={()=>{}}>
             电话号码
           </List.Item>
-          <List.Item arrow={false} border="none" extra={versions}>
+          <List.Item arrow={false} border="none" extra={versions} onClick={()=>{}}>
             软件版本
+          </List.Item>
+          <List.Item arrow={true} border="none" onClick={()=>{
+            history.push('/edituserinfo')
+          }}>
+            修改会员信息
           </List.Item>
         </List>
         <div className="login-out-btn-wrapper">

@@ -87,7 +87,7 @@ export function del_comment(params) {
             duration: 2000,
             content: res.message,
           });
-          reject(res.data);
+          reject(res);
           break;
       }
     });
@@ -127,12 +127,39 @@ export function thumb_up(params) {
             duration: 2000,
             content: res.message,
           });
-          reject(res.data);
+          reject(res);
           break;
       }
     });
   });
 }
+
+export function comment_jubao(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.post(Api.COMMENT_JUBAO, params, "").then((res) => {
+      switch (res.error) {
+        case 0:
+          Toast.show({
+            icon: "success",
+            duration: 2000,
+            content: res.message,
+          });
+          resolve(res);
+          break;
+        default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
+          reject(res);
+          break;
+      }
+    });
+  });
+}
+
+
 
 export function get_comment_reply_list(params) {
   return new Promise((resolve, reject) => {
@@ -171,7 +198,7 @@ export function add_comment_reply(params) {
             duration: 2000,
             content: res.message,
           });
-          reject(res.data);
+          reject(res);
           break;
       }
     });
@@ -195,7 +222,7 @@ export function del_comment_reply(params) {
             duration: 2000,
             content: res.message,
           });
-          reject(res.data);
+          reject(res);
           break;
       }
     });
