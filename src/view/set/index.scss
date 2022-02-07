@@ -1,4 +1,13 @@
+@import "@/stylesheets/_base.scss";
 .set-container{
+    .adm-nav-bar{
+        background-color: $base-color !important;
+        color: #fff;
+    }
+    .adm-list-item-content-main{
+        font-size: 0.16rem;
+        color: #666666;
+    }
     .login-out-btn-wrapper{
         position: absolute;
         bottom: 0;

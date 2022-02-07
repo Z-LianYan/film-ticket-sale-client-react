@@ -21,6 +21,7 @@ import {
   Input,
   Popup,
   Dialog,
+  TextArea,
 } from "antd-mobile";
 import { get_film_detail } from "@/api/film";
 import dayjs from "dayjs";
@@ -130,10 +131,11 @@ class FileDetail extends Component {
     let { commentlist, commentTotalCount } = this.state;
     let { history } = this.props;
     const result = await Dialog.confirm({
+      confirmText: "确定",
       content: "您确定删除吗？",
     });
-    if(!result) return;
-    try{
+    if (!result) return;
+    try {
       if (type == "comment") {
         let result = await del_comment({
           comment_id: item.comment_id,
@@ -160,7 +162,7 @@ class FileDetail extends Component {
         });
         console.log("删除回复", result);
       }
-    }catch(err){
+    } catch (err) {
       if (err.error == 401) {
         this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
         history.push({
@@ -168,21 +170,22 @@ class FileDetail extends Component {
         });
       }
     }
-    
   }
-  async onJubao(report_id,type,comment_id){//举报
+  async onJubao(report_id, type, comment_id) {
+    //举报
     let { history } = this.props;
     const result = await Dialog.confirm({
+      confirmText: "确定",
       content: "您确定举报吗？",
     });
-    if(!result) return;
-    try{
+    if (!result) return;
+    try {
       await comment_jubao({
-        report_id:report_id,
-        report_type:type,
-        comment_id:comment_id
-      })
-    }catch(err){
+        report_id: report_id,
+        report_type: type,
+        comment_id: comment_id,
+      });
+    } catch (err) {
       if (err.error == 401) {
         this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
         history.push({
@@ -413,8 +416,8 @@ class FileDetail extends Component {
                     if (val.key == "del") {
                       this.onDel(item, null, "comment", index);
                     }
-                    if (val.key == 'jubao'){
-                      this.onJubao(item.comment_id,'comment',item.comment_id)
+                    if (val.key == "jubao") {
+                      this.onJubao(item.comment_id, "comment", item.comment_id);
                     }
                   }}
                   commentContent={item.comment_content}
@@ -439,7 +442,7 @@ class FileDetail extends Component {
                   dzNum={item.thumb_up_count}
                   alreadyThumbUp={item.already_thumb_up}
                   onThumbUp={async () => {
-                    try{
+                    try {
                       let result = await thumb_up({
                         thumb_up_id: item.comment_id,
                         comment_id: item.comment_id,
@@ -456,7 +459,7 @@ class FileDetail extends Component {
                       this.setState({
                         commentlist,
                       });
-                    }catch(err){
+                    } catch (err) {
                       if (err.error == 401) {
                         this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
                         history.push({
@@ -464,7 +467,6 @@ class FileDetail extends Component {
                         });
                       }
                     }
-                    
                   }}
                   history={history}
                   bottomNode={
@@ -591,8 +593,12 @@ class FileDetail extends Component {
                             if (val.key == "del") {
                               this.onDel(item, it, "reply", idx);
                             }
-                            if (val.key == 'jubao'){
-                              this.onJubao(it.reply_id,'reply',item.comment_id)
+                            if (val.key == "jubao") {
+                              this.onJubao(
+                                it.reply_id,
+                                "reply",
+                                item.comment_id
+                              );
                             }
                           }}
                           commentContent={it.reply_content}
@@ -603,7 +609,7 @@ class FileDetail extends Component {
                           dzNum={it.thumb_up_count}
                           alreadyThumbUp={it.already_thumb_up}
                           onThumbUp={async () => {
-                            try{
+                            try {
                               let result = await thumb_up({
                                 thumb_up_id: it.reply_id,
                                 comment_id: item.comment_id,
@@ -623,7 +629,7 @@ class FileDetail extends Component {
                               this.setState({
                                 commentlist,
                               });
-                            }catch(err){
+                            } catch (err) {
                               if (err.error == 401) {
                                 this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
                                 history.push({
@@ -631,7 +637,6 @@ class FileDetail extends Component {
                                 });
                               }
                             }
-                            
                           }}
                           history={history}
                           onReplyTextBtn={() => {
@@ -706,8 +711,22 @@ class FileDetail extends Component {
           }}
         >
           {selectReplyItem && (
-            <div style={{ padding: "0.1rem 0.2rem 0.5rem 0.2rem" }}>
-              <Input
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "0.1rem 0.2rem 0.3rem 0.2rem",
+                background: "#f4f4f4",
+              }}
+            >
+              <TextArea
+                style={{
+                  background: "#fff",
+                  borderRadius: "0.1rem",
+                  textAlign: "bottom",
+                  marginRight: "0.1rem",
+                  padding: "0.05rem",
+                }}
                 placeholder={`回复 ${selectReplyItem.reply_person_nickname} :`}
                 value={selectReplyItem.reply_content}
                 onChange={(val) => {
@@ -716,72 +735,66 @@ class FileDetail extends Component {
                     selectReplyItem,
                   });
                 }}
-                onEnterPress={async () => {
-                  let { selectReplyItem } = this.state;
-                  try{
-                    let result = await add_comment_reply(selectReplyItem);
-                    if (
-                      !commentlist[selectReplyItem.commentlistIndex].replyList
-                    ) {
-                      commentlist[selectReplyItem.commentlistIndex].replyList =
-                        [];
-                    }
-                    commentlist[selectReplyItem.commentlistIndex].replyList.push(
-                      result
-                    );
-
-                    if (
-                      !commentlist[selectReplyItem.commentlistIndex]
-                        .backup_reply_list
-                    ) {
-                      commentlist[
-                        selectReplyItem.commentlistIndex
-                      ].backup_reply_list = [];
-                    }
-                    commentlist[
-                      selectReplyItem.commentlistIndex
-                    ].backup_reply_list.push(result);
-
-                    if (
-                      !commentlist[selectReplyItem.commentlistIndex].reply_count
-                    ) {
-                      commentlist[
-                        selectReplyItem.commentlistIndex
-                      ].reply_count = 0;
-                    }
-                    commentlist[
-                      selectReplyItem.commentlistIndex
-                    ].reply_count += 1;
-
-                    this.setState({
-                      commentlist,
-                      selectReplyItem: null,
-                    });
-                  }catch(err){
-                    if (err.error == 401) {
-                      this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
-                      history.push({
-                        pathname: "/login",
-                      });
-                    }
-                  }
-                  
-                }}
               />
+              <Button
+                color="primary"
+                size="mini"
+                style={{ width: "0.7rem" }}
+                onClick={() => {
+                  this.onReply();
+                }}
+              >
+                回复
+              </Button>
             </div>
           )}
         </Popup>
       </div>
     );
   }
-  handleDate(date){
-    let diff = dayjs().diff(dayjs(date),'day');
-    if(diff>10){
-      return dayjs(date).format('YYYY-MM-DD HH:mm')
+  async onReply() {
+    let { selectReplyItem, commentlist } = this.state;
+    let { history } = this.props;
+    try {
+      let result = await add_comment_reply(selectReplyItem);
+      if (!commentlist[selectReplyItem.commentlistIndex].replyList) {
+        commentlist[selectReplyItem.commentlistIndex].replyList = [];
+      }
+      commentlist[selectReplyItem.commentlistIndex].replyList.push(result);
+
+      if (!commentlist[selectReplyItem.commentlistIndex].backup_reply_list) {
+        commentlist[selectReplyItem.commentlistIndex].backup_reply_list = [];
+      }
+      commentlist[selectReplyItem.commentlistIndex].backup_reply_list.push(
+        result
+      );
+
+      if (!commentlist[selectReplyItem.commentlistIndex].reply_count) {
+        commentlist[selectReplyItem.commentlistIndex].reply_count = 0;
+      }
+      commentlist[selectReplyItem.commentlistIndex].reply_count += 1;
+
+      this.setState({
+        commentlist,
+        selectReplyItem: null,
+      });
+    } catch (err) {
+      if (err.error == 401) {
+        this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
+        history.push({
+          pathname: "/login",
+        });
+      }
+    }
+  }
+  handleDate(date) {
+    let diff = dayjs().diff(dayjs(date), "day");
+    if (diff > 10) {
+      return dayjs(date).format("YYYY-MM-DD HH:mm");
     }
     let fromNow = dayjs(date).fromNow();
-    if(fromNow=='几秒前'){
-      return '刚刚';
+    if (fromNow == "几秒前") {
+      return "刚刚";
     }
     return fromNow;
   }

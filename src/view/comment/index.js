@@ -26,7 +26,7 @@ import {
   add_comment,
   edit_comment,
   del_comment,
-  get_comment_detail
+  get_comment_detail,
 } from "@/api/comment";
 import CustomSkeleton from "@/components/CustomSkeleton/index";
 import dayjs from "dayjs";
@@ -57,38 +57,41 @@ class Comment extends Component {
         9: "很不错，推荐看看",
         10: "棒极了，极力推荐",
       },
-      filmInfo:{},
-      productionNum:0
+      filmInfo: {},
+      productionNum: 0,
     };
   }
   async componentDidMount() {
-    console.log('999',this.props.location.state);
+    console.log("999", this.props.location.state);
     let { location } = this.props;
     let { formData } = this.state;
 
-    if(location.state && !location.state.film_id) return;
+    if (location.state && !location.state.film_id) return;
 
     let result = await get_comment_detail({
       film_id: location.state && location.state.film_id,
       comment_id: location.state && location.state.comment_id,
-    })
+    });
     this.setState({
-      filmInfo:result.filmInfo,
-      productionNum:(location.state && location.state.comment_id)?result.count:result.count+1
-    })
+      filmInfo: result.filmInfo,
+      productionNum:
+        location.state && location.state.comment_id
+          ? result.count
+          : result.count + 1,
+    });
 
-    if(location.state && location.state.comment_id){
+    if (location.state && location.state.comment_id) {
       let commentInfo = result.commentInfo;
       formData.score = commentInfo.score;
       formData.comment_content = commentInfo.comment_content;
       this.setState({
-        formData
-      })
+        formData,
+      });
     }
   }
 
   async addComment() {
-    let { location } = this.props;
+    let { location, history } = this.props;
     let { formData } = this.state;
     if (!formData.score)
       return Toast.show({
@@ -100,10 +103,17 @@ class Comment extends Component {
         duration: 1000,
         content: "您还没评论呢",
       });
-    if(location.state && location.state.comment_id){
+    if (location.state && location.state.comment_id) {
       await edit_comment({
         ...formData,
-        comment_id:location.state.comment_id
+        comment_id: location.state.comment_id,
+      });
+      history.replace({
+        pathname: "/commentComplete",
+        state: {
+          comment_id: location.state.comment_id,
+          film_id: location.state && location.state.film_id,
+        },
       });
       return;
     }
@@ -111,12 +121,20 @@ class Comment extends Component {
       ...formData,
       film_id: location.state && location.state.film_id,
     });
+    if (!result) return;
+    history.replace({
+      pathname: "/commentComplete",
+      state: {
+        comment_id: result.insertId,
+        film_id: location.state && location.state.film_id,
+      },
+    });
     console.log("result---", result, formData, location.state.film_id);
   }
 
   render() {
     let { history, location } = this.props;
-    let { formData, rateLevelTex,filmInfo,productionNum } = this.state;
+    let { formData, rateLevelTex, filmInfo, productionNum } = this.state;
 
     return (
       <div className="comment-container">
@@ -158,9 +176,7 @@ class Comment extends Component {
             }
           >
             <div className="comment-title">我的评论</div>
-            <div className="comment-film">
-              {filmInfo.film_name}
-            </div>
+            <div className="comment-film">{filmInfo.film_name}</div>
           </NavBar>
         </div>
         <div style={{ height: "0.5rem" }}></div>
@@ -168,9 +184,9 @@ class Comment extends Component {
         <div className="content-container">
           <div className="jilu">
             {/* 这是您在这里讨论的第<span className="num"> {productionNum} </span>部作品 */}
-            {
-              (location.state && location.state.comment_id)?`您在这里总共讨论了`:'这是您在这里讨论的第'
-            }
+            {location.state && location.state.comment_id
+              ? `您在这里总共讨论了`
+              : "这是您在这里讨论的第"}
             <span className="num"> {productionNum} </span>部作品
           </div>
           <div className="rate-wrapper">
@@ -180,7 +196,7 @@ class Comment extends Component {
                 className="star"
                 style={{ "--star-size": "0.21rem" }}
                 allowHalf
-                value={formData.score/2}
+                value={formData.score / 2}
                 onChange={(val) => {
                   formData.score = val * 2;
                   this.setState({
