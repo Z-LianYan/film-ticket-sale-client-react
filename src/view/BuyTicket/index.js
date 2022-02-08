@@ -13,7 +13,7 @@ import {
 } from "antd-mobile";
 import { DownOutline, UpOutline, CloseOutline } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
-import { get_buy_ticket_detail, pay_order } from "@/api/order";
+import { create_order, pay_order } from "@/api/order";
 import { get_user_info } from "@/api/user";
 import dayjs from "dayjs";
 import tools from "@/utils/tools";
@@ -77,7 +77,7 @@ class BuyTicket extends Component {
   async getOrderDetail() {
     let { history, location } = this.props;
     try {
-      let result = await get_buy_ticket_detail({
+      let result = await create_order({
         schedule_id: location.state.schedule_id,
         buy_seat_ids: location.state.buy_seat_ids.join(","),
       });

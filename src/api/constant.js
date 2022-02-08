@@ -22,10 +22,12 @@ export const SEND_VERIFY_CODE = "/sendVerifyCode"; //发送短信验证码
 export const EDIT_USER_INFO = "/editUserInfo"; //编辑会员信息
 export const GET_USER_INFO = "/getUserInfo"; //获取用户信息
 export const LOGIN_OUT = "/loginOut"; //退出登录
-export const GET_BUY_TICHET_DETAIL = "/getOrderDetail"; //订单详情
+
 export const USER_RECHARGE = "/userRecharge"; //会员充值
+export const CREATE_ORDER = "/createOrder"; //创建订单
 export const PAY_ORDER = "/payOrder"; //支付订单
 export const GET_ORDER_LIST = "/getOrderList"; //订单列表
+export const GET_ORDER_DETAIL = "/getOrderDetail"; //订单详情
 
 export const GET_COMMENT_LIST = "/getCommentList"; //评论列表
 export const ADD_COMMENT = "/addComment"; //添加评论
@@ -37,5 +39,3 @@ export const COMMENT_JUBAO = "/commentJubao"; //举报
 export const GET_COMMENT_REPLY_LIST = "/getCommentReplyList"; //获取回复列表
 export const ADD_COMMENT_REPLY = "/addCommentReply"; //添加回复
 export const DEL_COMMENT_REPLY = "/delCommentReply"; //删除回复
-
-

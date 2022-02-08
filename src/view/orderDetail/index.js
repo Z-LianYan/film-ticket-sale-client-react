@@ -9,6 +9,7 @@ import {
   Button,
   Toast,
   Image,
+  Popup,
 } from "antd-mobile";
 import { GroupCommons } from "@/modules/group/index";
 import {
@@ -19,7 +20,7 @@ import {
   PhoneFill,
   DownlandOutline,
 } from "antd-mobile-icons";
-import { get_buy_ticket_detail, pay_order } from "@/api/order";
+import { get_order_detail, pay_order } from "@/api/order";
 import QRCode from "qrcode.react";
 import domToImage from "dom-to-image";
 import { saveAs } from "file-saver";
@@ -32,7 +33,7 @@ dayjs.extend(relativeTime);
 dayjs.extend(calendar);
 dayjs.locale("zh-cn");
 
-class Recharge extends Component {
+class OrderDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -48,7 +49,7 @@ class Recharge extends Component {
     let { history, location, match } = this.props;
     // console.log("location", this.props, match.params.order_id);
     try {
-      let result = await get_buy_ticket_detail({
+      let result = await get_order_detail({
         order_id: match.params.order_id,
       });
       // console.log(result);
@@ -197,9 +198,7 @@ class Recharge extends Component {
                   });
                 }}
               >
-                <div className="cinema-name">
-                  {orderDetail.cinema_name}
-                </div>
+                <div className="cinema-name">{orderDetail.cinema_name}</div>
                 <RightOutline style={{ margin: "0 0.1rem" }} fontSize={20} /> |
               </div>
 
@@ -288,47 +287,64 @@ class Recharge extends Component {
                   </div>
                 </div>
               </div>
-              <div
-                className="save-qr"
-                id="down_link"
-                onClick={() => {
-                  this.changeCanvasToPic();
-                }}
-              >
-                <DownlandOutline fontSize={20} />
-                <span>保存二维码</span>
-              </div>
+              {orderDetail.order_expire ? null : (
+                <div
+                  className="save-qr"
+                  id="down_link"
+                  onClick={() => {
+                    this.changeCanvasToPic();
+                  }}
+                >
+                  <DownlandOutline fontSize={20} />
+                  <span>保存二维码</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
-        <div style={{height:'0.3rem'}}></div>
+        <div style={{ height: "0.3rem" }}></div>
         <div className="order-detail-card">
           {/* <List.Item arrow={true} title='订单明细' extra='价格明细'></List.Item> */}
-          <div className="order-title">
-            <h4 className='title'>订单明细</h4>
-            <span className="val">价格明细<RightOutline /></span>
+          <div
+            className="order-title"
+            onClick={() => {
+              this.$child.open();
+            }}
+          >
+            <h4 className="title">订单明细</h4>
+            <span className="val">
+              价格明细
+              <RightOutline color="#000" fontSize={16} />
+            </span>
           </div>
 
           <div className="detail-item">
             <span className="label">实付金额：</span>
-            <span className="val">¥93（2张电影票）</span>
+            <span className="val">
+              ¥{orderDetail.price}（{orderDetail.ticket_count}张电影票）
+            </span>
           </div>
           <div className="detail-item">
             <span className="label">手机号码：</span>
-            <span className="val">13536681616</span>
+            <span className="val">{orderDetail.phone_number}</span>
           </div>
           <div className="detail-item">
-            <span className="label">订单号码：</span>
-            <span className="val">123456543 </span>
+            <span className="label">订单编号：</span>
+            <span className="val">{orderDetail.order_id}</span>
           </div>
           <div className="detail-item">
             <span className="label">订单时间：</span>
-            <span className="val">2022-02-07 22:22:09</span>
+            <span className="val">{orderDetail.created_at}</span>
           </div>
-          
-
         </div>
-        <div style={{height:'0.5rem'}}></div>
+        <div style={{ height: "0.5rem" }}></div>
+
+        <MaskDetailComponent
+          orderDetail={this.state.orderDetail}
+          onRef={(child) => {
+            this.$child = child;
+          }}
+        />
       </div>
     );
   }
@@ -348,8 +364,6 @@ class Recharge extends Component {
         sameElse: "YY年MM月DD日", // Everything else ( 7/10/2011 )
       }) + "开场"
     );
-
-    
   }
   handleVerifyCode() {
     // console.log(
@@ -370,4 +384,102 @@ class Recharge extends Component {
   }
 }
 
-export default GroupCommons(Recharge);
+export default GroupCommons(OrderDetail);
+
+class MaskDetailComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isVisibleMask: false,
+      service: [],
+      cinema_name: "",
+    };
+  }
+  static defaultProps = {
+    orderDetail: {},
+  };
+  render() {
+    let { isVisibleMask } = this.state;
+    let { orderDetail } = this.props;
+    return (
+      <Popup visible={isVisibleMask}>
+        <div className="order-detail--mask-container">
+          <NavBar
+            style={{ backgroundColor: "#fff" }}
+            backArrow={false}
+            right={
+              <CloseOutline
+                fontSize={24}
+                onClick={() => {
+                  this.close();
+                }}
+              />
+            }
+            onBack={() => {}}
+          >
+            价格明细
+          </NavBar>
+          <div className="content">
+            <List>
+              <List.Item
+                arrow={false}
+                border="none"
+                extra={orderDetail.ticket_count + "张"}
+              >
+                电影票
+              </List.Item>
+              <List.Item
+                arrow={false}
+                border="none"
+                extra={
+                  <div>
+                    <span className="premium">
+                      含服务费{orderDetail.premium}元/张
+                    </span>{" "}
+                    <span style={{ color: "red" }}>{orderDetail.price}</span>元
+                  </div>
+                }
+              >
+                原价
+              </List.Item>
+              <List.Item
+                arrow={false}
+                border="none"
+                extra={
+                  <div>
+                    <span className="premium">
+                      <span style={{ color: "red" }}>¥{orderDetail.price}</span>
+                    </span>
+                  </div>
+                }
+              >
+                实际支付
+              </List.Item>
+              {/* <List.Item arrow={false} border="none" extra={'-3元'}>
+                抵用券
+              </List.Item> */}
+            </List>
+          </div>
+        </div>
+      </Popup>
+    );
+  }
+  componentDidMount() {
+    this.props.onRef(this);
+  }
+  componentWillUnmount = () => {
+    this.setState = (state, callback) => {
+      return;
+    };
+  };
+  open(service, cinema_name) {
+    this.setState({
+      isVisibleMask: true,
+    });
+  }
+  close() {
+    this.setState({
+      isVisibleMask: false,
+    });
+  }
+}

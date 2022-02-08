@@ -199,6 +199,8 @@
         }
         .val{
           font-size: 0.13rem;
+          display: flex;
+          align-items: center;
         }
 
         
@@ -215,6 +217,17 @@
         }
       }
     }
+
+    .order-detail--mask-container{
+      .content{
+          min-height: 2rem;
+          padding-bottom: 0.5rem;
+          .premium{
+              color: #ccc;
+          }
+      }
+  
+  }
 
 }
 
