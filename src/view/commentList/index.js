@@ -167,7 +167,6 @@ class CommentList extends Component {
     this.setState({
       commentlist: this.state.commentlist,
     });
-    console.log("result", result);
   }
 
   async onDel(item, it, type, index) {
@@ -345,7 +344,7 @@ class CommentList extends Component {
                         marginBottom: "0.1rem",
                       }}
                     >
-                      讨论区仅展示部分评价，与影片无关的，或包含人身攻击等内容的评价将被折叠，且其评分不计入猫眼评分。
+                      讨论区仅展示部分评价，与影片无关的，或包含人身攻击等内容的评价将被折叠，且其评分不计入评分。
                       对于多次违反社区规则的用户，我们也保留封禁账号的权利。
                     </div>
                     <div
@@ -467,10 +466,6 @@ class CommentList extends Component {
                                 this.setState({
                                   commentlist: commentlist,
                                 });
-                                console.log(
-                                  "item.isFinalllyPage",
-                                  item.isFinalllyPage
-                                );
                               }}
                             >
                               收起

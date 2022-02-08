@@ -1,17 +1,22 @@
 @import "@/stylesheets/_base.scss";
 @import "@/stylesheets/_mixin.scss";
 .order-detail-container{
+    min-height: 100vh;
+    background-color: #f4f4f4;
     .content-container{
       background-color: #64663e;
-      height: 60vh;
-      box-shadow: 0.1rem -0.1rem 0.5rem 1rem #64663e;
+      // height: 60vh;
+      box-shadow: 0.1rem -0.1rem 0.5rem 0.6rem #64663e;
       padding: 0 10px;
       .header-content{
-        height: 70px;
-        background-color: #494c2f;
-        border-top-left-radius: 0.1rem;
-        border-top-right-radius: 0.1rem;
+        // height: 70px;
+        // background-color: #494c2f;
+        // border-top-left-radius: 0.1rem;
+        // border-top-right-radius: 0.1rem;
         .head-top{
+          background-color: #494c2f;
+          border-top-left-radius: 0.1rem;
+          border-top-right-radius: 0.1rem;
           height: 50px;
           margin-top: 0.1rem;
           display: flex;
@@ -176,6 +181,38 @@
 
         
         
+      }
+    }
+
+    .order-detail-card{
+      background-color: #fff;
+      margin: 0.12rem;
+      border-radius: 0.1rem;
+      padding: 0.15rem 0.1rem;
+      .order-title{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .title{
+          color: #000;
+          font-weight: bold;
+        }
+        .val{
+          font-size: 0.13rem;
+        }
+
+        
+
+      }
+      .detail-item{
+        margin-top: 0.05rem;
+        .label{
+          font-size: 0.14rem;
+        }
+        .val{
+          color: #000;
+          font-size: 0.14rem;
+        }
       }
     }
 

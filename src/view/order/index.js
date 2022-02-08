@@ -221,7 +221,11 @@ class OrderComponent extends Component {
             );
           })} */}
           {list.map((item, index) => {
-            return <ItemList item={item} history={history} key={index} />;
+            return <ItemList item={item} history={history} key={index} onClick={()=>{
+              history.push({
+                pathname:'/order/detail/'+item.order_id
+              })
+            }}/>;
           })}
           <InfiniteScroll
             threshold="50"
@@ -265,10 +269,12 @@ class OrderComponent extends Component {
 
 export default GroupCommons(OrderComponent);
 
-function ItemList({ item, history }) {
+function ItemList({ item, history,onClick }) {
   console.log("history", item);
   return (
-    <div className="item-list">
+    <div className="item-list" onClick={()=>{
+      onClick && onClick()
+    }}>
       <List mode="card" header="">
         <List.Item extra={item.status_text}>{item.film_name}</List.Item>
         <div className="item-list-content">
@@ -287,24 +293,51 @@ function ItemList({ item, history }) {
           </div>
         </div>
         <div className="comment-btn">
+          {/* {
+            item.status==2?<Button
+              color="primary"
+              size="small"
+              onClick={() => {
+                stopBubble(e);
+                history.push({
+                  pathname: "/comment",
+                  state: {
+                    // schedule_id: item.schedule_id,
+                    film_id: item.film_id,
+                    film_name: item.film_name,
+                  },
+                });
+              }}
+            >
+              写影评
+            </Button>:null
+          } */}
           <Button
-            color="primary"
-            size="small"
-            onClick={() => {
-              history.push({
-                pathname: "/comment",
-                state: {
-                  // schedule_id: item.schedule_id,
-                  film_id: item.film_id,
-                  film_name: item.film_name,
-                },
-              });
-            }}
-          >
-            写影评
-          </Button>
+              color="primary"
+              size="small"
+              onClick={(e) => {
+                stopBubble(e);
+                history.push({
+                  pathname: "/comment",
+                  state: {
+                    // schedule_id: item.schedule_id,
+                    film_id: item.film_id,
+                    film_name: item.film_name,
+                  },
+                });
+              }}
+            >
+              写影评
+            </Button>
         </div>
       </List>
     </div>
   );
 }
+function stopBubble(e) { 
+  if(e && e.stopPropagation) { //非IE 
+    e.stopPropagation(); 
+  } else { //IE 
+    window.event.cancelBubble = true; 
+  } 
+} 

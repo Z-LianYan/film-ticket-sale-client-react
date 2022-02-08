@@ -196,7 +196,6 @@ class FileDetail extends Component {
   }
 
   async getCommentReplyList(item) {
-    console.log("getCommentReplyList----=");
     item.isReplyCommentLoading = true;
     item.page = item.page ? item.page + 1 : 1;
     this.setState({
@@ -227,7 +226,6 @@ class FileDetail extends Component {
     this.setState({
       commentlist: this.state.commentlist,
     });
-    console.log("result", result);
   }
 
   render() {
@@ -487,10 +485,6 @@ class FileDetail extends Component {
                                   this.setState({
                                     commentlist: commentlist,
                                   });
-                                  console.log(
-                                    "item.isFinalllyPage",
-                                    item.isFinalllyPage
-                                  );
                                 }}
                               >
                                 收起

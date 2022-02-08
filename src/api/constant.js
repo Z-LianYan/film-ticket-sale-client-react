@@ -1,3 +1,4 @@
+export const GET_UPLOAD_QINIU_CONFIG = "/getUploadQiniuConfig"; //获取上传七牛配置
 export const GET_FILM_HOT = "/film/hot";
 
 export const GET_FILM_SOONSHOW = "/film/soonShow";
@@ -36,4 +37,5 @@ export const COMMENT_JUBAO = "/commentJubao"; //举报
 export const GET_COMMENT_REPLY_LIST = "/getCommentReplyList"; //获取回复列表
 export const ADD_COMMENT_REPLY = "/addCommentReply"; //添加回复
 export const DEL_COMMENT_REPLY = "/delCommentReply"; //删除回复
+
 

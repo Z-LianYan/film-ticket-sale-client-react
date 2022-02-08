@@ -301,6 +301,34 @@ class Recharge extends Component {
             </div>
           </div>
         </div>
+        <div style={{height:'0.3rem'}}></div>
+        <div className="order-detail-card">
+          {/* <List.Item arrow={true} title='订单明细' extra='价格明细'></List.Item> */}
+          <div className="order-title">
+            <h4 className='title'>订单明细</h4>
+            <span className="val">价格明细<RightOutline /></span>
+          </div>
+
+          <div className="detail-item">
+            <span className="label">实付金额：</span>
+            <span className="val">¥93（2张电影票）</span>
+          </div>
+          <div className="detail-item">
+            <span className="label">手机号码：</span>
+            <span className="val">13536681616</span>
+          </div>
+          <div className="detail-item">
+            <span className="label">订单号码：</span>
+            <span className="val">123456543 </span>
+          </div>
+          <div className="detail-item">
+            <span className="label">订单时间：</span>
+            <span className="val">2022-02-07 22:22:09</span>
+          </div>
+          
+
+        </div>
+        <div style={{height:'0.5rem'}}></div>
       </div>
     );
   }
@@ -309,6 +337,7 @@ class Recharge extends Component {
     let { start_runtime } = orderDetail;
     if (!start_runtime) return;
     // return dayjs(dayjs('2022-02-08 15:24').valueOf()).fromNow()
+    // if()
     return (
       dayjs(start_runtime).calendar(null, {
         sameDay: "[今天] A h:mm ", // The same day ( Today at 2:30 AM )

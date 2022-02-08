@@ -24,7 +24,6 @@ class CinemaSearch extends Component {
     let result = await Dialog.confirm({
       content: "您确定退出登录吗？",
     });
-    console.log("result", result);
     if (result) {
       await login_out();
       this.props.loginOut();

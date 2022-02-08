@@ -11,13 +11,6 @@
     .adm-nav-bar{
       background-color: $base-color !important;
       color: #fff;
-      // .comment-title{
-      //   color: #24292f;
-      //   font-size: 0.16rem;
-      // }
-      // .comment-film{
-      //   font-size: 0.12rem;
-      // }
     }
   }
   
@@ -27,6 +20,10 @@
       align-items: center;
       justify-content: center;
     }
+  }
+  .adm-list-item-content{
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
   }
 
 }

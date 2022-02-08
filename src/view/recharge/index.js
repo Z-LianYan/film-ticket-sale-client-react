@@ -55,7 +55,6 @@ class Recharge extends Component {
       let result = await user_recharge({
         rechargePrice: Number(rechargePrice),
       });
-      console.log("result", result);
       this.setState({
         rechargePrice: "",
         fontPriceIndex: 0,

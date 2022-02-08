@@ -62,7 +62,6 @@ class Comment extends Component {
     };
   }
   async componentDidMount() {
-    console.log("999", this.props.location.state);
     let { location } = this.props;
     let { formData } = this.state;
 
@@ -89,7 +88,18 @@ class Comment extends Component {
       });
     }
   }
-
+  onGotoCommentCompletePage(comment_id){
+    let { location, history } = this.props;
+    setTimeout(() => {
+      history.replace({
+        pathname: "/commentComplete",
+        state: {
+          comment_id: comment_id,
+          film_id: location.state && location.state.film_id,
+        },
+      });
+    }, 500);
+  }
   async addComment() {
     let { location, history } = this.props;
     let { formData } = this.state;
@@ -108,13 +118,7 @@ class Comment extends Component {
         ...formData,
         comment_id: location.state.comment_id,
       });
-      history.replace({
-        pathname: "/commentComplete",
-        state: {
-          comment_id: location.state.comment_id,
-          film_id: location.state && location.state.film_id,
-        },
-      });
+      this.onGotoCommentCompletePage(location.state.comment_id);
       return;
     }
     let result = await add_comment({
@@ -122,14 +126,7 @@ class Comment extends Component {
       film_id: location.state && location.state.film_id,
     });
     if (!result) return;
-    history.replace({
-      pathname: "/commentComplete",
-      state: {
-        comment_id: result.insertId,
-        film_id: location.state && location.state.film_id,
-      },
-    });
-    console.log("result---", result, formData, location.state.film_id);
+    this.onGotoCommentCompletePage(result.insertId);
   }
 
   render() {

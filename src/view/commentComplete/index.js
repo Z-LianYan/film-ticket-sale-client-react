@@ -58,12 +58,11 @@ class CommentComplete extends Component {
         10: "棒极了，极力推荐",
       },
       filmInfo: {},
-      commentInfo: {},
+      commentInfo: null,
       productionNum: 0,
     };
   }
   async componentDidMount() {
-    console.log("999", this.props.location.state);
     let { location } = this.props;
     let { formData } = this.state;
     if (location.state && !location.state.film_id) return;
@@ -111,7 +110,7 @@ class CommentComplete extends Component {
         <div className="content-container">
           <div className="content-wrapper">
             <div className="user-info">
-              {commentInfo.avatar ? (
+              {commentInfo && commentInfo.avatar ? (
                 <Image
                   className="avatar"
                   src={commentInfo.avatar}
@@ -146,7 +145,7 @@ class CommentComplete extends Component {
                 </svg>
               )}
               <div className="right-wrapper">
-                {commentInfo.nickname ? (
+                {commentInfo && commentInfo.nickname ? (
                   <p className="nickname">
                     {commentInfo.nickname} <span className="ping">评</span>
                   </p>
@@ -160,23 +159,25 @@ class CommentComplete extends Component {
               {filmInfo.film_name ? (
                 <div className="film-name">《{filmInfo.film_name}》</div>
               ) : null}
-              <Rate
-                className="star"
-                style={{
-                  "--star-size": "0.21rem",
-                  "--active-color": "#e54847",
-                }}
-                allowHalf
-                value={commentInfo.score / 2}
-                readOnly={true}
-              />
-              {commentInfo.score ? (
+              {
+                commentInfo && commentInfo.score?<Rate
+                  className="star"
+                  style={{
+                    "--star-size": "0.21rem",
+                    "--active-color": "#e54847",
+                  }}
+                  allowHalf
+                  value={commentInfo.score / 2}
+                  readOnly={true}
+                />:null
+              }
+              {commentInfo && commentInfo.score ? (
                 <div className="score">
                   {commentInfo.score}分 {rateLevelTex[commentInfo.score]}
                 </div>
               ) : null}
             </div>
-            <div className="comment-content">{commentInfo.comment_content}</div>
+            <div className="comment-content">{commentInfo && commentInfo.comment_content}</div>
 
             <Image
               className="poster-img"
