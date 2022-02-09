@@ -164,11 +164,11 @@ class OrderDetail extends Component {
         {isSkeleton ? <CustomSkeleton section={5} row={5} /> : null}
         <NavBar
           style={{
-            position:'fixed',
-            left:0,
-            top:0,
-            right:0,
-            zIndex:1000,
+            position: "fixed",
+            left: 0,
+            top: 0,
+            right: 0,
+            zIndex: 1000,
             "--height": "0.44rem",
             backgroundColor: "#64663e",
             color: "#fff",
@@ -187,15 +187,16 @@ class OrderDetail extends Component {
             history.goBack();
           }}
         >
-          {orderDetail.order_expire?"观影结束":this.handlerTitle()}
+          {orderDetail.order_expire ? "观影结束" : this.handlerTitle()}
         </NavBar>
-        <div style={{height:'0.4rem'}}></div>
+        <div style={{ height: "0.4rem" }}></div>
         <div className="content-container">
           <div className="header-content">
             <div className="head-top">
               <div
                 className="cinema-name-wrapper"
                 onClick={() => {
+                  if (!orderDetail.cinema_has_schedule) return;
                   history.push({
                     pathname: `/cinema/detail`,
                     state: {
@@ -205,7 +206,10 @@ class OrderDetail extends Component {
                 }}
               >
                 <div className="cinema-name">{orderDetail.cinema_name}</div>
-                <RightOutline style={{ margin: "0 0.1rem" }} fontSize={20} /> |
+                {orderDetail.cinema_has_schedule && (
+                  <RightOutline style={{ margin: "0 0.1rem" }} fontSize={20} />
+                )}{" "}
+                |
               </div>
 
               <EnvironmentOutline
@@ -283,20 +287,40 @@ class OrderDetail extends Component {
                         id="qrCode"
                         value={orderDetail.order_verify_code} // value参数为生成二维码的链接
                         size={150} // 二维码的宽高尺寸
-                        fgColor={(orderDetail.order_expire || orderDetail.order_status==2)?'#ccc':'#000'} // 二维码的颜色
+                        fgColor={
+                          orderDetail.order_expire ||
+                          orderDetail.order_status == 2
+                            ? "#ccc"
+                            : "#000"
+                        } // 二维码的颜色
                       />
                     ) : null}
-                    {orderDetail.order_status==2?<i 
-                    className="iconfont icon-yiwancheng already-complete"></i>:orderDetail.order_status==1 && orderDetail.order_expire?<i 
-                    className="iconfont icon-yiguoqi already-complete"></i>:null}
+                    {orderDetail.order_status == 2 ? (
+                      <i className="iconfont icon-yiwancheng already-complete"></i>
+                    ) : orderDetail.order_status == 1 &&
+                      orderDetail.order_expire ? (
+                      <i className="iconfont icon-yiguoqi already-complete"></i>
+                    ) : null}
                   </div>
                   <div className="verify-code">
                     验证码：
-                    <span className={[`code-num ${(orderDetail.order_expire || orderDetail.order_status==2)?'text-line-through':''}`]}>{this.handleVerifyCode()}</span>
+                    <span
+                      className={[
+                        `code-num ${
+                          orderDetail.order_expire ||
+                          orderDetail.order_status == 2
+                            ? "text-line-through"
+                            : ""
+                        }`,
+                      ]}
+                    >
+                      {this.handleVerifyCode()}
+                    </span>
                   </div>
                 </div>
               </div>
-              {orderDetail.order_status==1 ? <div
+              {orderDetail.order_status == 1 ? (
+                <div
                   className="save-qr"
                   id="down_link"
                   onClick={() => {
@@ -305,7 +329,8 @@ class OrderDetail extends Component {
                 >
                   <DownlandOutline fontSize={20} />
                   <span>保存二维码</span>
-                </div> : null}
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

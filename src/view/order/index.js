@@ -221,11 +221,18 @@ class OrderComponent extends Component {
             );
           })} */}
           {list.map((item, index) => {
-            return <ItemList item={item} history={history} key={index} onClick={()=>{
-              history.push({
-                pathname:'/order/detail/'+item.order_id
-              })
-            }}/>;
+            return (
+              <ItemList
+                item={item}
+                history={history}
+                key={index}
+                onClick={() => {
+                  history.push({
+                    pathname: "/order/detail/" + item.order_id,
+                  });
+                }}
+              />
+            );
           })}
           <InfiniteScroll
             threshold="50"
@@ -250,7 +257,7 @@ class OrderComponent extends Component {
             hasMore={isHasMore}
           >
             <InfiniteScrollContent
-              text={'暂无内容哦'}
+              text={"暂无内容哦"}
               noContent={!isHasMore && !this.state.list.length}
               hasMore={isHasMore}
             />
@@ -269,14 +276,25 @@ class OrderComponent extends Component {
 
 export default GroupCommons(OrderComponent);
 
-function ItemList({ item, history,onClick }) {
-  console.log("history", item);
+function ItemList({ item, history, onClick }) {
+  // console.log("history", item);
   return (
-    <div className="item-list" onClick={()=>{
-      onClick && onClick()
-    }}>
+    <div
+      className="item-list"
+      onClick={() => {
+        onClick && onClick();
+      }}
+    >
       <List mode="card" header="">
-        <List.Item extra={item.status_text}>{item.film_name}</List.Item>
+        <List.Item
+          extra={
+            item.status == 2 && item.comment_content
+              ? "已评价"
+              : item.status_text
+          }
+        >
+          {item.film_name}
+        </List.Item>
         <div className="item-list-content">
           <Image
             style={{ borderRadius: 8 }}
@@ -293,26 +311,8 @@ function ItemList({ item, history,onClick }) {
           </div>
         </div>
         <div className="comment-btn">
-          {/* {
-            item.status==2?<Button
-              color="primary"
-              size="small"
-              onClick={() => {
-                stopBubble(e);
-                history.push({
-                  pathname: "/comment",
-                  state: {
-                    // schedule_id: item.schedule_id,
-                    film_id: item.film_id,
-                    film_name: item.film_name,
-                  },
-                });
-              }}
-            >
-              写影评
-            </Button>:null
-          } */}
-          <Button
+          {item.status == 2 && !item.comment_content ? (
+            <Button
               color="primary"
               size="small"
               onClick={(e) => {
@@ -322,22 +322,25 @@ function ItemList({ item, history,onClick }) {
                   state: {
                     // schedule_id: item.schedule_id,
                     film_id: item.film_id,
-                    film_name: item.film_name,
+                    // film_name: item.film_name,
                   },
                 });
               }}
             >
               写影评
             </Button>
+          ) : null}
         </div>
       </List>
     </div>
   );
 }
-function stopBubble(e) { 
-  if(e && e.stopPropagation) { //非IE 
-    e.stopPropagation(); 
-  } else { //IE 
-    window.event.cancelBubble = true; 
-  } 
-} 
+function stopBubble(e) {
+  if (e && e.stopPropagation) {
+    //非IE
+    e.stopPropagation();
+  } else {
+    //IE
+    window.event.cancelBubble = true;
+  }
+}
