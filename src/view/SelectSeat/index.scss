@@ -66,6 +66,10 @@
             }
             .name-price{
                 font-size: 0.10rem;
+                margin-left: 0.05rem;
+                .price{
+                    color: $base-color;
+                }
             }
         }
     }

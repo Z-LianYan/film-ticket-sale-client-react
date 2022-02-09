@@ -400,6 +400,7 @@ class SelectSeat extends Component {
                   ></div>
                   <div className="name-price">
                     <p>{item.section_name}</p>
+                    <p className="price">¥{item.price}</p>
                   </div>
                 </li>
               );
