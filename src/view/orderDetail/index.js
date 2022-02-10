@@ -285,7 +285,7 @@ class OrderDetail extends Component {
                     {orderDetail.order_verify_code ? (
                       <QRCode
                         id="qrCode"
-                        value={orderDetail.order_verify_code} // value参数为生成二维码的链接
+                        value={orderDetail.verify_ticket_url} // value参数为生成二维码的链接
                         size={150} // 二维码的宽高尺寸
                         fgColor={
                           orderDetail.order_expire ||
