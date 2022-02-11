@@ -258,8 +258,12 @@ class FileDetail extends Component {
         >
           {isShowNavBar ? detail.film_name : ""}
         </NavBar>
-        <div className="header-wrapper">
-          <img className="image" src={detail.poster_img} alt=""></img>
+        <div 
+        className="header-wrapper" 
+        style={{
+          background: `url(${detail.poster_img})`,
+        }}>
+          {/* <img className="image" src={detail.poster_img} alt=""></img> */}
         </div>
         <div className="film-detail">
           <div className="film-name-score">

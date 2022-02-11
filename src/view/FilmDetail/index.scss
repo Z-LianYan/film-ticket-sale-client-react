@@ -22,19 +22,27 @@
     }
   }
   .header-wrapper {
-    height: 2.31rem;
     width: 100%;
-    position: relative;
-    overflow: hidden;
-    .image{
-      width: 100%;
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-    }
+    height: 2.31rem;
+    // background: url('https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2798491980,1963709037&fm=26&gp=0.jpg');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    filter: blur(0.3rem);
+    -webkit-filter: blur(0.3rem);
+    // height: 2.31rem;
+    // width: 100%;
+    // position: relative;
+    // overflow: hidden;
+    // .image{
+    //   width: 100%;
+    //   position: absolute;
+    //   top: 50%;
+    //   transform: translateY(-50%);
+    // }
   }
   .film-detail{
     padding: 0.12rem 0.15rem 0.15rem 0.15rem;
+    background-color: #fff;
     .film-name-score{
       display: flex;
       justify-content: space-between;
