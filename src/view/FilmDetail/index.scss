@@ -22,69 +22,137 @@
     }
   }
   .header-wrapper {
+    height: 2.8rem;
     width: 100%;
-    height: 2.31rem;
-    // background: url('https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2798491980,1963709037&fm=26&gp=0.jpg');
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    filter: blur(0.3rem);
-    -webkit-filter: blur(0.3rem);
-    // height: 2.31rem;
-    // width: 100%;
-    // position: relative;
-    // overflow: hidden;
-    // .image{
-    //   width: 100%;
-    //   position: absolute;
-    //   top: 50%;
-    //   transform: translateY(-50%);
-    // }
-  }
-  .film-detail{
-    padding: 0.12rem 0.15rem 0.15rem 0.15rem;
-    background-color: #fff;
-    .film-name-score{
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      .film-name{
-        font-size: 0.18rem;
-        color: #191a1b;
-        
-        .show-type{
-          padding: 0.01rem 0.03rem;
-          background-color: #d2d6dc;;
-          font-size: 0.11rem;
-          border-radius: 0.04rem;
+    position: relative;
+    overflow: hidden;
+    padding-top: 0.4rem;
+    .blur-bg{
+      position: absolute;
+      top:50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      z-index: -1;
+      width: 200%;
+      height: 200%;
+      // background: url('https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2798491980,1963709037&fm=26&gp=0.jpg');
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      filter: blur(0.3rem);
+      -webkit-filter: blur(0.3rem);
+    }
+    .header-content{
+      width: 100%;
+      height: 100%;
+      padding: 0.1rem 0.14rem;
+      .film-detail{
+        display: flex;
+        .image{
+          width: 1rem;
+          height: 1.5rem;
+        }
+        .right-content{
+          height: 1.5rem;
+          margin-left: 0.15rem;
+          .film-name{
+            font-size: 0.22rem;
+            font-weight: 400;
+            color: #fff;
+          }
+          .cate-film{
+            margin-top: 0.15rem;
+            color: #c4baba;
+            .play-type-name{
+              margin-left: 0.08rem;
+            }
+          }
+          .play-area{
+            color: #c4baba;
+            font-size: 0.14rem;
+          }
+          .show-date{
+            color: #c4baba;
+            font-size: 0.14rem;
+          }
+          .want-see{
+            margin-top: 0.2rem;
+            font-size: 0.14rem;
+            color: #c4baba;
+            .num{
+              font-size: 0.18rem;
+              font-weight: 400;
+              color: $base-color;
+              margin-right: 0.1rem;
+            }
+          }
+        }
+      }
+      .write-comment{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.05rem 0.1rem;
+        background-color: #9b7979;
+        border-radius: 0.1rem;
+        margin-top: 0.3rem;
+        .left-box{
           color: #fff;
+          font-size: 0.14rem;
+          display: flex;
+          align-items: center;
+        }
+        .right-btn{
+          
         }
       }
-      .score-val{
-        font-size: 0.18rem;
-        color: $base-color;
-        .score{
-          font-size: 0.1rem;
-        }
-      }
     }
-    .record-film{
-      font-size: 0.13rem;
-      color: #797d82;
-      margin-top: 0.04rem;
-    }
-    .show-date{
-      font-size: 0.13rem;
-      color: #797d82;
-      margin-top: 0.04rem;
-    }
-    .area-and-play-time{
-      font-size: 0.13rem;
-      color: #797d82;
-      margin-top: 0.04rem;
-    }
+  }
+  .abstract-detail{
+    padding: 0.12rem 0.15rem 0.15rem 0.15rem;
+    // background-color: #fff;
+    // .film-name-score{
+    //   display: flex;
+    //   justify-content: space-between;
+    //   align-items: center;
+    //   .film-name{
+    //     font-size: 0.18rem;
+    //     color: #191a1b;
+        
+    //     .show-type{
+    //       padding: 0.01rem 0.03rem;
+    //       background-color: #d2d6dc;;
+    //       font-size: 0.11rem;
+    //       border-radius: 0.04rem;
+    //       color: #fff;
+    //     }
+    //   }
+    //   .score-val{
+    //     font-size: 0.18rem;
+    //     color: $base-color;
+    //     .score{
+    //       font-size: 0.1rem;
+    //     }
+    //   }
+    // }
+    // .record-film{
+    //   font-size: 0.13rem;
+    //   color: #797d82;
+    //   margin-top: 0.04rem;
+    // }
+    // .show-date{
+    //   font-size: 0.13rem;
+    //   color: #797d82;
+    //   margin-top: 0.04rem;
+    // }
+    // .area-and-play-time{
+    //   font-size: 0.13rem;
+    //   color: #797d82;
+    //   margin-top: 0.04rem;
+    // }
     .abstract{
       font-size: 0.13rem;
       margin-top: 0.12rem;
+      color: #000;
       .text{
         overflow: hidden;
         text-overflow: ellipsis;

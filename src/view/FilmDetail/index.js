@@ -22,6 +22,7 @@ import {
   Popup,
   Dialog,
   TextArea,
+  Rate,
 } from "antd-mobile";
 import { get_film_detail } from "@/api/film";
 import dayjs from "dayjs";
@@ -258,32 +259,68 @@ class FileDetail extends Component {
         >
           {isShowNavBar ? detail.film_name : ""}
         </NavBar>
-        <div 
-        className="header-wrapper" 
-        style={{
-          background: `url(${detail.poster_img})`,
-        }}>
-          {/* <img className="image" src={detail.poster_img} alt=""></img> */}
+        <div className="header-wrapper">
+          <div
+            className="blur-bg"
+            style={{
+              background: `url(${detail.poster_img})`,
+            }}
+          ></div>
+          <div className="header-content">
+            <div className="film-detail">
+              <img className="image" src={detail.poster_img} alt=""></img>
+              <div className="right-content">
+                <div className="film-name">{detail.film_name}</div>
+                <div className="cate-film">
+                  {detail.category_names}
+                  <span className="play-type-name">
+                    {detail.play_type_name}
+                  </span>
+                </div>
+                <div className="play-area">
+                  {detail.area} | {detail.runtime}分钟
+                </div>
+                <div className="show-date">
+                  {dayjs(detail.show_time).format("YYYY年MM月DD日")}
+                  {detail.area}上映
+                </div>
+                <div className="want-see">
+                  <span className="num">{detail.want_see}1234</span>人想看
+                </div>
+              </div>
+            </div>
+            {detail.user_already_comment ? null : (
+              <div className="write-comment">
+                <div className="left-box">
+                  看过啦,快来打个分吧
+                  <Rate
+                    className="star"
+                    style={{ "--star-size": "0.13rem", marginLeft: "0.1rem" }}
+                    allowHalf
+                    readOnly
+                  />
+                </div>
+                <div className="right-btn">
+                  <Button
+                    color="primary"
+                    size="mini"
+                    onClick={() => {
+                      history.push({
+                        pathname: "/comment",
+                        state: {
+                          film_id: detail.id,
+                        },
+                      });
+                    }}
+                  >
+                    去评分
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-        <div className="film-detail">
-          <div className="film-name-score">
-            <h3 className="film-name">
-              {detail.film_name}
-              <span className="show-type">{detail.play_type_name}</span>
-            </h3>
-            <span className="score-val">
-              {detail.grade}
-              <span className="score">分</span>
-            </span>
-          </div>
-
-          <div className="record-film">{detail.category_names}</div>
-          <div className="show-date">
-            {dayjs(detail.show_time).format("YYYY年MM月DD日")}上映
-          </div>
-          <div className="area-and-play-time">
-            {detail.area} | {detail.runtime}分钟
-          </div>
+        <div className="abstract-detail">
           <div className="abstract">
             <input id="label-input" className="label-input" type="checkbox" />
             <p className="text">
@@ -357,7 +394,6 @@ class FileDetail extends Component {
               })
             : null}
         </div>
-
         {this.renderStill()}
         <div className="separator"></div>
         {commentlist.length ? (
@@ -674,7 +710,7 @@ class FileDetail extends Component {
             <div className="separator"></div>
           </div>
         ) : null}
-
+        {/* isNotCanSelectSeatBuy 影院详情传过来的 */}
         {location.state &&
         location.state.isNotCanSelectSeatBuy ? null : detail.hasSchedule ? (
           <Button
@@ -699,7 +735,6 @@ class FileDetail extends Component {
             选座购票
           </Button>
         ) : null}
-
         <Popup
           visible={selectReplyItem ? true : false}
           onMaskClick={() => {

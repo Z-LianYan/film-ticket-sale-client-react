@@ -88,7 +88,7 @@ class Comment extends Component {
       });
     }
   }
-  onGotoCommentCompletePage(comment_id){
+  onGotoCommentCompletePage(comment_id) {
     let { location, history } = this.props;
     setTimeout(() => {
       history.replace({
@@ -182,8 +182,8 @@ class Comment extends Component {
           <div className="jilu">
             {/* 这是您在这里讨论的第<span className="num"> {productionNum} </span>部作品 */}
             {location.state && location.state.comment_id
-              ? `您在这里总共讨论了`
-              : "这是您在这里讨论的第"}
+              ? `您总共参与讨论了`
+              : "这是您参与讨论的第"}
             <span className="num"> {productionNum} </span>部作品
           </div>
           <div className="rate-wrapper">
