@@ -44,48 +44,42 @@ class Comment extends Component {
         comment_parent_id: "",
         comment_content: "",
       },
-      rateLevelTex: {
-        0: "可以点击星星评分",
-        1: "超烂啊，太差了",
-        2: "超烂啊，太差了",
-        3: "很差，不推荐",
-        4: "很差，不推荐",
-        5: "一般般",
-        6: "一般般",
-        7: "还可以，看看也行",
-        8: "比较好，可以尝试",
-        9: "很不错，推荐看看",
-        10: "棒极了，极力推荐",
-      },
       filmInfo: {},
       productionNum: 0,
     };
   }
   async componentDidMount() {
-    let { location } = this.props;
+    let { location, history } = this.props;
     let { formData } = this.state;
 
     if (location.state && !location.state.film_id) return;
 
-    let result = await get_comment_detail({
-      film_id: location.state && location.state.film_id,
-      comment_id: location.state && location.state.comment_id,
-    });
-    this.setState({
-      filmInfo: result.filmInfo,
-      productionNum:
-        location.state && location.state.comment_id
-          ? result.count
-          : result.count + 1,
-    });
-
-    if (location.state && location.state.comment_id) {
-      let commentInfo = result.commentInfo;
-      formData.score = commentInfo.score;
-      formData.comment_content = commentInfo.comment_content;
-      this.setState({
-        formData,
+    try {
+      let result = await get_comment_detail({
+        film_id: location.state && location.state.film_id,
+        comment_id: location.state && location.state.comment_id,
       });
+      this.setState({
+        filmInfo: result.filmInfo,
+        productionNum:
+          location.state && location.state.comment_id
+            ? result.count
+            : result.count + 1,
+      });
+
+      if (location.state && location.state.comment_id) {
+        let commentInfo = result.commentInfo;
+        formData.score = commentInfo.score;
+        formData.comment_content = commentInfo.comment_content;
+        this.setState({
+          formData,
+        });
+      }
+    } catch (err) {
+      if (err.error == 401) {
+        this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
+        history.goBack();
+      }
     }
   }
   onGotoCommentCompletePage(comment_id) {
@@ -126,12 +120,12 @@ class Comment extends Component {
       film_id: location.state && location.state.film_id,
     });
     if (!result) return;
-    this.onGotoCommentCompletePage(result.insertId);
+    this.onGotoCommentCompletePage(result.comment_id);
   }
 
   render() {
-    let { history, location } = this.props;
-    let { formData, rateLevelTex, filmInfo, productionNum } = this.state;
+    let { history, rateLevelTex, location } = this.props;
+    let { formData, filmInfo, productionNum } = this.state;
 
     return (
       <div className="comment-container">

@@ -22,7 +22,7 @@
     }
   }
   .header-wrapper {
-    height: 2.8rem;
+    // height: 2.8rem;
     width: 100%;
     position: relative;
     overflow: hidden;
@@ -43,7 +43,7 @@
     }
     .header-content{
       width: 100%;
-      height: 100%;
+      // height: 100%;
       padding: 0.1rem 0.14rem;
       .film-detail{
         display: flex;
@@ -75,7 +75,7 @@
             font-size: 0.14rem;
           }
           .want-see{
-            margin-top: 0.2rem;
+            margin-top: 0.16rem;
             font-size: 0.14rem;
             color: #c4baba;
             .num{
@@ -91,18 +91,46 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.05rem 0.1rem;
+        // padding: 0.05rem 0.1rem;
+        padding-right: 0.05rem;
         background-color: #9b7979;
         border-radius: 0.1rem;
         margin-top: 0.3rem;
         .left-box{
           color: #fff;
-          font-size: 0.14rem;
+          font-size: 0.12rem;
           display: flex;
           align-items: center;
+          .daiyanjing-icon{
+            font-size: 0.3rem;
+            margin-right: 0.1rem;
+          }
         }
         .right-btn{
           
+        }
+      }
+      .thumb-up-write-comment{
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.15rem;
+        .thumb-up-write-comment-btn{
+          width: 45%;
+          height: 0.35rem;
+          line-height: 0.35rem;
+          text-align: center;
+          background-color: #968e8e;
+          border-radius: 0.02rem;
+          color:#fff;
+          .left-icon{
+            margin-right: 0.1rem;
+          }
+        }
+        .thumb-up-btn{
+          
+        }
+        .write-comment-btn{
+         
         }
       }
     }

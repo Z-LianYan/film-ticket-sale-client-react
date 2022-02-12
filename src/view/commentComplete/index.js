@@ -44,19 +44,6 @@ class CommentComplete extends Component {
         comment_parent_id: "",
         comment_content: "",
       },
-      rateLevelTex: {
-        0: "可以点击星星评分",
-        1: "超烂啊，太差了",
-        2: "超烂啊，太差了",
-        3: "很差，不推荐",
-        4: "很差，不推荐",
-        5: "一般般",
-        6: "一般般",
-        7: "还可以，看看也行",
-        8: "比较好，可以尝试",
-        9: "很不错，推荐看看",
-        10: "棒极了，极力推荐",
-      },
       filmInfo: {},
       commentInfo: null,
       productionNum: 0,
@@ -78,8 +65,8 @@ class CommentComplete extends Component {
   }
 
   render() {
-    let { history, location } = this.props;
-    let { commentInfo, filmInfo, productionNum, rateLevelTex } = this.state;
+    let { history, location, rateLevelTex } = this.props;
+    let { commentInfo, filmInfo, productionNum } = this.state;
 
     return (
       <div className="comment-complete-container">
@@ -159,8 +146,8 @@ class CommentComplete extends Component {
               {filmInfo.film_name ? (
                 <div className="film-name">《{filmInfo.film_name}》</div>
               ) : null}
-              {
-                commentInfo && commentInfo.score?<Rate
+              {commentInfo && commentInfo.score ? (
+                <Rate
                   className="star"
                   style={{
                     "--star-size": "0.21rem",
@@ -169,15 +156,17 @@ class CommentComplete extends Component {
                   allowHalf
                   value={commentInfo.score / 2}
                   readOnly={true}
-                />:null
-              }
+                />
+              ) : null}
               {commentInfo && commentInfo.score ? (
                 <div className="score">
                   {commentInfo.score}分 {rateLevelTex[commentInfo.score]}
                 </div>
               ) : null}
             </div>
-            <div className="comment-content">{commentInfo && commentInfo.comment_content}</div>
+            <div className="comment-content">
+              {commentInfo && commentInfo.comment_content}
+            </div>
 
             <Image
               className="poster-img"

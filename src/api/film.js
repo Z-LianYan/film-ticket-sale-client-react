@@ -82,3 +82,23 @@ export function get_film_detail(params) {
     });
   });
 }
+
+export function add_cancel_want_see(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.post(Api.ADD_CANCEL_WANT_SEE, params, "").then((res) => {
+      switch (res.error) {
+        case 0:
+          resolve(res.data);
+          break;
+        default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
+          reject(res.data);
+          break;
+      }
+    });
+  });
+}

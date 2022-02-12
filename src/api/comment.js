@@ -96,7 +96,7 @@ export function del_comment(params) {
 
 export function get_comment_detail(params) {
   return new Promise((resolve, reject) => {
-    HttpUtils.get(Api.GET_COMMENT_DETAIL, params, "删除中...").then((res) => {
+    HttpUtils.get(Api.GET_COMMENT_DETAIL, params, "加载中...").then((res) => {
       switch (res.error) {
         case 0:
           resolve(res.data);
@@ -107,7 +107,7 @@ export function get_comment_detail(params) {
             duration: 2000,
             content: res.message,
           });
-          reject(res.data);
+          reject(res);
           break;
       }
     });
@@ -158,8 +158,6 @@ export function comment_jubao(params) {
     });
   });
 }
-
-
 
 export function get_comment_reply_list(params) {
   return new Promise((resolve, reject) => {

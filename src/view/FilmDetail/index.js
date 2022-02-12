@@ -9,6 +9,8 @@ import {
   MoreOutline,
   MinusOutline,
   PlayOutline,
+  StarFill,
+  HeartFill,
 } from "antd-mobile-icons";
 import {
   List,
@@ -24,7 +26,7 @@ import {
   TextArea,
   Rate,
 } from "antd-mobile";
-import { get_film_detail } from "@/api/film";
+import { get_film_detail, add_cancel_want_see } from "@/api/film";
 import dayjs from "dayjs";
 import { GroupCommons } from "@/modules/group";
 import CommentItem from "@/components/Comment-item/index";
@@ -148,6 +150,7 @@ class FileDetail extends Component {
           commentlist,
           commentTotalCount,
         });
+        this.getFilmDetail();
         console.log("删除评论", result);
       }
       if (type == "reply") {
@@ -238,7 +241,7 @@ class FileDetail extends Component {
       commentTotalCount,
       selectReplyItem,
     } = this.state;
-    let { history, location, userInfo } = this.props;
+    let { history, location, userInfo, rateLevelTex } = this.props;
     return (
       <div className="film-detail-container">
         {isSkeleton ? <div className="skeleton-box"></div> : null}
@@ -285,36 +288,110 @@ class FileDetail extends Component {
                   {detail.area}上映
                 </div>
                 <div className="want-see">
-                  <span className="num">{detail.want_see}1234</span>人想看
+                  <span className="num">{detail.want_see_num}</span>人想看
                 </div>
               </div>
             </div>
-            {detail.user_already_comment ? null : (
+
+            {detail.user_already_comment ? (
               <div className="write-comment">
                 <div className="left-box">
-                  看过啦,快来打个分吧
+                  <i className="iconfont icon-rentitezheng-daiyanjing-L daiyanjing-icon"></i>
+                  看过啦,
+                  {!detail.user_comment_del ? (
+                    <span>
+                      {rateLevelTex[detail.rate_score] + "！我评 "}
+                      <span
+                        style={{
+                          color: "var(--adm-color-primary)",
+                        }}
+                      >
+                        {detail.rate_score} 分
+                      </span>
+                    </span>
+                  ) : (
+                    "快来打个分吧"
+                  )}
                   <Rate
                     className="star"
-                    style={{ "--star-size": "0.13rem", marginLeft: "0.1rem" }}
+                    value={
+                      detail.user_already_comment && !detail.user_comment_del
+                        ? detail.rate_score / 2
+                        : 0
+                    }
+                    style={{
+                      "--star-size": "0.12rem",
+                      marginLeft: "0.02rem",
+                      color: "var(--adm-color-primary)",
+                      "--active-color": "var(--adm-color-primary)",
+                    }}
                     allowHalf
                     readOnly
                   />
                 </div>
                 <div className="right-btn">
-                  <Button
-                    color="primary"
-                    size="mini"
-                    onClick={() => {
+                  {detail.user_already_comment &&
+                  !detail.user_comment_del ? null : (
+                    <Button
+                      color="primary"
+                      size="mini"
+                      onClick={() => {
+                        if (!userInfo) {
+                          history.push({
+                            pathname: "/login",
+                          });
+                          return;
+                        }
+                        history.push({
+                          pathname: "/comment",
+                          state: {
+                            film_id: detail.id,
+                          },
+                        });
+                      }}
+                    >
+                      去评分
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="thumb-up-write-comment">
+                <div
+                  className="thumb-up-write-comment-btn thumb-up-btn"
+                  onClick={async () => {
+                    let result = await add_cancel_want_see({
+                      film_id: detail.id,
+                      user_id: userInfo.user_id,
+                    });
+                    detail.want_see_num = result.count;
+                    this.setState({
+                      detail,
+                    });
+                  }}
+                >
+                  <HeartFill className="left-icon" />
+                  想看
+                </div>
+                <div
+                  className="thumb-up-write-comment-btn write-comment-btn"
+                  onClick={() => {
+                    if (!userInfo) {
                       history.push({
-                        pathname: "/comment",
-                        state: {
-                          film_id: detail.id,
-                        },
+                        pathname: "/login",
                       });
-                    }}
-                  >
-                    去评分
-                  </Button>
+                      return;
+                    }
+                    history.push({
+                      pathname: "/comment",
+                      state: {
+                        film_id: detail.id,
+                      },
+                    });
+                  }}
+                >
+                  <StarFill className="left-icon" />
+                  看过
                 </div>
               </div>
             )}

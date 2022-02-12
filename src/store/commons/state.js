@@ -10,7 +10,21 @@ const state = {
     isShowSwitchLocationModal: false, //首页（film页）banner ，定位成功显示切换模态框
   },
 
-  versions:'v2.0.0'
+  rateLevelTex: {
+    0: "可以点击星星评分",
+    1: "超烂啊，太差了",
+    2: "超烂啊，太差了",
+    3: "很差，不推荐",
+    4: "很差，不推荐",
+    5: "一般般",
+    6: "一般般",
+    7: "还可以，看看也行",
+    8: "比较好，可以尝试",
+    9: "很不错，推荐看看",
+    10: "棒极了，极力推荐",
+  },
+
+  versions: "v2.0.0",
 };
 
 export default state;

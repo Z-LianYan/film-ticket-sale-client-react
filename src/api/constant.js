@@ -39,3 +39,5 @@ export const COMMENT_JUBAO = "/commentJubao"; //举报
 export const GET_COMMENT_REPLY_LIST = "/getCommentReplyList"; //获取回复列表
 export const ADD_COMMENT_REPLY = "/addCommentReply"; //添加回复
 export const DEL_COMMENT_REPLY = "/delCommentReply"; //删除回复
+
+export const ADD_CANCEL_WANT_SEE = "/addAndCancelWantSee"; //添加取消想看
