@@ -360,17 +360,32 @@ class FileDetail extends Component {
                 <div
                   className="thumb-up-write-comment-btn thumb-up-btn"
                   onClick={async () => {
+                    if (!userInfo) {
+                      history.push({
+                        pathname: "/login",
+                      });
+                      return;
+                    }
                     let result = await add_cancel_want_see({
                       film_id: detail.id,
                       user_id: userInfo.user_id,
                     });
                     detail.want_see_num = result.count;
+                    detail.user_already_click_want_see =
+                      !detail.user_already_click_want_see;
                     this.setState({
                       detail,
                     });
                   }}
                 >
-                  <HeartFill className="left-icon" />
+                  <HeartFill
+                    className="left-icon"
+                    color={
+                      detail.user_already_click_want_see
+                        ? "var(--adm-color-primary)"
+                        : ""
+                    }
+                  />
                   想看
                 </div>
                 <div
