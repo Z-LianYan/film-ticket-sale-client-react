@@ -42,6 +42,8 @@ import {
 } from "@/api/comment";
 import _lodash from "lodash";
 import ProgressBarAndRateScore from "@/view/FilmDetail/ProgressBarAndRateScore/index";
+import CustomSkeleton from "@/components/CustomSkeleton/index";
+
 class FileDetail extends Component {
   constructor(props) {
     super(props);
@@ -51,7 +53,7 @@ class FileDetail extends Component {
       detail: {},
       isSkeleton: true,
       commentlist: [],
-      commentTotalCount: 0,
+      // commentTotalCount: 0,
       selectReplyItem: null,
     };
   }
@@ -67,7 +69,7 @@ class FileDetail extends Component {
     });
     this.setState({
       commentlist: result.rows,
-      commentTotalCount: result.count,
+      // commentTotalCount: result.count,
     });
   }
   componentDidMount() {
@@ -133,7 +135,7 @@ class FileDetail extends Component {
   }
 
   async onDel(item, it, type, index) {
-    let { commentlist, commentTotalCount } = this.state;
+    let { commentlist, detail } = this.state;
     let { history } = this.props;
     const result = await Dialog.confirm({
       confirmText: "确定",
@@ -146,17 +148,17 @@ class FileDetail extends Component {
           comment_id: item.comment_id,
         });
         commentlist.splice(index, 1);
-        commentTotalCount -= 1;
         // this.getcommentlist();
+        // detail.total_comment_num -= 1;
         this.setState({
           commentlist,
-          commentTotalCount,
+          // detail,
         });
         this.getFilmDetail();
-        console.log("删除评论", result);
+        // console.log("删除评论", result);
       }
       if (type == "reply") {
-        console.log("reply", type, item);
+        // console.log("reply", type, item);
         let result = await del_comment_reply({
           reply_id: it.reply_id,
         });
@@ -235,18 +237,12 @@ class FileDetail extends Component {
   }
 
   render() {
-    let {
-      isShowNavBar,
-      detail,
-      isSkeleton,
-      commentlist,
-      commentTotalCount,
-      selectReplyItem,
-    } = this.state;
+    let { isShowNavBar, detail, isSkeleton, commentlist, selectReplyItem } =
+      this.state;
     let { history, location, userInfo, rateLevelTex } = this.props;
     return (
       <div className="film-detail-container">
-        {isSkeleton ? <div className="skeleton-box"></div> : null}
+        {isSkeleton ? <CustomSkeleton section={5} row={5} /> : null}
         <NavBar
           style={{
             position: "fixed",
@@ -294,10 +290,13 @@ class FileDetail extends Component {
                 </div>
               </div>
             </div>
-            <ProgressBarAndRateScore 
-            style={{marginTop:'0.2rem'}} 
-            detail={detail} 
-            history={history}/>
+            {detail.total_comment_num ? (
+              <ProgressBarAndRateScore
+                style={{ marginTop: "0.2rem" }}
+                detail={detail}
+                history={history}
+              />
+            ) : null}
             {detail.user_already_comment ? (
               <div className="write-comment">
                 <div className="left-box">
@@ -801,7 +800,7 @@ class FileDetail extends Component {
                 });
               }}
             >
-              查看全部 {commentTotalCount} 条讨论
+              查看全部 {detail.total_comment_num} 条讨论
               <RightOutline />
             </div>
             <div className="separator"></div>

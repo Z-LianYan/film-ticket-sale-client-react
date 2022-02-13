@@ -65,7 +65,7 @@ export function get_banner(params) {
 
 export function get_film_detail(params) {
   return new Promise((resolve, reject) => {
-    HttpUtils.get(Api.GET_FILM_DETAIL, params, "努力加载中...").then((res) => {
+    HttpUtils.get(Api.GET_FILM_DETAIL, params, "").then((res) => {
       switch (res.error) {
         case 0:
           resolve(res.data.rows);
