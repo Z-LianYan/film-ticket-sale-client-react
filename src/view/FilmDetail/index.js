@@ -25,6 +25,7 @@ import {
   Dialog,
   TextArea,
   Rate,
+  ProgressBar,
 } from "antd-mobile";
 import { get_film_detail, add_cancel_want_see } from "@/api/film";
 import dayjs from "dayjs";
@@ -40,6 +41,7 @@ import {
   comment_jubao,
 } from "@/api/comment";
 import _lodash from "lodash";
+import ProgressBarAndRateScore from "@/view/FilmDetail/ProgressBarAndRateScore/index";
 class FileDetail extends Component {
   constructor(props) {
     super(props);
@@ -292,7 +294,10 @@ class FileDetail extends Component {
                 </div>
               </div>
             </div>
-
+            <ProgressBarAndRateScore 
+            style={{marginTop:'0.2rem'}} 
+            detail={detail} 
+            history={history}/>
             {detail.user_already_comment ? (
               <div className="write-comment">
                 <div className="left-box">
@@ -303,7 +308,7 @@ class FileDetail extends Component {
                       {rateLevelTex[detail.rate_score] + "！我评 "}
                       <span
                         style={{
-                          color: "var(--adm-color-primary)",
+                          color: "var(--adm-color-warning)",
                         }}
                       >
                         {detail.rate_score} 分
@@ -322,8 +327,8 @@ class FileDetail extends Component {
                     style={{
                       "--star-size": "0.12rem",
                       marginLeft: "0.02rem",
-                      color: "var(--adm-color-primary)",
-                      "--active-color": "var(--adm-color-primary)",
+                      color: "var(--adm-color-warning)",
+                      "--active-color": "var(--adm-color-warning)",
                     }}
                     allowHalf
                     readOnly

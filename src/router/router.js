@@ -1,5 +1,5 @@
 import { Film, Cinemas, User, Login } from "@/view/main/index";
-import Citys from "@/view/Citys/index";
+import Citys from "@/view/citys/index";
 import FilmDetail from "@/view/FilmDetail/index";
 import CinemaDetail from "@/view/CinemaDetail/index";
 import SelectCinema from "@/view/main/Cinemas/index";
