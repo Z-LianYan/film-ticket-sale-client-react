@@ -124,7 +124,7 @@ class Citys extends Component {
     let { history, locationInfo } = this.props;
     let { realLocation } = locationInfo;
     return (
-      <div>
+      <div className="select-citys-page">
         <NavBar
           back=""
           backArrow={<CloseOutline />}
@@ -134,6 +134,7 @@ class Citys extends Component {
         >
           当前城市 - {locationInfo.city_name}
         </NavBar>
+        <div style={{borderTop:'0.01rem solid #f4f4f4'}}></div>
         <SearchBar
           value={searchValue}
           placeholder="输入城市名称或拼音"
@@ -152,11 +153,9 @@ class Citys extends Component {
             });
           }}
           style={{
-            "--border-radius": "3px",
-            "--background": "#ffffff",
-            background: "#f4f4f4",
-            padding: "10px 15px",
-            borderBottom: "1px solid #eee",
+            "--border-radius": "0.03rem",
+            "--background": "#fff",
+            borderBottom: "0.01rem solid #eee",
           }}
         />
         <div style={{ height: "calc(100vh - 98px)", overflowX: "hidden" }}>

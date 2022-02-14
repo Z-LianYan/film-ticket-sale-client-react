@@ -15,6 +15,7 @@ import Comment from "@/view/comment/index";
 import CommentList from "@/view/commentList/index";
 import EditUserInfo from "@/view/editUserInfo/index";
 import CommentComplete from "@/view/commentComplete/index";
+import ImageViewer from "@/view/ImageViewer/index";
 
 const routers = [
   { path: "/", component: Film, exact: true },
@@ -40,5 +41,6 @@ const routers = [
   { path: "/commentList", component: CommentList },
   { path: "/edituserinfo", component: EditUserInfo },
   { path: "/commentComplete", component: CommentComplete },
+  { path: "/imageViewer", component: ImageViewer },
 ];
 export default routers;

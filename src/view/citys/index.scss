@@ -1,35 +1,37 @@
 
-.not-search-relative-info{
-  height: 100%;
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  justify-content: center;
-  color: #bdc0c5;
-}
-.header-location-wrapper{
-  padding: 0.15rem 0 0 0.15rem;
-  .row{
-    .title{
-      font-size: 0.13rem;
-      margin-bottom: 0.1rem;
-    }
-    .item-tag-wrapper{
-      display: flex;
-      flex-flow: row wrap;
-      .item-tag{
-        min-width: 0.9rem;
-        height: 0.30rem;
-        line-height: 0.30rem;
-        background-color: #ededed;
-        text-align: center;
-        border-radius: 0.03rem;
-        font-size: 0.14rem;
-        margin: 0 0.075rem;
-        margin-bottom: 0.15rem;
-        padding: 0 0.1rem;
+.select-citys-page{
+  .not-search-relative-info{
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+    color: #bdc0c5;
+  }
+  .header-location-wrapper{
+    padding: 0.15rem 0 0 0.15rem;
+    .row{
+      .title{
+        font-size: 0.13rem;
+        margin-bottom: 0.1rem;
       }
+      .item-tag-wrapper{
+        display: flex;
+        flex-flow: row wrap;
+        .item-tag{
+          min-width: 0.9rem;
+          height: 0.30rem;
+          line-height: 0.30rem;
+          background-color: #ededed;
+          text-align: center;
+          border-radius: 0.03rem;
+          font-size: 0.14rem;
+          margin: 0 0.075rem;
+          margin-bottom: 0.15rem;
+          padding: 0 0.1rem;
+        }
+      }
+      
     }
-    
   }
 }

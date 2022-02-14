@@ -95,45 +95,6 @@ class FileDetail extends Component {
     });
   }
 
-  renderStill() {
-    let { isVisibleMask, detail } = this.state;
-    return (
-      <Mask visible={isVisibleMask}>
-        <div className="still-mask-container">
-          <NavBar
-            onBack={() => {
-              this.setState({ isVisibleMask: false });
-            }}
-          >
-            剧照（{detail.stage_photo && detail.stage_photo.length}）
-          </NavBar>
-          <div className="img-list">
-            {detail && detail.stage_photo
-              ? detail.stage_photo.map((item, index) => {
-                  return (
-                    <div className="img-item" key={index}>
-                      <div className="img-wrapper">
-                        <img
-                          className="image"
-                          src={item}
-                          onClick={() => {
-                            ImageViewer.Multi.show({
-                              defaultIndex: index,
-                              images: detail.stage_photo,
-                            });
-                          }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })
-              : null}
-          </div>
-        </div>
-      </Mask>
-    );
-  }
-
   async onDel(item, it, type, index) {
     let { commentlist, detail } = this.state;
     let { history } = this.props;
@@ -463,7 +424,13 @@ class FileDetail extends Component {
             })`}</div>
           }
           onClick={() => {
-            this.setState({ isVisibleMask: true });
+            // this.setState({ isVisibleMask: true });
+            history.push({
+              pathname:'/imageViewer',
+              state:{
+                imgs:detail.stage_photo
+              }
+            })
           }}
         >
           剧照
@@ -476,10 +443,11 @@ class FileDetail extends Component {
                     key={index}
                     className="still-item"
                     onClick={() => {
-                      ImageViewer.Multi.show({
+                      let imgage_viewer_instance = ImageViewer.Multi.show({
                         defaultIndex: index,
                         images: detail.stage_photo,
                       });
+                      this.setState({imgage_viewer_instance})
                     }}
                   >
                     <div className="photo-wrapper">
@@ -490,7 +458,6 @@ class FileDetail extends Component {
               })
             : null}
         </div>
-        {this.renderStill()}
         <div className="separator"></div>
         {commentlist.length ? (
           <div>
@@ -928,9 +895,11 @@ class FileDetail extends Component {
     return fromNow;
   }
   componentWillUnmount = () => {
+    let { imgage_viewer_instance } = this.state;
     this.setState = (state, callback) => {
       return;
     };
+    imgage_viewer_instance && imgage_viewer_instance.close();
   };
 }
 

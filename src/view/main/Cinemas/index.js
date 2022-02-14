@@ -1,4 +1,4 @@
-import React, { Component, useRef } from "react";
+import React, { Component, useRef,useState } from "react";
 import "./index.scss";
 import CinemaListItem from "@/components/CinemaListItem/index";
 import { SearchOutline, DownOutline, LeftOutline } from "antd-mobile-icons";
@@ -18,6 +18,7 @@ import { get_city_district_list } from "@/api/citys";
 import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
 import Cookies from "js-cookie";
 import dayjs from "dayjs";
+
 class Cinema extends Component {
   constructor(props) {
     super(props);
@@ -236,6 +237,8 @@ class Cinema extends Component {
       film_name,
     } = this.state;
 
+    
+
     return (
       <div className="app-cinema-page">
         {location.pathname == "/cinemas" ? null : isSkeleton ? (
@@ -297,7 +300,6 @@ class Cinema extends Component {
               })}
             </Tabs>
           ) : null}
-
           <Dropdown>
             <Dropdown.Item
               key="all-city"
@@ -318,6 +320,9 @@ class Cinema extends Component {
                     <Grid.Item
                       key={index}
                       onClick={() => {
+                        var _a;
+                        (_a = this.ref.current) === null || _a === void 0 ? void 0 : _a.close();
+                        return;
                         let { fetchOptions } = this.state;
                         fetchOptions.district_id = item.id;
                         this.setState({
@@ -458,3 +463,6 @@ class Cinema extends Component {
 }
 
 export default GroupCommons(Cinema);
+
+
+
