@@ -1,4 +1,4 @@
-import React, { Component, useRef,useState } from "react";
+import React, { Component, useRef, useState } from "react";
 import "./index.scss";
 import CinemaListItem from "@/components/CinemaListItem/index";
 import { SearchOutline, DownOutline, LeftOutline } from "antd-mobile-icons";
@@ -237,8 +237,6 @@ class Cinema extends Component {
       film_name,
     } = this.state;
 
-    
-
     return (
       <div className="app-cinema-page">
         {location.pathname == "/cinemas" ? null : isSkeleton ? (
@@ -320,9 +318,6 @@ class Cinema extends Component {
                     <Grid.Item
                       key={index}
                       onClick={() => {
-                        var _a;
-                        (_a = this.ref.current) === null || _a === void 0 ? void 0 : _a.close();
-                        return;
                         let { fetchOptions } = this.state;
                         fetchOptions.district_id = item.id;
                         this.setState({
@@ -463,6 +458,3 @@ class Cinema extends Component {
 }
 
 export default GroupCommons(Cinema);
-
-
-
