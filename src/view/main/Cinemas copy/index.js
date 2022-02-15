@@ -1,4 +1,4 @@
-import React, { Component, useRef } from "react";
+import React, { Component, useRef,useState } from "react";
 import "./index.scss";
 import CinemaListItem from "@/components/CinemaListItem/index";
 import { SearchOutline, DownOutline, LeftOutline } from "antd-mobile-icons";
@@ -14,12 +14,10 @@ import {
 import { GroupCommons } from "@/modules/group";
 import { get_cinema_list, get_film_in_schedule_dates } from "@/api/cinema";
 import { get_film_detail } from "@/api/film";
-// import { get_city_district_list } from "@/api/citys";
+import { get_city_district_list } from "@/api/citys";
 import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
 import Cookies from "js-cookie";
 import dayjs from "dayjs";
-import DropdownFilter from "@/view/main/Cinemas/DropdownFilter/index";
-
 
 class Cinema extends Component {
   constructor(props) {
@@ -53,7 +51,7 @@ class Cinema extends Component {
   }
   async componentDidMount() {
     let { location, locationInfo } = this.props;
-    // this.getDistrictList();
+    this.getDistrictList();
     locationInfo.locationReady = () => {
       this.getData();
     };
@@ -150,7 +148,38 @@ class Cinema extends Component {
       }
     );
   }
-  
+  async getDistrictList() {
+    let { city_id } = this.props.locationInfo;
+    let _cookies = Cookies.get("locationInfo");
+    let _cookiesInfo = null;
+    if (_cookies) {
+      _cookiesInfo = JSON.parse(_cookies);
+    }
+    let result = await get_city_district_list({
+      city_id:
+        _cookiesInfo && _cookiesInfo.city_id ? _cookiesInfo.city_id : city_id,
+    });
+    result.rows.unshift({
+      first_letter: null,
+      id: "",
+      is_hot: null,
+      module_id: "",
+      name: "全城",
+      pinyin: "quanbu",
+    });
+    this.setState({
+      city_district_list: result.rows,
+    });
+  }
+  onDistrictName() {
+    let { fetchOptions, city_district_list } = this.state;
+    if (!fetchOptions.district_id) return "全城";
+    return city_district_list.map((item) => {
+      if (item.id == fetchOptions.district_id) {
+        return item.name;
+      }
+    });
+  }
   handerDate(date) {
     let today = dayjs().format("YYYY-MM-DD");
     let tomorrow = dayjs().add(1, "day").format("YYYY-MM-DD");
@@ -198,9 +227,13 @@ class Cinema extends Component {
       list,
       fetchOptions,
       isHasMore,
+      city_district_list,
       dateList,
       dateActiveKey,
       isSkeleton,
+      checkListDefaultValue,
+      checkListDefaultLabel,
+      checkList,
       film_name,
     } = this.state;
 
@@ -267,25 +300,90 @@ class Cinema extends Component {
               })}
             </Tabs>
           ) : null}
-          <DropdownFilter 
-          userInfo={userInfo} 
-          props={this.props} 
-          fetchOptions={fetchOptions}
-          districtChange={(district_id)=>{
-            fetchOptions.district_id = district_id;
-            this.setState({
-              fetchOptions: fetchOptions,
-              isHasMore: false,
-            });
-            this.onRefreshList();
-          }}
-          onCheckListChange={(type)=>{
-            fetchOptions.type = type;
-            this.setState({
-              fetchOptions
-            });
-            this.onRefresh();
-          }}/>
+          <Dropdown>
+            <Dropdown.Item
+              key="all-city"
+              title={this.onDistrictName()}
+              closeOnContentClick={true}
+              closeOnMaskClick={true}
+            >
+              <Grid
+                columns={4}
+                gap={10}
+                style={{
+                  padding: "0.1rem",
+                  "--gap-vertical": "0.15rem",
+                }}
+              >
+                {city_district_list.map((item, index) => {
+                  return (
+                    <Grid.Item
+                      key={index}
+                      onClick={() => {
+                        var _a;
+                        (_a = this.ref.current) === null || _a === void 0 ? void 0 : _a.close();
+                        return;
+                        let { fetchOptions } = this.state;
+                        fetchOptions.district_id = item.id;
+                        this.setState({
+                          fetchOptions: fetchOptions,
+                          isHasMore: false,
+                        });
+                        this.onRefreshList();
+                      }}
+                    >
+                      <div
+                        className={[
+                          `area-wrapper ${
+                            this.state.fetchOptions.district_id == item.id
+                              ? "active"
+                              : ""
+                          }`,
+                        ]}
+                      >
+                        {item.name}
+                      </div>
+                    </Grid.Item>
+                  );
+                })}
+              </Grid>
+            </Dropdown.Item>
+            {userInfo ? (
+              <Dropdown.Item
+                key="recently"
+                title={checkListDefaultLabel}
+                closeOnContentClick={true}
+                closeOnMaskClick={true}
+              >
+                <CheckList
+                  defaultValue={checkListDefaultValue}
+                  onChange={(res) => {
+                    let { fetchOptions } = this.state;
+                    this.checkListDefaultValue = res;
+                    checkList.map((item) => {
+                      if (item.value == res[0]) {
+                        fetchOptions.type = res[0];
+                        this.setState({
+                          fetchOptions,
+                          checkListDefaultLabel: item.label,
+                        });
+                        this.onRefresh();
+                        return;
+                      }
+                    });
+                  }}
+                >
+                  {checkList.map((item, index) => {
+                    return (
+                      <CheckList.Item key={index} value={item.value}>
+                        {item.label}
+                      </CheckList.Item>
+                    );
+                  })}
+                </CheckList>
+              </Dropdown.Item>
+            ) : null}
+          </Dropdown>
         </div>
         <div
           style={{
@@ -365,3 +463,6 @@ class Cinema extends Component {
 }
 
 export default GroupCommons(Cinema);
+
+
+
