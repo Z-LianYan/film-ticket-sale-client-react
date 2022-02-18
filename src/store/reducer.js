@@ -8,4 +8,14 @@ const reducer = combineReducers({
   commons: commons,
 });
 
+
+// //还可以这样合成reducer
+// const reducer = function (state = {}, action) {
+//   return {
+//     template: template(state.template, action),
+//     commons: commons(state.commons, action),
+//   }
+// }
+
+
 export default reducer;

@@ -31,7 +31,8 @@ export default ({ userInfo, props, fetchOptions,districtChange,onCheckListChange
     if (!city_district_list.length) {
       getDistrictList();
     }
-
+    return ()=>{
+    }
   })
   return <Dropdown ref={ref}>
     <Dropdown.Item

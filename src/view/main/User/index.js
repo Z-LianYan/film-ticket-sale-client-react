@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./index.scss";
 
-import { GroupCommons } from "../../../modules/group";
+import { GroupCommons,GroupTemplate } from "../../../modules/group";
 import { List, Button } from "antd-mobile";
 import {
   SetOutline,
@@ -20,6 +20,7 @@ class User extends Component {
 
   componentDidMount() {
     let { userInfo, history } = this.props;
+    console.log('this.props',this.props);
     // if (!userInfo) {
     //   history.replace({
     //     pathname: "/login",
@@ -150,4 +151,4 @@ class User extends Component {
   }
 }
 
-export default GroupCommons(User);
+export default GroupTemplate(GroupCommons(User));
