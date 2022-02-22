@@ -86,6 +86,11 @@ class BuyTicket extends Component {
         orderDetail: result,
       });
     } catch (err) {
+      if (err.error == 400) {
+        setTimeout(() => {
+          history.goBack();
+        }, 1500);
+      }
       if (err.error == 401) {
         this.props.login(null); //如果token认证过期 清空当前缓存的登录信息
         history.replace({
