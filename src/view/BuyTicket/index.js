@@ -109,19 +109,18 @@ class BuyTicket extends Component {
         content: "您确认支付吗？",
       });
       if (!result) return;
-      let seat_ids = [];
-      for (let item of select_seats) {
-        if (orderDetail.is_section == 1) {
-          for (let it of item.seatList) {
-            seat_ids.push(it.id);
-          }
-        } else {
-          seat_ids.push(item.id);
-        }
-      }
+      // let seat_ids = [];
+      // for (let item of select_seats) {
+      //   if (orderDetail.is_section == 1) {
+      //     for (let it of item.seatList) {
+      //       seat_ids.push(it.id);
+      //     }
+      //   } else {
+      //     seat_ids.push(item.id);
+      //   }
+      // }
       let pay_result = await pay_order({
-        schedule_id: orderDetail.schedule_id,
-        buy_seat_ids: seat_ids.join(","),
+        order_id: orderDetail.order_id,
         pay_type: "user_balance",
       });
       if (pay_result) this.getUserInfo();
