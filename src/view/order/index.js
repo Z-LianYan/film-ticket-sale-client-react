@@ -1,4 +1,4 @@
-import React, { Component, useRef } from "react";
+import React, { Component, useEffect, useRef, useState } from "react";
 import "./index.scss";
 import CinemaListItem from "@/components/CinemaListItem/index";
 import { LeftOutline } from "antd-mobile-icons";
@@ -277,7 +277,12 @@ class OrderComponent extends Component {
 export default GroupCommons(OrderComponent);
 
 function ItemList({ item, history, onClick }) {
-  // console.log("history", item);
+  let [expire_time, set_expire_time] = useState([12]);
+
+  useEffect(() => {
+    // handlerExpireTime()
+    return () => {};
+  });
   return (
     <div
       className="item-list"
@@ -290,10 +295,12 @@ function ItemList({ item, history, onClick }) {
           extra={
             item.status == 2 && item.comment_content
               ? "已评价"
-              : item.status_text
+              : item.status_text +
+                (item.status == 0 ? ", " + item.expireTime : "")
           }
         >
           {item.film_name}
+          {/* item.expireTime */}
         </List.Item>
         <div className="item-list-content">
           <Image
