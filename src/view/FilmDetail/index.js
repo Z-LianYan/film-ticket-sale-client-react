@@ -242,7 +242,7 @@ class FileDetail extends Component {
                 <div className="play-area">
                   {detail.area} | {detail.runtime}分钟
                 </div>
-                <div className="show-date">
+                <div className="show-date ellipsis-one">
                   {dayjs(detail.show_time).format("YYYY年MM月DD日")}
                   {detail.area}上映
                 </div>
