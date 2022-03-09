@@ -123,6 +123,21 @@
         }
     
     }
+
+    .expire-time-wrapper{
+      position: fixed;
+      top: 0.2rem;
+      right: 0;  
+      padding: 0 0.1rem 0 0.05rem;
+      background-color: #ccc;
+      border-top-left-radius: 0.1rem;
+      border-bottom-left-radius: 0.1rem;
+      display: flex;
+      align-items: center;
+      .time{
+          margin-left: 0.05rem;
+      }
+    }
 }
 
 

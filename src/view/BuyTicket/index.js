@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useRef, useState } from "react";
 import "./index.scss";
 import {
   NavBar,
@@ -11,7 +11,7 @@ import {
   Popup,
   Dialog,
 } from "antd-mobile";
-import { DownOutline, UpOutline, CloseOutline } from "antd-mobile-icons";
+import { DownOutline, UpOutline, CloseOutline,ClockCircleOutline } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
 import { create_order, pay_order } from "@/api/order";
 import { get_user_info } from "@/api/user";
@@ -190,6 +190,7 @@ class BuyTicket extends Component {
         >
           支付订单
         </NavBar>
+        <ExpireTimeDom expireTime={orderDetail.expireTime}/>
         <div className="header-wrapper">
           <Image
             src={orderDetail.poster_img}
@@ -263,6 +264,8 @@ class BuyTicket extends Component {
             this.$child = child;
           }}
         />
+
+        
       </div>
     );
   }
@@ -353,4 +356,31 @@ class MaskDetailComponent extends Component {
       isVisibleMask: false,
     });
   }
+}
+
+
+
+function ExpireTimeDom({ expireTime }) {
+
+  let [expire_time, set_expire_time] = useState([expireTime]);
+
+  useEffect(() => {
+    console.log('expireTime---',expireTime);
+    if(expire_time<=0) return;
+    setTimeout(() => {
+      expire_time -= 1
+      set_expire_time(expire_time)
+    }, 1000);
+    return () => {};
+  });
+  function handleMinute(){
+    let m = Math.floor(expire_time/60);
+    let s = expire_time%60;
+    return m+':'+ (s>9?s:'0'+s);
+  }
+  return (
+    <div className="expire-time-wrapper">
+      <ClockCircleOutline fontSize={16} color='#fff'/> <span className="time">{expireTime}</span>
+    </div>
+  );
 }

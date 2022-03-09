@@ -277,12 +277,22 @@ class OrderComponent extends Component {
 export default GroupCommons(OrderComponent);
 
 function ItemList({ item, history, onClick }) {
-  let [expire_time, set_expire_time] = useState([12]);
+  let [expire_time, set_expire_time] = useState([item.expireTime]);
 
   useEffect(() => {
-    // handlerExpireTime()
+    if(expire_time<=0) return;
+    setTimeout(() => {
+    expire_time -= 1
+    set_expire_time(expire_time)
+    }, 1000);
     return () => {};
   });
+  function handleMinute(){
+    let m = Math.floor(expire_time/60);
+    let s = expire_time%60;
+    return m+':'+ (s>9?s:'0'+s)
+
+  }
   return (
     <div
       className="item-list"
@@ -295,8 +305,7 @@ function ItemList({ item, history, onClick }) {
           extra={
             item.status == 2 && item.comment_content
               ? "已评价"
-              : item.status_text +
-                (item.status == 0 ? ", " + item.expireTime : "")
+              : (item.status == 0 && expire_time>0 ?(item.status_text + ", " + handleMinute()) : item.status == 0?'支付超时':item.status_text)
           }
         >
           {item.film_name}
