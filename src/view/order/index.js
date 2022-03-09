@@ -280,18 +280,17 @@ function ItemList({ item, history, onClick }) {
   let [expire_time, set_expire_time] = useState([item.expireTime]);
 
   useEffect(() => {
-    if(expire_time<=0) return;
+    if (expire_time <= 0) return;
     setTimeout(() => {
-    expire_time -= 1
-    set_expire_time(expire_time)
+      expire_time -= 1;
+      set_expire_time(expire_time);
     }, 1000);
     return () => {};
   });
-  function handleMinute(){
-    let m = Math.floor(expire_time/60);
-    let s = expire_time%60;
-    return m+':'+ (s>9?s:'0'+s)
-
+  function handleMinute() {
+    let m = Math.floor(expire_time / 60);
+    let s = expire_time % 60;
+    return m + ":" + (s > 9 ? s : "0" + s);
   }
   return (
     <div
@@ -305,7 +304,11 @@ function ItemList({ item, history, onClick }) {
           extra={
             item.status == 2 && item.comment_content
               ? "已评价"
-              : (item.status == 0 && expire_time>0 ?(item.status_text + ", " + handleMinute()) : item.status == 0?'支付超时':item.status_text)
+              : item.status == 0 && expire_time > 0
+              ? item.status_text + ", " + handleMinute()
+              : item.status == 0
+              ? "支付超时"
+              : item.status_text
           }
         >
           {item.film_name}
@@ -344,6 +347,24 @@ function ItemList({ item, history, onClick }) {
               }}
             >
               写影评
+            </Button>
+          ) : null}
+          {item.status == 0 && expire_time ? (
+            <Button
+              color="primary"
+              size="small"
+              onClick={(e) => {
+                stopBubble(e);
+                history.push({
+                  pathname: "/buy/ticket",
+                  state: {
+                    schedule_id: item.schedule_id,
+                    buy_seat_ids: item.buy_seat_ids,
+                  },
+                });
+              }}
+            >
+              付款
             </Button>
           ) : null}
         </div>

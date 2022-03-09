@@ -64,6 +64,11 @@ class OrderDetail extends Component {
           pathname: "/login",
         });
       }
+      if (err.error == 400) {
+        setTimeout(() => {
+          history.goBack();
+        }, 800);
+      }
     }
   }
   changeCanvasToPic() {
@@ -279,45 +284,67 @@ class OrderDetail extends Component {
                   <div className="circle line"></div>
                   <div className="circle right-circle"></div>
                 </div>
-                <div className="qr-code">
-                  <h3>取电影票</h3>
-                  <div className="code">
-                    {orderDetail.order_verify_code ? (
-                      <QRCode
-                        id="qrCode"
-                        value={orderDetail.verify_ticket_url} // value参数为生成二维码的链接
-                        size={150} // 二维码的宽高尺寸
-                        fgColor={
-                          orderDetail.order_expire ||
-                          orderDetail.order_status == 2
-                            ? "#ccc"
-                            : "#000"
-                        } // 二维码的颜色
-                      />
-                    ) : null}
-                    {orderDetail.order_status == 2 ? (
-                      <i className="iconfont icon-yiwancheng already-complete"></i>
-                    ) : orderDetail.order_status == 1 &&
-                      orderDetail.order_expire ? (
-                      <i className="iconfont icon-yiguoqi already-complete"></i>
-                    ) : null}
+                {orderDetail.order_status != 0 ? (
+                  <div className="qr-code">
+                    <h3>取电影票</h3>
+                    <div className="code">
+                      {orderDetail.order_verify_code ? (
+                        <QRCode
+                          id="qrCode"
+                          value={orderDetail.verify_ticket_url} // value参数为生成二维码的链接
+                          size={150} // 二维码的宽高尺寸
+                          fgColor={
+                            orderDetail.order_expire ||
+                            orderDetail.order_status == 2
+                              ? "#ccc"
+                              : "#000"
+                          } // 二维码的颜色
+                        />
+                      ) : null}
+                      {orderDetail.order_status == 2 ? (
+                        <i className="iconfont icon-yiwancheng already-complete"></i>
+                      ) : orderDetail.order_status == 1 &&
+                        orderDetail.order_expire ? (
+                        <i className="iconfont icon-yiguoqi already-complete"></i>
+                      ) : null}
+                    </div>
+                    <div className="verify-code">
+                      验证码：
+                      <span
+                        className={[
+                          `code-num ${
+                            orderDetail.order_expire ||
+                            orderDetail.order_status == 2
+                              ? "text-line-through"
+                              : ""
+                          }`,
+                        ]}
+                      >
+                        {this.handleVerifyCode()}
+                      </span>
+                    </div>
                   </div>
-                  <div className="verify-code">
-                    验证码：
-                    <span
-                      className={[
-                        `code-num ${
-                          orderDetail.order_expire ||
-                          orderDetail.order_status == 2
-                            ? "text-line-through"
-                            : ""
-                        }`,
-                      ]}
-                    >
-                      {this.handleVerifyCode()}
-                    </span>
-                  </div>
-                </div>
+                ) : (
+                  <Button
+                    color="primary"
+                    size="lagre"
+                    block
+                    onClick={() => {
+                      // onCancel && onCancel();
+                      history.push({
+                        pathname: "/buy/ticket",
+                        state: {
+                          schedule_id: orderDetail.schedule_id,
+                          buy_seat_ids: orderDetail.select_seats.map(
+                            (item) => item.id
+                          ),
+                        },
+                      });
+                    }}
+                  >
+                    付款
+                  </Button>
+                )}
               </div>
               {orderDetail.order_status == 1 ? (
                 <div

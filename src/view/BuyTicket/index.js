@@ -11,7 +11,12 @@ import {
   Popup,
   Dialog,
 } from "antd-mobile";
-import { DownOutline, UpOutline, CloseOutline,ClockCircleOutline } from "antd-mobile-icons";
+import {
+  DownOutline,
+  UpOutline,
+  CloseOutline,
+  ClockCircleOutline,
+} from "antd-mobile-icons";
 import hammerjs from "hammerjs";
 import { create_order, pay_order } from "@/api/order";
 import { get_user_info } from "@/api/user";
@@ -27,7 +32,9 @@ class BuyTicket extends Component {
     this.state = {
       orderDetail: {},
       isSkeleton: true,
+      expire_time: 0,
       // selectedSchedule: {},
+      timerSetInterVal: "",
     };
   }
   componentDidMount() {
@@ -85,6 +92,8 @@ class BuyTicket extends Component {
         isSkeleton: false,
         orderDetail: result,
       });
+      this.setState({ expire_time: result.expireTime });
+      this.setInterval();
     } catch (err) {
       if (err.error == 400) {
         setTimeout(() => {
@@ -98,6 +107,36 @@ class BuyTicket extends Component {
         });
       }
     }
+  }
+  onDialog() {
+    Dialog.alert({
+      content: "支付超时，该订单已失效，请重新选座购票",
+      closeOnMaskClick: false,
+      onConfirm: () => {
+        this.props.history.goBack();
+      },
+    });
+  }
+  setInterval() {
+    let timer = setInterval(() => {
+      let { expire_time } = this.state;
+      if (expire_time <= 0) {
+        this.onDialog();
+        clearInterval(timer);
+      } else {
+        expire_time -= 1;
+        this.setState({ expire_time: expire_time });
+      }
+    }, 1000);
+    this.setState({
+      timerSetInterVal: timer,
+    });
+  }
+  handleMinute() {
+    let { expire_time } = this.state;
+    let m = Math.floor(expire_time / 60);
+    let s = expire_time % 60;
+    return m + ":" + (s > 9 ? s : "0" + s);
   }
 
   async onGoToPay() {
@@ -148,7 +187,7 @@ class BuyTicket extends Component {
 
   render() {
     let { history, location } = this.props;
-    let { orderDetail, isSkeleton } = this.state;
+    let { orderDetail, isSkeleton, expire_time } = this.state;
     let arr_label = [
       <span className="hall-name" key={"abc"}>
         {orderDetail.hall_name}
@@ -190,7 +229,11 @@ class BuyTicket extends Component {
         >
           支付订单
         </NavBar>
-        <ExpireTimeDom expireTime={orderDetail.expireTime}/>
+        {/* <ExpireTimeDom expireTime={orderDetail.expireTime} /> */}
+        <div className="expire-time-wrapper">
+          <ClockCircleOutline fontSize={16} color="#fff" />{" "}
+          <span className="time">{this.handleMinute()}</span>
+        </div>
         <div className="header-wrapper">
           <Image
             src={orderDetail.poster_img}
@@ -264,11 +307,15 @@ class BuyTicket extends Component {
             this.$child = child;
           }}
         />
-
-        
       </div>
     );
   }
+  componentWillUnmount = () => {
+    clearInterval(this.state.timerSetInterVal);
+    this.setState = (state, callback) => {
+      return;
+    };
+  };
 }
 
 export default GroupCommons(BuyTicket);
@@ -358,29 +405,44 @@ class MaskDetailComponent extends Component {
   }
 }
 
+// function ExpireTimeDom({ expireTime }) {
+//   // console.log("哈哈哈哈", typeof expireTime);
+//   if (!expireTime) return;
+//   // // if (!expireTime) return;
+//   // let [expire_time, set_expire_time] = useState([expireTime]);
 
+//   // useEffect(() => {
+//   //   console.log("expireTime---123", expire_time);
+//   //   if (expire_time <= 0) return;
+//   //   // let type = typeof expire_time;
+//   //   console.log("expireTime---123---", expire_time);
 
-function ExpireTimeDom({ expireTime }) {
+//   //   setTimeout(() => {
+//   //     expire_time -= 1;
+//   //     set_expire_time(expire_time);
+//   //   }, 1000);
+//   //   return () => {};
+//   // });
+//   function handleMinute(_expireTime) {
+//     let m = Math.floor(_expireTime / 60);
+//     let s = _expireTime % 60;
+//     return m + ":" + (s > 9 ? s : "0" + s);
+//   }
 
-  let [expire_time, set_expire_time] = useState([expireTime]);
+//   let _expireTime = expireTime;
 
-  useEffect(() => {
-    console.log('expireTime---',expireTime);
-    if(expire_time<=0) return;
-    setTimeout(() => {
-      expire_time -= 1
-      set_expire_time(expire_time)
-    }, 1000);
-    return () => {};
-  });
-  function handleMinute(){
-    let m = Math.floor(expire_time/60);
-    let s = expire_time%60;
-    return m+':'+ (s>9?s:'0'+s);
-  }
-  return (
-    <div className="expire-time-wrapper">
-      <ClockCircleOutline fontSize={16} color='#fff'/> <span className="time">{expireTime}</span>
-    </div>
-  );
-}
+//   let timer = setInterval(() => {
+//     if (_expireTime <= 0) {
+//       clearInterval(timer);
+//     } else {
+//       _expireTime -= 1;
+//     }
+//   }, 1000);
+
+//   return (
+//     <div className="expire-time-wrapper">
+//       <ClockCircleOutline fontSize={16} color="#fff" />{" "}
+//       <span className="time">{handleMinute(_expireTime)}</span>
+//     </div>
+//   );
+// }
