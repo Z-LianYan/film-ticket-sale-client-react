@@ -18,7 +18,7 @@ import {
   ClockCircleOutline,
 } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
-import { create_order, pay_order } from "@/api/order";
+import { create_order, pay_order, cancle_order } from "@/api/order";
 import { get_user_info } from "@/api/user";
 import dayjs from "dayjs";
 import tools from "@/utils/tools";
@@ -223,7 +223,7 @@ class BuyTicket extends Component {
         <NavBar
           style={{ backgroundColor: "#fff" }}
           backArrow={true}
-          onBack={() => {
+          onBack={async () => {
             history.goBack();
           }}
         >
@@ -310,7 +310,13 @@ class BuyTicket extends Component {
       </div>
     );
   }
-  componentWillUnmount = () => {
+  componentWillUnmount = async () => {
+    let { orderDetail } = this.state;
+    if (orderDetail.order_id) {
+      //取消订单
+      await cancle_order({ order_id: orderDetail.order_id });
+    }
+
     clearInterval(this.state.timerSetInterVal);
     this.setState = (state, callback) => {
       return;

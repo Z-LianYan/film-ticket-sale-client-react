@@ -41,6 +41,26 @@ export function create_order(params) {
   });
 }
 
+export function cancle_order(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.post(Api.CANCLE_ORDER, params, "").then((res) => {
+      switch (res.error) {
+        case 0:
+          resolve(res.data);
+          break;
+        default:
+          reject(res);
+          // Toast.show({
+          //   icon: "fail",
+          //   duration: 2000,
+          //   content: res.message,
+          // });
+          break;
+      }
+    });
+  });
+}
+
 export function get_order_detail(params) {
   return new Promise((resolve, reject) => {
     HttpUtils.get(Api.GET_ORDER_DETAIL, params, "努力加载中...").then((res) => {
