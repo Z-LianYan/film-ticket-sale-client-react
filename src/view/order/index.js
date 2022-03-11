@@ -11,6 +11,7 @@ import {
   Button,
   List,
   Image,
+  Toast
 } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import { get_order_list } from "@/api/order";
@@ -227,6 +228,11 @@ class OrderComponent extends Component {
                 history={history}
                 key={index}
                 onClick={() => {
+                  if(item.status==0) return Toast.show({
+                    // icon: "-",
+                    duration: 1000,
+                    content: "支付超时了，请重新选座购买吧",
+                  });
                   history.push({
                     pathname: "/order/detail/" + item.order_id,
                   });
@@ -280,6 +286,7 @@ function ItemList({ item, history, onClick }) {
   let [expire_time, set_expire_time] = useState([item.expireTime]);
 
   useEffect(() => {
+    if(expire_time===0) return item.status = 0;
     if (expire_time <= 0) return;
     setTimeout(() => {
       expire_time -= 1;
@@ -325,7 +332,7 @@ function ItemList({ item, history, onClick }) {
           <div className="right-content">
             <div>影院：{item.cinema_name}</div>
             <div>场次：{item.start_runtime}</div>
-            <div>场次：{item.buy_seat_ids.length} 张</div>
+            <div>数量：{item.buy_seat_ids.length} 张</div>
             <div>总价：¥{item.price}</div>
           </div>
         </div>
