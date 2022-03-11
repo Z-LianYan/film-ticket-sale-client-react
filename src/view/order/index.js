@@ -11,6 +11,7 @@ import {
   Button,
   List,
   Image,
+  Toast,
 } from "antd-mobile";
 import { GroupCommons } from "@/modules/group";
 import { get_order_list } from "@/api/order";
@@ -227,6 +228,12 @@ class OrderComponent extends Component {
                 history={history}
                 key={index}
                 onClick={() => {
+                  // if(item.)
+                  // return Toast.show({
+                  //   duration: 1000,
+                  //   content: "您还没给评分呢",
+                  // });
+
                   history.push({
                     pathname: "/order/detail/" + item.order_id,
                   });
@@ -296,7 +303,9 @@ function ItemList({ item, history, onClick }) {
     <div
       className="item-list"
       onClick={() => {
-        onClick && onClick();
+        if (expire_time) {
+          onClick && onClick();
+        }
       }}
     >
       <List mode="card" header="">
