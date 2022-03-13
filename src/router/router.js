@@ -20,7 +20,11 @@ import ImageViewer from "@/view/ImageViewer/index";
 const routers = [
   { path: "/", component: Film, exact: true },
   { path: "/cinemas", component: Cinemas },
-  { path: "/user", component: User },
+  {
+    path: "/user",
+    component: User,
+    auth: true,
+  },
   { path: "/login", component: Login },
   { path: "/citys", component: Citys },
   { path: "/film/detail/:film_id", component: FilmDetail },

@@ -724,6 +724,7 @@ class SelectSeat extends Component {
                 state: {
                   schedule_id: selectedSchedule.id,
                   buy_seat_ids: selectedSeat.map((item) => item.id),
+                  isCancelOrder: true,
                 },
               });
             }}

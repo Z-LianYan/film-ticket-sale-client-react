@@ -93,7 +93,7 @@ class BuyTicket extends Component {
         orderDetail: result,
       });
       this.setState({ expire_time: result.expireTime });
-      this.setInterval();
+      this.onSetInterval();
     } catch (err) {
       if (err.error == 400) {
         setTimeout(() => {
@@ -117,7 +117,7 @@ class BuyTicket extends Component {
       },
     });
   }
-  setInterval() {
+  onSetInterval() {
     let timer = setInterval(() => {
       let { expire_time } = this.state;
       if (expire_time <= 0) {
@@ -312,12 +312,20 @@ class BuyTicket extends Component {
   }
   componentWillUnmount = async () => {
     let { orderDetail } = this.state;
-    if (orderDetail.order_id) {
+    let { location } = this.props;
+    /**
+     * isCancelOrder 是否取消订单 为true取消订单 （从确认选座是进来时返回需要取消订单）
+     */
+    if (
+      orderDetail.order_id &&
+      location.state &&
+      location.state.isCancelOrder
+    ) {
       //取消订单
       await cancle_order({ order_id: orderDetail.order_id });
     }
-
     clearInterval(this.state.timerSetInterVal);
+
     this.setState = (state, callback) => {
       return;
     };

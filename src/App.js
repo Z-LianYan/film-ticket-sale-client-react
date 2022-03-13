@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route, Switch, withRouter } from "react-router-dom";
+import { Route, Switch, withRouter, Redirect } from "react-router-dom";
 import { Film, Cinemas, User, Login } from "./view/main/index";
 
 import AppFooter from "./components/AppFooter";
@@ -20,6 +20,7 @@ import { Toast, Dialog } from "antd-mobile";
 import { get_by_city } from "@/api/citys";
 import { get_user_info } from "@/api/user";
 import routerData from "@/router/router";
+import NotFound from "@/view/notFound/index";
 
 class App extends Component {
   constructor(props) {
@@ -49,20 +50,36 @@ class App extends Component {
   //	}
 
   renderRoute() {
-    let { routes } = this.props;
+    let { routes, userInfo } = this.props;
     return (
       <Switch>
-        {routes.map((item, index) => (
-          <Route
-            key={index}
-            path={item.path}
-            component={item.component}
-            exact={item.exact}
-            render={(props) => {
-              console.log("12345", props);
-            }}
-          />
-        ))}
+        {routes.map((item, index) => {
+          return (
+            <Route
+              key={index}
+              path={item.path}
+              // component={item.component}
+              exact={item.exact}
+              render={(props) => {
+                console.log("12345", props);
+                return !item.auth ? (
+                  <item.component {...props} />
+                ) : userInfo ? (
+                  <item.component {...props} />
+                ) : (
+                  <Redirect
+                    to={{
+                      pathname: "/login",
+                      state: { from: props.location },
+                    }}
+                  />
+                );
+              }}
+            />
+          );
+        })}
+        {/* 所有错误路由跳转页面 */}
+        <Route component={NotFound} />
       </Switch>
     );
   }

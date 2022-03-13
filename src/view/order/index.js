@@ -228,12 +228,6 @@ class OrderComponent extends Component {
                 history={history}
                 key={index}
                 onClick={() => {
-                  // if(item.)
-                  // return Toast.show({
-                  //   duration: 1000,
-                  //   content: "您还没给评分呢",
-                  // });
-
                   history.push({
                     pathname: "/order/detail/" + item.order_id,
                   });
