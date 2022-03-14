@@ -332,13 +332,7 @@ class OrderDetail extends Component {
                     onClick={() => {
                       // onCancel && onCancel();
                       history.push({
-                        pathname: "/buy/ticket",
-                        state: {
-                          schedule_id: orderDetail.schedule_id,
-                          buy_seat_ids: orderDetail.select_seats.map(
-                            (item) => item.id
-                          ),
-                        },
+                        pathname: "/buy/ticket/" + orderDetail.order_id,
                       });
                     }}
                   >

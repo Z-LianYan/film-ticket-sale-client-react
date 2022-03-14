@@ -25,6 +25,8 @@ export const LOGIN_OUT = "/loginOut"; //退出登录
 
 export const USER_RECHARGE = "/userRecharge"; //会员充值
 export const CREATE_ORDER = "/createOrder"; //创建订单
+export const GET_BUY_TICKET_DETAIL = "/getBuyTicketDetail"; //获取购票详情
+
 export const CANCLE_ORDER = "/cancleOrder"; //取消订单
 export const PAY_ORDER = "/payOrder"; //支付订单
 export const GET_ORDER_LIST = "/getOrderList"; //订单列表

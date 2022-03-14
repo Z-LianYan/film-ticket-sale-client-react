@@ -15,6 +15,8 @@ import sectionC from "@/static/img/sectionC.png";
 import sectionD from "@/static/img/sectionD.png";
 import CustomSkeleton from "@/components/CustomSkeleton/index";
 
+import { create_order } from "@/api/order";
+
 import { GroupCommons } from "@/modules/group";
 import { alert } from "antd-mobile/es/components/dialog/alert";
 class SelectSeat extends Component {
@@ -714,19 +716,15 @@ class SelectSeat extends Component {
             size="middle"
             disabled={selectedSeat.length ? false : true}
             onClick={() => {
-              // Toast.show({
-              //   icon: "none",
-              //   duration: 2000,
-              //   content: "去购买",
+              // history.push({
+              //   pathname: "/buy/ticket",
+              //   state: {
+              //     schedule_id: selectedSchedule.id,
+              //     buy_seat_ids: selectedSeat.map((item) => item.id),
+              //     isCancelOrder: true,
+              //   },
               // });
-              history.push({
-                pathname: "/buy/ticket",
-                state: {
-                  schedule_id: selectedSchedule.id,
-                  buy_seat_ids: selectedSeat.map((item) => item.id),
-                  isCancelOrder: true,
-                },
-              });
+              this.onCreateOreder();
             }}
           >
             {this.calcTotalPrice()}元 确认选座
@@ -734,6 +732,26 @@ class SelectSeat extends Component {
         </div>
       </div>
     );
+  }
+  async onCreateOreder() {
+    let { selectedSeat, selectedSchedule } = this.state;
+    let { history } = this.props;
+    try {
+      let result = await create_order({
+        schedule_id: selectedSchedule.id,
+        buy_seat_ids: selectedSeat.map((item) => item.id).join(","),
+      });
+      console.log("生成订单", result);
+      if (!result) return;
+      history.push({
+        pathname: "/buy/ticket/" + result.order_id,
+        state: {
+          isCancelOrder: true,
+        },
+      });
+    } catch (err) {
+      console.log("err", err.message);
+    }
   }
   handlerSelectedSectionPrice(it) {
     let { selectedSchedule } = this.state;

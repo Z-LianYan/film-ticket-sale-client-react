@@ -36,7 +36,7 @@ const routers = [
   { path: "/cinema/search", component: CinemaSearch },
   { path: "/select/seat/:schedule_id", component: SelectSeat },
   { path: "/set", component: SetPage },
-  { path: "/buy/ticket", component: BuyTicket },
+  { path: "/buy/ticket/:order_id", component: BuyTicket },
   { path: "/recharge", component: Recharge },
   { path: "/order/detail/:order_id", component: OrderDetail },
   { path: "/order", component: Order },

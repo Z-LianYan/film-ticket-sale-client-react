@@ -359,11 +359,7 @@ function ItemList({ item, history, onClick }) {
               onClick={(e) => {
                 stopBubble(e);
                 history.push({
-                  pathname: "/buy/ticket",
-                  state: {
-                    schedule_id: item.schedule_id,
-                    buy_seat_ids: item.buy_seat_ids,
-                  },
+                  pathname: "/buy/ticket/" + item.order_id,
                 });
               }}
             >

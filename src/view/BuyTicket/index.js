@@ -18,7 +18,12 @@ import {
   ClockCircleOutline,
 } from "antd-mobile-icons";
 import hammerjs from "hammerjs";
-import { create_order, pay_order, cancle_order } from "@/api/order";
+import {
+  create_order,
+  pay_order,
+  cancle_order,
+  get_buy_ticket_detail,
+} from "@/api/order";
 import { get_user_info } from "@/api/user";
 import dayjs from "dayjs";
 import tools from "@/utils/tools";
@@ -35,6 +40,8 @@ class BuyTicket extends Component {
       expire_time: 0,
       // selectedSchedule: {},
       timerSetInterVal: "",
+
+      isNotCancelOrder: false, //本页面操作标识
     };
   }
   componentDidMount() {
@@ -82,11 +89,11 @@ class BuyTicket extends Component {
     }
   }
   async getOrderDetail() {
-    let { history, location } = this.props;
+    let { history, location, match } = this.props;
+    let { params } = match;
     try {
-      let result = await create_order({
-        schedule_id: location.state.schedule_id,
-        buy_seat_ids: location.state.buy_seat_ids.join(","),
+      let result = await get_buy_ticket_detail({
+        order_id: params && params.order_id,
       });
       this.setState({
         isSkeleton: false,
@@ -113,7 +120,14 @@ class BuyTicket extends Component {
       content: "支付超时，该订单已失效，请重新选座购票",
       closeOnMaskClick: false,
       onConfirm: () => {
-        this.props.history.goBack();
+        this.setState(
+          {
+            isNotCancelOrder: true,
+          },
+          () => {
+            this.props.history.goBack();
+          }
+        );
       },
     });
   }
@@ -246,7 +260,7 @@ class BuyTicket extends Component {
               <h3>{orderDetail.film_name}</h3>
               <div className="count-price">
                 {orderDetail.ticket_count}张{" "}
-                <span>原价 ¥{orderDetail.origin_total_price}</span>
+                <span>原价 ¥{orderDetail.origin_price}</span>
               </div>
             </div>
             <div className="date-time-language-type">
@@ -274,12 +288,12 @@ class BuyTicket extends Component {
             <List.Item
               arrow={false}
               border="none"
-              extra={"票价小计 ¥" + orderDetail.total_price}
+              extra={"票价小计 ¥" + orderDetail.price}
             ></List.Item>
           </List>
         </div>
         <div className="bottom-bar">
-          <div className="price">{orderDetail.total_price}</div>
+          <div className="price">{orderDetail.price}</div>
           <div className="right-wrapper">
             <div
               className="detail-box"
@@ -293,7 +307,14 @@ class BuyTicket extends Component {
             <Button
               color="primary"
               onClick={() => {
-                this.onGoToPay();
+                this.setState(
+                  {
+                    isNotCancelOrder: true,
+                  },
+                  () => {
+                    this.onGoToPay();
+                  }
+                );
               }}
             >
               确认支付
@@ -311,7 +332,7 @@ class BuyTicket extends Component {
     );
   }
   componentWillUnmount = async () => {
-    let { orderDetail } = this.state;
+    let { orderDetail, isNotCancelOrder } = this.state;
     let { location } = this.props;
     /**
      * isCancelOrder 是否取消订单 为true取消订单 （从确认选座是进来时返回需要取消订单）
@@ -319,7 +340,8 @@ class BuyTicket extends Component {
     if (
       orderDetail.order_id &&
       location.state &&
-      location.state.isCancelOrder
+      location.state.isCancelOrder &&
+      !isNotCancelOrder
     ) {
       //取消订单
       await cancle_order({ order_id: orderDetail.order_id });
@@ -384,7 +406,7 @@ class MaskDetailComponent extends Component {
                     <span className="premium">
                       含服务费{orderDetail.premium}元/张
                     </span>{" "}
-                    {orderDetail.total_price}元
+                    {orderDetail.price}元
                   </div>
                 }
               >
