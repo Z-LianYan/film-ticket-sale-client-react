@@ -267,13 +267,18 @@ class CommentList extends Component {
         {isSkeleton ? <CustomSkeleton section={5} row={5} /> : null}
         <div className="header-wrapper">
           <NavBar
-            backArrow={false}
+            backArrow={true}
+            onBack={() => {
+              history.goBack();
+            }}
             left={
-              <LeftOutline
+              <i
+                className="iconfont icon-shouye"
                 onClick={() => {
-                  history.goBack();
+                  history.push("/");
                 }}
-              />
+                style={{ fontSize: "0.2rem" }}
+              ></i>
             }
             right={
               userInfo &&
