@@ -61,7 +61,7 @@ class App extends Component {
               // component={item.component}
               exact={item.exact}
               render={(props) => {
-                console.log("12345", props);
+                // console.log("12345", props);
                 return !item.auth ? (
                   <item.component {...props} />
                 ) : userInfo ? (
