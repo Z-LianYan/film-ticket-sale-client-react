@@ -18,8 +18,14 @@ import { get_city_district_list } from "@/api/citys";
 import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
 import Cookies from "js-cookie";
 import dayjs from "dayjs";
-export default ({ userInfo, props, fetchOptions,districtChange,onCheckListChange }) => {
-  const ref = useRef(null)
+export default ({
+  userInfo,
+  props,
+  fetchOptions,
+  districtChange,
+  onCheckListChange,
+}) => {
+  const ref = useRef(null);
   let [city_district_list, set_city_district_list] = useState([]);
   let [checkListDefaultValue, setCheckListDefaultValue] = useState([""]);
   let [checkListDefaultLabel, setCheckListDefaultLabel] = useState("全部");
@@ -28,84 +34,88 @@ export default ({ userInfo, props, fetchOptions,districtChange,onCheckListChange
     { label: "最近去过", value: "zjqg" },
   ]);
   useEffect(() => {
-    if (!city_district_list.length) {
-      getDistrictList();
-    }
-    return ()=>{
-    }
-  })
-  return <Dropdown ref={ref}>
-    <Dropdown.Item
-      key="all-city"
-      title={onDistrictName()}
-      closeOnContentClick={true}
-      closeOnMaskClick={true}
-    >
-      <Grid
-        columns={4}
-        gap={10}
-        style={{
-          padding: "0.1rem",
-          "--gap-vertical": "0.15rem",
-        }}
-      >
-        {city_district_list.map((item, index) => {
-          return (
-            <Grid.Item
-              key={index}
-              onClick={() => {
-                districtChange && districtChange(item.id);
-                var _a;
-                (_a = ref.current) === null || _a === void 0 ? void 0 : _a.close();
-              }}
-            >
-              <div
-                className={[
-                  `area-wrapper ${fetchOptions.district_id == item.id
-                    ? "active"
-                    : ""
-                  }`,
-                ]}
-              >
-                {item.name}
-              </div>
-            </Grid.Item>
-          );
-        })}
-      </Grid>
-    </Dropdown.Item>
-    {userInfo ? (
+    // if (!city_district_list.length) {
+    getDistrictList();
+    // }
+    return () => {};
+  }, []);
+  return (
+    <Dropdown ref={ref}>
       <Dropdown.Item
-        key="recently"
-        title={checkListDefaultLabel}
+        key="all-city"
+        title={onDistrictName()}
         closeOnContentClick={true}
         closeOnMaskClick={true}
       >
-        <CheckList
-          defaultValue={checkListDefaultValue}
-          onChange={(res) => {
-            checkList.map((item) => {
-              if (item.value == res[0]) {
-                setCheckListDefaultLabel(item.label);
-                return;
-              }
-            });
-            onCheckListChange && onCheckListChange(res[0]);
-            var _a;
-            (_a = ref.current) === null || _a === void 0 ? void 0 : _a.close();
+        <Grid
+          columns={4}
+          gap={10}
+          style={{
+            padding: "0.1rem",
+            "--gap-vertical": "0.15rem",
           }}
         >
-          {checkList.map((item, index) => {
+          {city_district_list.map((item, index) => {
             return (
-              <CheckList.Item key={index} value={item.value}>
-                {item.label}
-              </CheckList.Item>
+              <Grid.Item
+                key={index}
+                onClick={() => {
+                  districtChange && districtChange(item.id);
+                  var _a;
+                  (_a = ref.current) === null || _a === void 0
+                    ? void 0
+                    : _a.close();
+                }}
+              >
+                <div
+                  className={[
+                    `area-wrapper ${
+                      fetchOptions.district_id == item.id ? "active" : ""
+                    }`,
+                  ]}
+                >
+                  {item.name}
+                </div>
+              </Grid.Item>
             );
           })}
-        </CheckList>
+        </Grid>
       </Dropdown.Item>
-    ) : null}
-  </Dropdown>
+      {userInfo ? (
+        <Dropdown.Item
+          key="recently"
+          title={checkListDefaultLabel}
+          closeOnContentClick={true}
+          closeOnMaskClick={true}
+        >
+          <CheckList
+            defaultValue={checkListDefaultValue}
+            onChange={(res) => {
+              checkList.map((item) => {
+                if (item.value == res[0]) {
+                  setCheckListDefaultLabel(item.label);
+                  return;
+                }
+              });
+              onCheckListChange && onCheckListChange(res[0]);
+              var _a;
+              (_a = ref.current) === null || _a === void 0
+                ? void 0
+                : _a.close();
+            }}
+          >
+            {checkList.map((item, index) => {
+              return (
+                <CheckList.Item key={index} value={item.value}>
+                  {item.label}
+                </CheckList.Item>
+              );
+            })}
+          </CheckList>
+        </Dropdown.Item>
+      ) : null}
+    </Dropdown>
+  );
 
   async function getDistrictList() {
     let { city_id } = props.locationInfo;
@@ -137,5 +147,3 @@ export default ({ userInfo, props, fetchOptions,districtChange,onCheckListChange
     });
   }
 };
-
-

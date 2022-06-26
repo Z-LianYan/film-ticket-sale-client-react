@@ -328,7 +328,7 @@ function ItemList({ item, history, onClick }) {
           <div className="right-content">
             <div>影院：{item.cinema_name}</div>
             <div>场次：{item.start_runtime}</div>
-            <div>场次：{item.buy_seat_ids.length} 张</div>
+            <div>数量：{item.buy_seat_ids.length} 张</div>
             <div>总价：¥{item.price}</div>
           </div>
         </div>

@@ -13,7 +13,7 @@ import {
   TextArea,
   Avatar,
   Form,
-  ImageUploader
+  ImageUploader,
 } from "antd-mobile";
 import { GroupCommons } from "@/modules/group/index";
 // import { } from "antd-mobile-icons";
@@ -30,10 +30,10 @@ class EditUserInfo extends Component {
       formData: {
         nickname: "",
         avatar: [],
-        qiniuConfig:{
-          static_host:'',
-          upload_token:''
-        }
+      },
+      qiniuConfig: {
+        static_host: "",
+        upload_token: "",
       },
     };
   }
@@ -53,7 +53,7 @@ class EditUserInfo extends Component {
       });
     await edit_user_info({
       ...formData,
-      avatar:formData.avatar[0].url
+      avatar: formData.avatar[0].url,
     });
     this.getUserInfo();
   }
@@ -63,30 +63,39 @@ class EditUserInfo extends Component {
     let result = await get_user_info();
     if (!result) return;
     formData.nickname = result.nickname;
-    formData.avatar = result.avatar?[{
-      url: result.avatar
-    }]:[];
+    formData.avatar = result.avatar
+      ? [
+          {
+            url: result.avatar,
+          },
+        ]
+      : [];
     this.setState({
       formData,
     });
-    this.props.login(result, () => { });
+    this.props.login(result, () => {});
   }
-  async getUploadConfig(){
+  async getUploadConfig() {
     let result = await get_upload_qiuniu_config();
     // console.log('config',result);
     this.setState({
-      qiniuConfig:result
-    })
+      qiniuConfig: result,
+    });
   }
   getExtName(str) {
     var index = str.lastIndexOf(".");
     return str.slice(index);
   }
   async onSumbitUpload(file) {
-    return new Promise((resolve)=>{
+    return new Promise((resolve) => {
       let { qiniuConfig } = this.state;
-      const key = 'film/userAvatar/' + dayjs().format("YYYY-MM-DD") + "/" + Date.now() + _.random(9999, 9999999)
-        + this.getExtName(file.name); // 上传后文件资源名以设置的 key 为主，如果 key 为 null 或者 undefined，则文件资源名会以 hash 值作为资源名。
+      const key =
+        "film/userAvatar/" +
+        dayjs().format("YYYY-MM-DD") +
+        "/" +
+        Date.now() +
+        _.random(9999, 9999999) +
+        this.getExtName(file.name); // 上传后文件资源名以设置的 key 为主，如果 key 为 null 或者 undefined，则文件资源名会以 hash 值作为资源名。
       let config = {
         useCdnDomain: true, //表示是否使用 cdn 加速域名，为布尔值，true 表示使用，默认为 false。
         region: qiniu.region.z2, // 根据具体提示修改上传地区,当为 null 或 undefined 时，自动分析上传域名区域
@@ -117,11 +126,10 @@ class EditUserInfo extends Component {
         },
         complete: (res) => {
           // 接收成功后返回的信息
-          resolve(qiniuConfig.static_host + res.key)
+          resolve(qiniuConfig.static_host + res.key);
         },
       });
-    })
-    
+    });
   }
 
   render() {
@@ -149,15 +157,19 @@ class EditUserInfo extends Component {
               history.goBack();
             }}
           >
-            <div className="comment-title">编辑会员信息</div>
+            <div className="comment-title">修改会员信息</div>
           </NavBar>
         </div>
         <div style={{ height: "0.5rem" }}></div>
-        <List mode='card'>
+        <List mode="card">
           <List.Item
             extra={
               <Input
-                style={{background:'#f4f4f4',padding:'0.05rem',borderRadius:'0.1rem'}}
+                style={{
+                  background: "#f4f4f4",
+                  padding: "0.05rem",
+                  borderRadius: "0.1rem",
+                }}
                 placeholder="请输入用户名"
                 maxLength={8}
                 value={formData.nickname}
@@ -177,37 +189,37 @@ class EditUserInfo extends Component {
             extra={
               <ImageUploader
                 maxCount={1}
-                accept='image/*'
+                accept="image/*"
                 value={formData.avatar}
                 onChange={(val) => {
-                  console.log('onchange', val)
+                  console.log("onchange", val);
                   formData.avatar = val;
                   this.setState({
-                    formData
-                  })
+                    formData,
+                  });
                 }}
                 upload={async (file) => {
-                  console.log('upload', file.name, URL.createObjectURL(file))
+                  console.log("upload", file.name, URL.createObjectURL(file));
                   let url = await this.onSumbitUpload(file);
                   return {
-                    url: url
-                  }
+                    url: url,
+                  };
                 }}
                 onDelete={(val) => {
                   formData.avatar = [];
                   this.setState({
-                    formData
-                  })
+                    formData,
+                  });
                 }}
                 beforeUpload={(files) => {
-                  console.log('beforeUpload', files);
-                  return files.filter(file => {
+                  console.log("beforeUpload", files);
+                  return files.filter((file) => {
                     if (file.size > 1024 * 1024) {
-                      Toast.show('请选择小于 1M 的图片')
-                      return false
+                      Toast.show("请选择小于 1M 的图片");
+                      return false;
                     }
-                    return true
-                  })
+                    return true;
+                  });
                 }}
               />
             }

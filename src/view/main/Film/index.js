@@ -179,7 +179,7 @@ class Film extends Component {
               actors={item.actors.map((item) => item.name).join(",")}
               bottomText={item.area + " | " + item.runtime + "分钟"}
               imgUrl={item.poster_img}
-              separator={hotList.length === index + 1 ? false : true}
+              separator={item.poster_img}
               onClick={() => {
                 this.props.history.push({
                   pathname: "/film/detail/" + item.film_id,

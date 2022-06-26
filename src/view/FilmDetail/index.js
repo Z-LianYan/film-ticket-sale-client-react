@@ -166,12 +166,21 @@ class FileDetail extends Component {
 
   async getCommentReplyList(item) {
     item.isReplyCommentLoading = true;
-    item.page = item.page ? item.page + 1 : 1;
+    // item.page = item.page ? item.page + 1 : 1;
+    let page = 1;
+    if (Array.isArray(item.backup_reply_list)) {
+      page =
+        item.backup_reply_list.length < 3
+          ? 1
+          : item.backup_reply_list.length % 3 == 0
+          ? item.backup_reply_list.length / 3 + 1
+          : Math.floor(item.backup_reply_list.length / 3);
+    }
     this.setState({
       commentlist: this.state.commentlist,
     });
     let result = await get_comment_reply_list({
-      page: item.page,
+      page: page,
       limit: 3,
       comment_id: item.comment_id,
     });
@@ -426,11 +435,11 @@ class FileDetail extends Component {
           onClick={() => {
             // this.setState({ isVisibleMask: true });
             history.push({
-              pathname:'/imageViewer',
-              state:{
-                imgs:detail.stage_photo
-              }
-            })
+              pathname: "/imageViewer",
+              state: {
+                imgs: detail.stage_photo,
+              },
+            });
           }}
         >
           剧照
@@ -447,7 +456,7 @@ class FileDetail extends Component {
                         defaultIndex: index,
                         images: detail.stage_photo,
                       });
-                      this.setState({imgage_viewer_instance})
+                      this.setState({ imgage_viewer_instance });
                     }}
                   >
                     <div className="photo-wrapper">
@@ -578,22 +587,10 @@ class FileDetail extends Component {
                         ) : (
                           <div>
                             <MinusOutline color="#ccc" />
-                            {item.isShowUnfold ? (
-                              <span
-                                className="btn"
-                                onClick={() => {
-                                  item.isShowUnfold = false;
-                                  item.sliceIndex = 0; //收起时sliceIndex 要 设为0；
-                                  item.replyList = [];
-                                  this.setState({
-                                    commentlist: commentlist,
-                                  });
-                                }}
-                              >
-                                收起
-                                <UpOutline className="icon" />
-                              </span>
-                            ) : (
+
+                            {!item.replyList ||
+                            (item.replyList &&
+                              item.replyList.length < item.reply_count) ? (
                               <span
                                 className="btn"
                                 onClick={() => {
@@ -655,7 +652,25 @@ class FileDetail extends Component {
                                 回复
                                 <DownOutline className="icon" />
                               </span>
-                            )}
+                            ) : null}
+
+                            {/* {item.isShowUnfold ? ( */}
+                            {item.replyList && item.replyList.length ? (
+                              <span
+                                className="btn"
+                                onClick={() => {
+                                  item.isShowUnfold = false;
+                                  item.sliceIndex = 0; //收起时sliceIndex 要 设为0；
+                                  item.replyList = [];
+                                  this.setState({
+                                    commentlist: commentlist,
+                                  });
+                                }}
+                              >
+                                收起
+                                <UpOutline className="icon" />
+                              </span>
+                            ) : null}
                           </div>
                         )}
                       </div>
@@ -700,9 +715,9 @@ class FileDetail extends Component {
                           }}
                           commentContent={it.reply_content}
                           isShowMenuBtn={true}
-                          onClickJubao={() => {
-                            console.log("jubao");
-                          }}
+                          // onClickJubao={() => {
+                          //   console.log("jubao");
+                          // }}
                           dzNum={it.thumb_up_count}
                           alreadyThumbUp={it.already_thumb_up}
                           onThumbUp={async () => {

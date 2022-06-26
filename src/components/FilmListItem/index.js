@@ -65,11 +65,11 @@ class FilmListItem extends Component {
             >
               主演：{actors}
             </p>
-            <p 
-            className="area"
-            style={{
-              width: `calc(100vw - ${btnTxt ? 1.73 : 1}rem)`,
-            }}
+            <p
+              className="area"
+              style={{
+                width: `calc(100vw - ${btnTxt ? 1.73 : 1}rem)`,
+              }}
             >
               {bottomText}
             </p>
@@ -91,7 +91,6 @@ class FilmListItem extends Component {
             >
               {btnTxt}
             </Button>
-            
           ) : null}
         </div>
         {separator ? <div className="line"></div> : null}
