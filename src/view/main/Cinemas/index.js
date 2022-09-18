@@ -327,6 +327,7 @@ class Cinema extends Component {
                 city_id: this.props.locationInfo.city_id,
                 lat: this.props.locationInfo.lat,
                 lng: this.props.locationInfo.lng,
+                user_id: userInfo && userInfo.user_id,
               });
               this.setState({
                 list:

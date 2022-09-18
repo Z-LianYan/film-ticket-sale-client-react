@@ -35,15 +35,6 @@ class CommentComplete extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isSkeleton: true,
-      isDownImage: false,
-      orderDetail: {},
-      formData: {
-        score: 0,
-        film_id: "",
-        comment_parent_id: "",
-        comment_content: "",
-      },
       filmInfo: {},
       commentInfo: null,
       productionNum: 0,
@@ -51,7 +42,6 @@ class CommentComplete extends Component {
   }
   async componentDidMount() {
     let { location } = this.props;
-    let { formData } = this.state;
     if (location.state && !location.state.film_id) return;
     let result = await get_comment_detail({
       film_id: location.state && location.state.film_id,

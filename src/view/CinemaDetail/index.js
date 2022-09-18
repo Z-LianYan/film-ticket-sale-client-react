@@ -9,9 +9,7 @@ import "swiper/css/swiper.min.css";
 import dayjs from "dayjs";
 import { GroupCommons } from "@/modules/group";
 import CustomSkeleton from "@/components/CustomSkeleton/index";
-import {
-  EnvironmentOutline
-} from "antd-mobile-icons";
+import { EnvironmentOutline } from "antd-mobile-icons";
 function CellItem(obj = {}) {
   return (
     <div className="cell-item-container">
@@ -310,8 +308,8 @@ class FileDetail extends Component {
           />
           <div className="addr">{cinemaDetail.address}</div>
           <div className="phone-icon">
-            {
-              cinemaDetail.phone?<a href={"tel:" + cinemaDetail.phone}>
+            {cinemaDetail.phone ? (
+              <a href={"tel:" + cinemaDetail.phone}>
                 <svg
                   t="1635787436480"
                   className="icon"
@@ -328,8 +326,8 @@ class FileDetail extends Component {
                     p-id="4659"
                   ></path>
                 </svg>
-              </a>:null
-            }
+              </a>
+            ) : null}
           </div>
         </div>
 
