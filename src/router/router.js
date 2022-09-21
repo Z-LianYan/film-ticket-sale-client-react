@@ -16,6 +16,7 @@ import CommentList from "@/view/commentList/index";
 import EditUserInfo from "@/view/editUserInfo/index";
 import CommentComplete from "@/view/commentComplete/index";
 import ImageViewer from "@/view/ImageViewer/index";
+import SocketIoClientTest from "@/view/SocketIoClientTest/index";
 
 const routers = [
   { path: "/", component: Film, exact: true },
@@ -46,5 +47,6 @@ const routers = [
   { path: "/edituserinfo", component: EditUserInfo },
   { path: "/commentComplete", component: CommentComplete },
   { path: "/imageViewer", component: ImageViewer },
+  { path: "/SocketIoClientTest", component: SocketIoClientTest },
 ];
 export default routers;

@@ -142,6 +142,18 @@ class User extends Component {
           >
             设置
           </List.Item>
+          <List.Item
+            style={{ fontSize: "0.16rem" }}
+            arrow={true}
+            onClick={() => {
+              history.push({
+                pathname: "/SocketIoClientTest",
+              });
+            }}
+            prefix={<SetOutline />}
+          >
+            socket.io-client
+          </List.Item>
         </List>
 
         {/* <div>{!userInfo || userInfo.username}</div> */}

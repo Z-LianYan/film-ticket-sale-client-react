@@ -10,4 +10,12 @@ module.exports = function (app) {
       },
     })
   );
+  app.use(
+    "/socket.io",
+    createProxyMiddleware({
+      target: "http://localhost:7002",
+      changeOrigin: true,
+      ws: true
+    })
+  );
 };
