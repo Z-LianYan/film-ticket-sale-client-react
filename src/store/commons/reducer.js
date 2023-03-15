@@ -1,5 +1,5 @@
 import state from "./state";
-import { CHECK_USER_INFO, SET_LOCATION_INFO } from "./const.js";
+import { CHECK_USER_INFO, SET_LOCATION_INFO, SET_SOCKET } from "./const.js";
 
 const reducer = (previousState = state, action) => {
   let new_state = { ...previousState };
@@ -13,7 +13,9 @@ const reducer = (previousState = state, action) => {
         ...action.locationInfo,
       };
       break;
-
+    case SET_SOCKET:
+        new_state.socket = action.socket;
+        break;
     default:
       break;
   }

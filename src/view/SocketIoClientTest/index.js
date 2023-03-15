@@ -26,52 +26,52 @@ class socketIoClientTest extends Component {
   componentDidMount(){
     // const socket = io('ws://localhost:7002/chat', { jsonp: false, transports: ['websocket'] });
     // init
-    const socket = io('http://127.0.0.1:7002/test', {
-      // 实际使用中可以在这里传递参数
-      query: {
-        room: 'demo',
-        userId: `client_${Math.random()}`,
-      },
+    // const socket = io('http://127.0.0.1:7002/test', {
+    //   // 实际使用中可以在这里传递参数
+    //   query: {
+    //     room: 'demo',
+    //     userId: `client_${Math.random()}`,
+    //   },
 
-      transports: ['websocket'],
-    });
+    //   transports: ['websocket'],
+    // });
 
-    socket.on('connect', () => {
-      const id = socket.id;
+    // socket.on('connect', () => {
+    //   const id = socket.id;
 
-      console.log('#connect,', id, socket);
+    //   console.log('#connect,', id, socket);
 
-      this.setState({
-        socket
-      })
+    //   this.setState({
+    //     socket
+    //   })
 
-      // 监听自身 id 以实现 p2p 通讯
-      socket.on(id, (msg) => {
-        console.log('#receive,', msg);
-      });
+    //   // 监听自身 id 以实现 p2p 通讯
+    //   socket.on(id, (msg) => {
+    //     console.log('#receive,', msg);
+    //   });
       
-    });
+    // });
 
-    // 接收在线用户信息
-    socket.on('online', (msg) => {
-      console.log('#online,', msg);
-    });
+    // // 接收在线用户信息
+    // socket.on('online', (msg) => {
+    //   console.log('#online,', msg);
+    // });
 
-    // 系统事件
-    socket.on('disconnect', (msg) => {
-      console.log('#disconnect', msg);
-    });
+    // // 系统事件
+    // socket.on('disconnect', (msg) => {
+    //   console.log('#disconnect', msg);
+    // });
 
-    socket.on('disconnecting', () => {
-      console.log('#disconnecting');
-    });
+    // socket.on('disconnecting', () => {
+    //   console.log('#disconnecting');
+    // });
 
-    socket.on('error', () => {
-      console.log('#error');
-    });
-    socket.on('res', (data) => {
-      console.log('#res---',data);
-    });
+    // socket.on('error', () => {
+    //   console.log('#error');
+    // });
+    // socket.on('res', (data) => {
+    //   console.log('#res---',data);
+    // });
 
     
     
@@ -80,7 +80,7 @@ class socketIoClientTest extends Component {
 
   render() {
     let { history } = this.props;
-    let { socket } = this.state;
+    // let { socket } = this.state;
     return <div className="">
       <NavBar
           style={{
@@ -101,8 +101,8 @@ class socketIoClientTest extends Component {
         </NavBar>
         <div style={{height:'50px'}}></div>
         <div onClick={()=>{
-          socket.emit('server','我是client事件');
           // console.log('123',socket);
+          // socket.emit('server','我是client事件');
         }}>
           123
         </div>

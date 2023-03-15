@@ -23,6 +23,8 @@ const state = {
     9: "很不错,推荐看看",
     10: "棒极了,极力推荐",
   },
+  
+  socket:null,
 
   versions: "v2.0.0",
 };
