@@ -51,16 +51,8 @@ class Cinema extends Component {
     };
   }
   async componentDidMount() {
-    console.log('1234',this.props)
-    let { location, locationInfo, socket } = this.props;
+    let { location, locationInfo } = this.props;
     // this.getDistrictList();
-    if(socket){
-      socket.on('refresh_cinema_list', (msg) => {
-        console.log('#refresh_cinema_list,', msg);
-      });
-    }
-    
-
     locationInfo.locationReady = () => {
       this.getData();
     };

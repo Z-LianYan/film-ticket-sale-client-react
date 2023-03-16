@@ -119,6 +119,13 @@ class App extends Component {
 
       setSocket(_socket);
 
+
+      
+      socket.on('refresh_cinema_list', (msg) => {
+        console.log('#refresh_cinema_list,', msg);
+      });
+      
+
       // 监听自身 id 以实现 p2p 通讯
       // _socket.on(id, (msg) => {
       //   console.log('#receive,', msg);
