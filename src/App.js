@@ -97,60 +97,60 @@ class App extends Component {
     if (result) this.props.login(result, () => {});
   }
 
-  connectSocket(){
-    const { socket, setSocket } = this.props;
-    console.log('connectSocket---')
-    if(socket) return;
-    const _socket = io('http://127.0.0.1:7002/test', {
-      // 实际使用中可以在这里传递参数
-      query: {
-        room: 'demo',
-        userId: `client_${Math.random()*10000000000000000}`,
-      },
-      transports: ['websocket'],
-    });
+  // connectSocket(){
+  //   const { socket, setSocket } = this.props;
+  //   console.log('connectSocket---')
+  //   if(socket) return;
+  //   const _socket = io('http://127.0.0.1:7002/test', {
+  //     // 实际使用中可以在这里传递参数
+  //     query: {
+  //       room: 'demo',
+  //       userId: `client_${Math.random()*10000000000000000}`,
+  //     },
+  //     transports: ['websocket'],
+  //   });
 
-    _socket.on('connect', () => {
-      const id = _socket.id;
+  //   _socket.on('connect', () => {
+  //     const id = _socket.id;
 
-      console.log('#connect,', id, _socket);
+  //     console.log('#connect,', id, _socket);
 
-      // this.setState({socket:_socket});
+  //     // this.setState({socket:_socket});
 
-      setSocket(_socket);
+  //     setSocket(_socket);
 
 
       
-      socket.on('refresh_cinema_list', (msg) => {
-        console.log('#refresh_cinema_list,', msg);
-      });
+  //     socket.on('refresh_cinema_list', (msg) => {
+  //       console.log('#refresh_cinema_list,', msg);
+  //     });
       
 
-      // 监听自身 id 以实现 p2p 通讯
-      // _socket.on(id, (msg) => {
-      //   console.log('#receive,', msg);
-      // });
+  //     // 监听自身 id 以实现 p2p 通讯
+  //     // _socket.on(id, (msg) => {
+  //     //   console.log('#receive,', msg);
+  //     // });
       
-    });
+  //   });
 
-    // 系统事件
-    _socket.on('disconnect', (msg) => {
-      console.log('#disconnect', msg);
-    });
+  //   // 系统事件
+  //   _socket.on('disconnect', (msg) => {
+  //     console.log('#disconnect', msg);
+  //   });
 
-    _socket.on('disconnecting', () => {
-      console.log('#disconnecting');
-    });
+  //   _socket.on('disconnecting', () => {
+  //     console.log('#disconnecting');
+  //   });
 
-    _socket.on('error', () => {
-      console.log('#error');
-    });
-  }
+  //   _socket.on('error', () => {
+  //     console.log('#error');
+  //   });
+  // }
 
   componentDidMount() {
     this.getUserInfo();
     this.handlerLocation();
-    this.connectSocket();
+    // this.connectSocket();
   }
   handlerLocation() {
     let { history, locationInfo } = this.props;

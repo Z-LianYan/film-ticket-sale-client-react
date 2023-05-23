@@ -252,6 +252,7 @@ class SelectSeat extends Component {
         });
       }
     }
+    console.log('seat_real_rows===>>',seat_real_rows);
     this.setState({
       isSkeleton: false,
       seat_real_rows,
