@@ -29,7 +29,7 @@ import { get_order_list } from "@/api/order";
 import InfiniteScrollContent from "@/components/InfiniteScrollContent/index";
 import Cookies from "js-cookie";
 
-import CommentItem from "@/components/Comment-item/index";
+import CommentItem from "@/components/CommentItem/index";
 import {
   get_comment_list,
   thumb_up,

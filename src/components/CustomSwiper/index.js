@@ -35,6 +35,7 @@ class CustomSwiper extends Component {
       },
       on: {
         click: function (e) {
+          console.log('----123',_this.state.bannerList[this.activeIndex - 1])
           onClick && onClick(_this.state.bannerList[this.activeIndex - 1]);
         },
       },

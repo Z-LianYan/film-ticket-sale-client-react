@@ -30,7 +30,7 @@ import {
 import { get_film_detail, add_cancel_want_see } from "@/api/film";
 import dayjs from "dayjs";
 import { GroupCommons } from "@/modules/group";
-import CommentItem from "@/components/Comment-item/index";
+import CommentItem from "@/components/CommentItem/index";
 import {
   get_comment_list,
   thumb_up,

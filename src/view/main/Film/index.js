@@ -392,6 +392,7 @@ class Film extends Component {
           <CustomSwiper
             useSwiperType=""
             onClick={(item) => {
+              if(!item) return;
               history.push({
                 pathname: "/film/detail/" + item.film_id,
               });

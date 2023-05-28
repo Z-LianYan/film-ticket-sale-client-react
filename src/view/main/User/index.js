@@ -20,7 +20,7 @@ class User extends Component {
 
   componentDidMount() {
     let { userInfo, history } = this.props;
-    console.log('this.props',this.props);
+    // console.log('this.props',this.props);
     // if (!userInfo) {
     //   history.replace({
     //     pathname: "/login",
@@ -142,6 +142,10 @@ class User extends Component {
           >
             设置
           </List.Item>
+          <div style={{padding: "40px 10px 10px 10px"}}>
+            此网站仅用于学习与观赏无任何商业用途，如有侵权请联系删除。
+            邮箱：2930638161@qq.com
+          </div>
           {/* <List.Item
             style={{ fontSize: "0.16rem" }}
             arrow={true}

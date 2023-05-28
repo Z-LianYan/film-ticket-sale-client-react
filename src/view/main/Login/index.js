@@ -175,7 +175,7 @@ class Login extends Component {
 
         <List.Item prefix="">
           <Input
-            placeholder="请输入短信验证码"
+            placeholder="请输入短信验证码(验证码默认是1234)"
             clearable
             type="tel"
             maxLength={4}
@@ -188,6 +188,11 @@ class Login extends Component {
             }}
           />
         </List.Item>
+
+        <div style={{padding: "40px 10px 10px 10px"}}>
+            此网站仅用于学习与观赏无任何商业用途，如有侵权请联系删除。
+            邮箱：2930638161@qq.com
+          </div>
 
         <Button
           className="login-btn"
