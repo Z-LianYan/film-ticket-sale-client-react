@@ -10,14 +10,27 @@ import {
   RightOutline,
 } from "antd-mobile-icons";
 import { login_out } from "@/api/user";
+import { app_versions_check_update } from "../../api/common";
 
 class CinemaSearch extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      appInfo: null
+    };
   }
-  componentDidMount() {
+  async componentDidMount() {
     let { locationInfo } = this.props;
+
+
+    const result = await app_versions_check_update({
+      platform: 'android',
+      packageName: 'com.filmticketsaleclientrnts',
+    });
+    console.log('result->>>',result);
+    this.setState({
+      appInfo: result
+    })
   }
   async onLoginOut() {
     let { history } = this.props;
@@ -34,7 +47,7 @@ class CinemaSearch extends Component {
   }
 
   render() {
-    let {} = this.state;
+    let { appInfo } = this.state;
     let { history, userInfo, versions } = this.props;
     return (
       <div className="set-container">
@@ -56,8 +69,22 @@ class CinemaSearch extends Component {
           <List.Item arrow={false} extra={userInfo && userInfo.phone_number}>
             电话号码
           </List.Item>
-          <List.Item arrow={false} border="none" extra={versions}>
-            软件版本
+          <List.Item 
+          arrow={true} 
+          border="none" 
+          extra={appInfo?`版本号v${appInfo.versionName +" 共" + Math.floor(appInfo.size/1024/1024)}M`:''}
+          onClick={ async ()=>{
+            
+            let result = await Dialog.confirm({
+              content: "您确定下载吗？",
+            });
+            if(!result || !appInfo) return;
+
+            const a = document.createElement('a');
+            a.href = appInfo.download_url;
+            a.click();
+          }}>
+            android端app
           </List.Item>
           <List.Item
             arrow={true}

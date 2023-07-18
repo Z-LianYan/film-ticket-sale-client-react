@@ -106,3 +106,41 @@ table {
 .adm-image-viewer-slides-inner > *{
   margin-right: 0;
 }
+
+.adm-nav-bar{
+  height: 0.45rem;
+}
+.adm-dropdown-item-title{
+  padding: 0.12rem !important;
+  .adm-dropdown-item-title-text{
+    margin-right: 0.05rem;
+  }
+  .adm-dropdown-item-title-arrow{
+    font-size: 0.09rem;
+  }
+}
+
+.adm-list-item-content-arrow{
+  font-size: 0.19rem;
+}
+.adm-nav-bar-back-arrow{
+  font-size: 0.24rem;
+}
+
+.adm-popup-body{
+  a{
+    font-size: 0.12rem;
+  }
+  .adm-action-sheet-button-item{
+    padding: 0.16rem;
+  }
+}
+
+.adm-notice-bar{
+  height: 0.38rem;
+  padding: 0 0.13rem;
+}
+
+.adm-list-item-content-extra{
+  font-size: 0.12rem
+}

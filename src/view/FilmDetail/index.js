@@ -388,12 +388,12 @@ class FileDetail extends Component {
         </div>
         <div className="abstract-detail">
           <div className="abstract">
-            <input id="label-input" className="label-input" type="checkbox" />
+            {/* <input id="label-input" className="label-input" type="checkbox" /> */}
             <p className="text">
-              <label className="label" htmlFor="label-input">
+              {/* <label className="label" htmlFor="label-input">
                 <DownOutline className="down-out-line" />
                 <UpOutline className="up-out-line" />
-              </label>
+              </label> */}
               {detail.abstract}
             </p>
           </div>
@@ -428,7 +428,7 @@ class FileDetail extends Component {
             fontSize: "0.16rem",
           }}
           extra={
-            <div style={{ marginTop: "0.13rem" }}>{`全部(${
+            <div style={{ height: '100%',display: 'flex',alignItems:'center' }}>{`全部(${
               detail.stage_photo ? detail.stage_photo.length : 0
             })`}</div>
           }

@@ -21,3 +21,23 @@ export function get_upload_qiuniu_config(params) {
     });
   });
 }
+
+export function app_versions_check_update(params) {
+  return new Promise((resolve, reject) => {
+    HttpUtils.post(Api.APP_VERSIONS_CHECK_UPDATE, params, "").then((res) => {
+      switch (res.error) {
+        case 0:
+          resolve(res.data);
+          break;
+        default:
+          Toast.show({
+            icon: "fail",
+            duration: 2000,
+            content: res.message,
+          });
+          reject(res);
+          break;
+      }
+    });
+  });
+}

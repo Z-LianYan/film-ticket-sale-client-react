@@ -212,14 +212,13 @@ class OrderDetail extends Component {
               >
                 <div className="cinema-name">{orderDetail.cinema_name}</div>
                 {orderDetail.cinema_has_schedule && (
-                  <RightOutline style={{ margin: "0 0.1rem" }} fontSize={20} />
+                  <RightOutline style={{ margin: "0 0.1rem",fontSize: "0.2rem" }} />
                 )}{" "}
                 |
               </div>
 
               <EnvironmentOutline
-                style={{ margin: "0 0.2rem" }}
-                fontSize={20}
+                style={{ margin: "0 0.2rem",fontSize: "0.2rem" }}
                 onClick={() => {
                   history.push({
                     pathname: "/viewlocation",
@@ -235,8 +234,7 @@ class OrderDetail extends Component {
               <a href={"tel:" + orderDetail.phone}>
                 <PhoneFill
                   color="#fff"
-                  style={{ margin: "0 0.1rem" }}
-                  fontSize={20}
+                  style={{ margin: "0 0.1rem",fontSize: "0.2rem" }}
                 />
               </a>
             </div>

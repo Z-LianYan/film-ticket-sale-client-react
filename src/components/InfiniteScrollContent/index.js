@@ -25,7 +25,7 @@ class InfiniteScrollContent extends Component {
             {noContent ? (
               <div className="no-content-text">{text}</div>
             ) : (
-              <span>- 我是有底线的 -</span>
+              <span style={{fontSize: "0.12rem"}}>- 我是有底线的 -</span>
             )}
           </div>
         )}

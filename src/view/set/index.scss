@@ -13,9 +13,9 @@
         bottom: 0;
         left: 0;
         right: 0;
-        padding-bottom: 0.2rem;
-        padding-bottom: calc(constant(safe-area-inset-bottom)+ 0.2rem);
-        padding-bottom: calc(env(safe-area-inset-bottom)+0.2rem);
+        padding-bottom: 0.4rem;
+        // padding-bottom: calc(constant(safe-area-inset-bottom)+ 0.2rem);
+        // padding-bottom: calc(env(safe-area-inset-bottom)+0.2rem);
         .login-out-btn{
         }
     }

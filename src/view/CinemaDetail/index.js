@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./index.scss";
 import { List, Image, Mask, NavBar, Tag, Tabs } from "antd-mobile";
-import { RightOutline, CloseOutline } from "antd-mobile-icons";
+import { RightOutline, CloseOutline, PhoneFill,PhonebookOutline } from "antd-mobile-icons";
 import { get_cinema_detail, get_date_schedule } from "@/api/cinema";
 
 import Swiper from "swiper";
@@ -287,12 +287,12 @@ class FileDetail extends Component {
                   })
                 : null}
             </div>
-            <RightOutline className="arrow-rigght" color="#ffb232" />
+            <RightOutline className="arrow-rigght" color="#ffb232" style={{fontSize: "0.15rem"}} />
           </div>
         ) : null}
         <div className="location-wrapper">
           <EnvironmentOutline
-            fontSize={28}
+            style={{fontSize: "0.28rem"}}
             color="#ccc"
             onClick={() => {
               history.push({
@@ -309,8 +309,8 @@ class FileDetail extends Component {
           <div className="addr">{cinemaDetail.address}</div>
           <div className="phone-icon">
             {cinemaDetail.phone ? (
-              <a href={"tel:" + cinemaDetail.phone}>
-                <svg
+              <a href={"tel:" + cinemaDetail.phone} style={{fontSize: "0.28rem"}}>
+                {/* <svg
                   t="1635787436480"
                   className="icon"
                   viewBox="0 0 1024 1024"
@@ -325,7 +325,8 @@ class FileDetail extends Component {
                     fill="#cccccc"
                     p-id="4659"
                   ></path>
-                </svg>
+                </svg> */}
+                <PhonebookOutline />
               </a>
             ) : null}
           </div>
@@ -358,7 +359,7 @@ class FileDetail extends Component {
               </p>
             ) : null}
           </div>
-          <RightOutline fontSize={15} />
+          <RightOutline style={{fontSize: "0.15rem"}}/>
         </div>
         <Tabs
           activeKey={this.state.activeDateKey.toString()}

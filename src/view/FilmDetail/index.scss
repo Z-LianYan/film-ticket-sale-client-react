@@ -145,10 +145,10 @@
       color: #000;
       .text{
         overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
+        // text-overflow: ellipsis;
+        // display: -webkit-box;
+        // -webkit-line-clamp: 3;
+        // -webkit-box-orient: vertical;
         position: relative;
         // animation-name:  animationname;
         // animation-duration: 4s;
