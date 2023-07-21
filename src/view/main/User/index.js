@@ -146,7 +146,7 @@ class User extends Component {
             此网站仅用于学习与观赏无任何商业用途，如有侵权请联系删除。
             邮箱：2930638161@qq.com
           </div>
-          {/* <List.Item
+          <List.Item
             style={{ fontSize: "0.16rem" }}
             arrow={true}
             onClick={() => {
@@ -157,7 +157,7 @@ class User extends Component {
             prefix={<SetOutline />}
           >
             socket.io-client
-          </List.Item> */}
+          </List.Item>
         </List>
 
         {/* <div>{!userInfo || userInfo.username}</div> */}
