@@ -61,19 +61,19 @@ class App extends Component {
               // component={item.component}
               exact={item.exact}
               render={(props) => {
-                // console.log("12345", props);
-                return !item.auth ? (
+                // return (!item.auth || userInfo) ? (
+                //   <item.component {...props} />
+                // ) : (
+                //   <Redirect
+                //     to={{
+                //       pathname: "/login",
+                //       state: { from: props.location },
+                //     }}
+                //   />
+                // );
+                return (!item.auth || userInfo) ? (
                   <item.component {...props} />
-                ) : userInfo ? (
-                  <item.component {...props} />
-                ) : (
-                  <Redirect
-                    to={{
-                      pathname: "/login",
-                      state: { from: props.location },
-                    }}
-                  />
-                );
+                ) : '';
               }}
             />
           );
