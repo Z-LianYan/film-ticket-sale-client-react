@@ -6,8 +6,14 @@ axios.defaults.withCredentials = true;
 
 // import store from "@/store/index";
 
+
+let api = ""; //跨域配置的api
+if (process.env.NODE_ENV === "development") {
+  api = "/api";
+}
+
 const service = axios.create({
-  baseURL: process.env.BASE_API, // api的base_url
+  baseURL: api, // api的base_url
   timeout: 5000 * 200, //1m request timeout
   headers: {
     platform: "web",
@@ -45,21 +51,17 @@ service.interceptors.response.use(
   }
 );
 
-let api = ""; //跨域配置的api
-if (process.env.NODE_ENV === "development") {
-  api = "/api";
-}
 
 export function post(url, data, text) {
   return new Promise((resolve, reject) => {
     if (text)
       Toast.show({
         icon: "loading",
-        duration: 2000,
+        duration: 0,//提示持续时间，若为 0 则不会自动关闭
         content: text,
       });
     service({
-      url: api + url,
+      url: url,
       method: "POST",
       data: data,
       headers: {},
@@ -84,11 +86,11 @@ export function get(url, params, text) {
     if (text)
       Toast.show({
         icon: "loading",
-        duration: 2000,
+        duration: 0,//提示持续时间，若为 0 则不会自动关闭
         content: text,
       });
     service({
-      url: api + url,
+      url: url,
       method: "GET",
       params: params,
       headers: {},
