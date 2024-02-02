@@ -62,7 +62,7 @@ class CustomSwiper extends Component {
                   <div className="swiper-slide" key={index}>
                     <img
                       className="left"
-                      style={{ width: "100%", height: "100%" }}
+                      style={{ width: "100%", height: "100%",objectFit: 'cover' }}
                       src={item.poster_img}
                     />
                   </div>
